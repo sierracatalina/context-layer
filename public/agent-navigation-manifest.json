@@ -1,0 +1,34 @@
+{
+  "name": "Context Layer public protocol site",
+  "version": "1.0.0",
+  "description": "Public, person-neutral navigation and concept manifest for the Context Layer working proposal.",
+  "default_entry": "#top",
+  "sections": [
+    { "id": "why", "label": "Why", "description": "Problem, protocol, proof, and current status." },
+    { "id": "demo", "label": "Live demo", "description": "Synthetic context request from vault evaluation through receipt." },
+    { "id": "map", "label": "Protocol map", "description": "Progressive layer-by-layer architecture explorer." },
+    { "id": "guide", "label": "Protocol guide", "description": "Question answering and allowlisted same-page navigation." },
+    { "id": "reference", "label": "Reference", "description": "Draft specification, implementation profiles, and public documents." }
+  ],
+  "navigation_actions": [
+    "why",
+    "demo",
+    "demo-policy",
+    "demo-bundle",
+    "demo-receipt",
+    "map",
+    "map-data",
+    "map-vault",
+    "map-policy",
+    "map-interface",
+    "map-receipts",
+    "guide",
+    "reference"
+  ],
+  "constraints": {
+    "same_page_only": true,
+    "arbitrary_urls": false,
+    "synthetic_data_only": true,
+    "production_vault_access": false
+  }
+}

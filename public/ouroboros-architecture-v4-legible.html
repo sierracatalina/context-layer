@@ -1,0 +1,275 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0d1117">
+  <meta name="description" content="Context Layer is a working protocol proposal for giving apps and agents useful context without exposing a user's entire private memory.">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Context Layer | Useful context, without total access">
+  <meta property="og:description" content="Explore a synthetic, interactive demonstration of scoped context, policy gates, receipts, and user-controlled memory.">
+  <meta property="og:image" content="/assets/context-layer-og.svg">
+  <meta name="twitter:card" content="summary_large_image">
+  <title>Context Layer | Useful context, without total access</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&amp;family=DM+Mono:wght@400;500&amp;family=DM+Sans:wght@400;500;600&amp;display=swap" rel="stylesheet">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="stylesheet" href="assets/context-layer.css">
+  <link rel="stylesheet" href="assets/context-layer-responsive.css">
+  <script src="assets/context-layer.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="site-header" data-header>
+    <div class="site-header__inner">
+      <a class="wordmark" href="#top" aria-label="Context Layer home">Context Layer</a>
+      <nav class="primary-nav" aria-label="Primary navigation">
+        <a href="#why">Why</a>
+        <a href="#demo">Demo</a>
+        <a href="#map">Map</a>
+        <a href="#guide">Guide</a>
+        <a href="#reference">Reference</a>
+      </nav>
+      <div class="header-actions">
+        <a class="sierra-link" href="https://sierracatalina.com" rel="author">sierracatalina.com</a>
+        <button class="icon-button" type="button" data-theme-toggle aria-label="Use light theme" title="Change color theme">
+          <span aria-hidden="true" data-theme-icon>☼</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="hero section" id="top" aria-labelledby="hero-title">
+      <div class="shell hero__grid">
+        <div class="hero__copy">
+          <p class="eyebrow">Context Layer / working proposal</p>
+          <h1 id="hero-title">Useful context,<br><em>without total access.</em></h1>
+          <p class="hero__lede">A proposed protocol for letting apps and agents request only the context a task needs. Raw memory stays behind a user-controlled policy boundary. Every disclosure is scoped, expiring, and receipted.</p>
+          <div class="hero__actions">
+            <a class="button button--primary" href="#demo">Run the demo <span aria-hidden="true">↓</span></a>
+            <a class="button button--quiet" href="#map">Open the map <span aria-hidden="true">→</span></a>
+          </div>
+        </div>
+
+        <div class="packet-figure" aria-labelledby="packet-title">
+          <div class="packet-figure__head">
+            <p class="utility-label">One request / progressively reduced</p>
+            <p id="packet-title" class="packet-caption">Watch context become a purpose-bound bundle.</p>
+          </div>
+          <ol class="packet-track" data-hero-track>
+            <li data-hero-stage="0"><span>01</span><strong>Request</strong><small>task asks</small></li>
+            <li data-hero-stage="1"><span>02</span><strong>Vault</strong><small>context stays private</small></li>
+            <li data-hero-stage="2"><span>03</span><strong>Policy</strong><small>fields reduce</small></li>
+            <li data-hero-stage="3"><span>04</span><strong>Bundle</strong><small>minimum reveal</small></li>
+            <li data-hero-stage="4"><span>05</span><strong>Surface</strong><small>result appears</small></li>
+            <li data-hero-stage="5"><span>06</span><strong>Receipt</strong><small>decision records</small></li>
+            <span class="context-packet" data-hero-packet aria-hidden="true"><span></span></span>
+          </ol>
+          <button class="text-command" type="button" data-play-demo>Play the context flow <span aria-hidden="true">→</span></button>
+        </div>
+      </div>
+    </section>
+
+    <section class="thesis section section--ruled" id="why" aria-labelledby="why-title">
+      <div class="shell">
+        <div class="section-heading">
+          <p class="eyebrow">Why this exists</p>
+          <h2 id="why-title">More useful agents should not require more exposed lives.</h2>
+        </div>
+        <ol class="editorial-sequence">
+          <li>
+            <span class="sequence-number">01</span>
+            <div><h3>Problem</h3><p>AI becomes more useful with context. Today, getting that context often means copying private memory into every platform that wants to use it.</p></div>
+          </li>
+          <li>
+            <span class="sequence-number">02</span>
+            <div><h3>Protocol</h3><p>Context Layer keeps private memory behind a policy boundary. Apps request a purpose-bound bundle instead of receiving unrestricted access.</p></div>
+          </li>
+          <li>
+            <span class="sequence-number">03</span>
+            <div><h3>Proof</h3><p>Every interaction should show what was used, who received it, why it was allowed, how long it lasts, and what receipt records the result.</p></div>
+          </li>
+          <li>
+            <span class="sequence-number">04</span>
+            <div><h3>Status</h3><p>This is a working proposal and synthetic demonstrator. It is not an adopted standard, production vault, or security certification.</p></div>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="demo-section section" id="demo" aria-labelledby="demo-title">
+      <div class="shell">
+        <div class="section-heading section-heading--split">
+          <div>
+            <p class="eyebrow">Synthetic protocol demo</p>
+            <h2 id="demo-title">Plan a day without sharing a life.</h2>
+          </div>
+          <p>A fictional itinerary app plans a Saturday in Harbor City. The data is synthetic, stays in this browser, and resets locally.</p>
+        </div>
+
+        <div class="demo-tool" data-demo>
+          <div class="demo-toolbar">
+            <div>
+              <span class="utility-label">Scenario / Harbor City</span>
+              <span class="demo-progress-label" data-progress-label>Step 1 of 6</span>
+            </div>
+            <button class="text-command text-command--small" type="button" data-reset-demo>Reset demo</button>
+          </div>
+
+          <div class="demo-stepper" role="tablist" aria-label="Context flow stages">
+            <button type="button" role="tab" aria-selected="true" data-stage-button="0"><span>01</span>Request</button>
+            <button type="button" role="tab" aria-selected="false" data-stage-button="1"><span>02</span>Vault</button>
+            <button type="button" role="tab" aria-selected="false" data-stage-button="2"><span>03</span>Policy</button>
+            <button type="button" role="tab" aria-selected="false" data-stage-button="3"><span>04</span>Bundle</button>
+            <button type="button" role="tab" aria-selected="false" data-stage-button="4"><span>05</span>Result</button>
+            <button type="button" role="tab" aria-selected="false" data-stage-button="5"><span>06</span>Receipt</button>
+          </div>
+
+          <div class="demo-body">
+            <article class="stage-copy" aria-live="polite" aria-atomic="true">
+              <p class="utility-label" data-stage-kicker>Context request</p>
+              <h3 data-stage-title>The app declares what it needs and why.</h3>
+              <p data-stage-summary>It requests enough context to plan a Saturday, not permission to browse an entire vault.</p>
+              <div class="stage-callout" data-stage-callout>
+                <span class="status-tag status-tag--request">Requested</span>
+                <p>Purpose: build a one-day itinerary. Retention: none.</p>
+              </div>
+              <div class="stage-actions">
+                <button class="button button--quiet" type="button" data-prev-stage disabled>Back</button>
+                <button class="button button--primary" type="button" data-next-stage>Review private vault <span aria-hidden="true">→</span></button>
+              </div>
+            </article>
+
+            <div class="field-comparison" aria-label="Context fields in the selected stage">
+              <div class="field-column">
+                <div class="field-column__head"><span>Input</span><small data-input-count>5 fields</small></div>
+                <ul data-stage-input></ul>
+              </div>
+              <div class="field-arrow" aria-hidden="true">→</div>
+              <div class="field-column">
+                <div class="field-column__head"><span>Output</span><small data-output-count>5 fields</small></div>
+                <ul data-stage-output></ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="disclosure-row">
+            <div>
+              <span class="utility-label">Disclosure</span>
+              <strong data-disclosure-label>Request defines five fields</strong>
+            </div>
+            <div class="meter" role="meter" aria-label="Shareable context remaining" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100" data-meter>
+              <span data-meter-fill></span>
+            </div>
+            <span class="meter-value" data-meter-value>100%</span>
+          </div>
+
+          <details class="protocol-data">
+            <summary>View protocol data</summary>
+            <pre><code data-stage-code></code></pre>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <section class="map-section section section--ruled" id="map" aria-labelledby="map-title">
+      <div class="shell">
+        <div class="section-heading section-heading--split">
+          <div>
+            <p class="eyebrow">Progressive protocol map</p>
+            <h2 id="map-title">Read one layer at a time.</h2>
+          </div>
+          <p>The complete architecture remains available as a reference, but this view limits each pass to one responsibility and its current-world equivalents.</p>
+        </div>
+
+        <div class="layer-explorer">
+          <div class="layer-tabs" role="tablist" aria-label="Protocol layers">
+            <button type="button" role="tab" aria-selected="true" data-layer="data"><span>01</span>Data plane</button>
+            <button type="button" role="tab" aria-selected="false" data-layer="vault"><span>02</span>Vault</button>
+            <button type="button" role="tab" aria-selected="false" data-layer="policy"><span>03</span>Policy</button>
+            <button type="button" role="tab" aria-selected="false" data-layer="interface"><span>04</span>Interface</button>
+            <button type="button" role="tab" aria-selected="false" data-layer="receipts"><span>05</span>Receipts</button>
+          </div>
+          <div class="layer-panel" role="tabpanel" data-layer-panel aria-live="polite"></div>
+        </div>
+
+        <div class="map-reference">
+          <p><strong>Need the full system view?</strong> Open the technical diagram only after the layer model is clear.</p>
+          <div>
+            <a class="button button--quiet" href="reference/context-layer-architecture-diagram.svg">View full diagram</a>
+            <a class="button button--quiet" href="reference/context-layer-technical-specification.md">Read draft specification</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="guide-section section" id="guide" aria-labelledby="guide-title">
+      <div class="shell guide-grid">
+        <div class="section-heading">
+          <p class="eyebrow">Protocol guide</p>
+          <h2 id="guide-title">Ask the site to explain or move.</h2>
+          <p>Text is the default. The guide can answer from this proposal and navigate only to approved sections on this page. Without a configured API, it remains a transparent local guide.</p>
+        </div>
+
+        <div class="guide-tool" data-guide>
+          <div class="guide-status">
+            <span class="status-tag" data-guide-mode>Local guide</span>
+            <span data-guide-status>Ready</span>
+          </div>
+          <div class="prompt-list" aria-label="Suggested questions">
+            <button type="button" data-guide-prompt="Show me how policy reduces what is shared">How does policy reduce data?</button>
+            <button type="button" data-guide-prompt="Take me to the synthetic demo">Take me to the demo</button>
+            <button type="button" data-guide-prompt="What does a receipt prove?">What does a receipt prove?</button>
+          </div>
+          <div class="guide-transcript" aria-live="polite" data-guide-transcript>
+            <p><strong>Guide</strong> Ask a protocol question or tell me which part you want to see.</p>
+          </div>
+          <form class="guide-form" data-guide-form>
+            <label class="sr-only" for="guide-input">Ask the Context Layer guide</label>
+            <input id="guide-input" name="question" maxlength="500" autocomplete="off" placeholder="Ask about policy, bundles, receipts, or the demo…" required>
+            <button class="button button--primary" type="submit">Ask</button>
+          </form>
+          <div class="voice-controls">
+            <button type="button" class="text-command text-command--small" data-voice-input>Voice input</button>
+            <label><input type="checkbox" data-voice-output> Read answers aloud</label>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="reference-section section section--ruled" id="reference" aria-labelledby="reference-title">
+      <div class="shell">
+        <div class="section-heading section-heading--split">
+          <div>
+            <p class="eyebrow">Reference and status</p>
+            <h2 id="reference-title">A proposal you can inspect.</h2>
+          </div>
+          <p>The demonstrator makes the design legible. The linked documents describe the protocol objects, trust boundaries, and open implementation questions in more detail.</p>
+        </div>
+        <div class="reference-list">
+          <a href="reference/context-layer-technical-specification.md"><span>01</span><strong>Draft technical specification</strong><small>Core objects, lifecycles, policy, security</small><b aria-hidden="true">↗</b></a>
+          <a href="reference/context-layer-implementation-and-interoperability.md"><span>02</span><strong>Implementation profiles</strong><small>Adapters, agents, web, mobile, interoperability</small><b aria-hidden="true">↗</b></a>
+          <a href="reference/context-layer-blog-post.md"><span>03</span><strong>Plain-language introduction</strong><small>Why the layer exists and who it can serve</small><b aria-hidden="true">↗</b></a>
+          <a href="agent-navigation-manifest.json"><span>04</span><strong>Navigation manifest</strong><small>Machine-readable public sections and actions</small><b aria-hidden="true">↗</b></a>
+        </div>
+        <div class="status-note">
+          <span class="status-tag status-tag--proposal">Working proposal</span>
+          <p>This site demonstrates intended behavior with fictional data. It does not claim standards adoption, production security, live vault access, or completed interoperability.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="shell site-footer__inner">
+      <p><strong>Context Layer</strong> / a public working proposal</p>
+      <p>Concept and direction by <a href="https://sierracatalina.com" rel="author">Sierra Catalina</a></p>
+    </div>
+  </footer>
+
+  <div class="sr-only" aria-live="polite" data-announcer></div>
+</body>
+</html>
