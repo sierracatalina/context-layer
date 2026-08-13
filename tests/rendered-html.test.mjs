@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { readFile, readdir } from "node:fs/promises";
+import { access, readFile, readdir } from "node:fs/promises";
 import { extname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import test from "node:test";
@@ -52,6 +52,12 @@ async function fetchPublicAsset(request) {
 
 test("isolated public source is the exact allowlisted release surface", async () => {
   assert.deepEqual((await walk(publicRoot)).sort(), expectedFiles);
+});
+
+test("deployment output cannot bypass the worker with direct public-file copies", async () => {
+  for (const pathname of ["index.html", "assets/context-layer.js", "llms.txt"]) {
+    await assert.rejects(access(join(projectRoot, "dist", "client", pathname)));
+  }
 });
 
 test("worker serves the verified public document with security headers", async () => {
