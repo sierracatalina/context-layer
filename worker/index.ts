@@ -1,9 +1,13 @@
 import { handleGuideRequest } from "./guide";
+import { renderArchitecturePage, renderDocumentPage } from "./documents";
 import portableHeaders from "../public/_headers?raw";
 import navigationManifest from "../public/agent-navigation-manifest.json?raw";
+import diagramCss from "../public/assets/context-layer-diagram.css?raw";
+import docsCss from "../public/assets/context-layer-docs.css?raw";
 import socialImage from "../public/assets/context-layer-og.svg?raw";
 import responsiveCss from "../public/assets/context-layer-responsive.css?raw";
 import siteCss from "../public/assets/context-layer.css?raw";
+import referenceJs from "../public/assets/context-layer-reference.js?raw";
 import siteJs from "../public/assets/context-layer.js?raw";
 import indexHtml from "../public/index.html?raw";
 import llms from "../public/llms.txt?raw";
@@ -23,23 +27,64 @@ interface Env {
 interface PublicAsset {
   body: string;
   contentType: string;
+  headers?: Record<string, string>;
 }
+
+const blogPage = renderDocumentPage(blogPost, {
+  canonicalPath: "/writing/context-layer",
+  description: "Sierra Catalina's proposal for user-owned memory, purpose-bound disclosure, reversible agent writes, and inspectable receipts.",
+  eyebrow: "Published essay / Context Layer",
+  rawPath: "/reference/context-layer-blog-post.md",
+  status: "Published",
+  subtitle: "A proposal for user-owned memory, purpose-bound disclosure, reversible agent writes, and receipts people can inspect",
+});
+
+const specificationPage = renderDocumentPage(technicalSpecification, {
+  canonicalPath: "/reference/specification",
+  description: "The Context Layer v0.1 draft technical specification: objects, lifecycles, policies, trust boundaries, and conformance requirements.",
+  eyebrow: "Technical reference / v0.1 draft",
+  rawPath: "/reference/context-layer-technical-specification.md",
+  status: "Working Draft",
+  subtitle: "A reviewable core contract for implementation and interoperability experiments.",
+});
+
+const implementationPage = renderDocumentPage(implementationReference, {
+  canonicalPath: "/reference/implementation",
+  description: "Implementation and interoperability profiles for Context Layer adapters, agents, web and mobile applications, and security review.",
+  eyebrow: "Technical reference / implementation",
+  rawPath: "/reference/context-layer-implementation-and-interoperability.md",
+  status: "Working Draft",
+  subtitle: "Adapter guidance for building on existing protocols without flattening their security model.",
+});
+
+const architecturePage = renderArchitecturePage();
 
 const PUBLIC_ASSETS = new Map<string, PublicAsset>([
   ["/_headers", text(portableHeaders)],
   ["/agent-navigation-manifest.json", json(navigationManifest)],
+  ["/assets/context-layer-diagram.css", css(diagramCss)],
+  ["/assets/context-layer-docs.css", css(docsCss)],
   ["/assets/context-layer-og.svg", svg(socialImage)],
   ["/assets/context-layer-responsive.css", css(responsiveCss)],
   ["/assets/context-layer.css", css(siteCss)],
+  ["/assets/context-layer-reference.js", javascript(referenceJs)],
   ["/assets/context-layer.js", javascript(siteJs)],
   ["/index.html", html(indexHtml)],
   ["/llms.txt", text(llms)],
   ["/manifest.webmanifest", { body: webManifest, contentType: "application/manifest+json; charset=utf-8" }],
   ["/ouroboros-architecture-v4-legible.html", html(architectureAlias)],
-  ["/reference/context-layer-architecture-diagram.svg", svg(architectureDiagram)],
-  ["/reference/context-layer-blog-post.md", markdown(blogPost)],
-  ["/reference/context-layer-implementation-and-interoperability.md", markdown(implementationReference)],
-  ["/reference/context-layer-technical-specification.md", markdown(technicalSpecification)],
+  ["/writing/context-layer", html(blogPage)],
+  ["/writing/context-layer/", html(blogPage)],
+  ["/reference/architecture", html(architecturePage)],
+  ["/reference/architecture/", html(architecturePage)],
+  ["/reference/specification", html(specificationPage)],
+  ["/reference/specification/", html(specificationPage)],
+  ["/reference/implementation", html(implementationPage)],
+  ["/reference/implementation/", html(implementationPage)],
+  ["/reference/context-layer-architecture-diagram.svg", noIndex(svg(architectureDiagram))],
+  ["/reference/context-layer-blog-post.md", noIndex(markdown(blogPost))],
+  ["/reference/context-layer-implementation-and-interoperability.md", noIndex(markdown(implementationReference))],
+  ["/reference/context-layer-technical-specification.md", noIndex(markdown(technicalSpecification))],
   ["/robots.txt", text(robots)],
 ]);
 
@@ -73,7 +118,10 @@ const worker = {
         status: 200,
         headers: {
           "Content-Type": asset.contentType,
-          "Cache-Control": assetPath.endsWith(".html") ? "no-cache" : "public, max-age=3600",
+          "Cache-Control": asset.contentType.startsWith("text/html") || asset.contentType === "image/svg+xml"
+            ? "no-cache"
+            : "public, max-age=3600",
+          ...asset.headers,
         },
       }));
     }
@@ -99,6 +147,10 @@ function withSecurityHeaders(response: Response): Response {
 
 function typed(body: string, contentType: string): PublicAsset {
   return { body, contentType };
+}
+
+function noIndex(asset: PublicAsset): PublicAsset {
+  return { ...asset, headers: { ...asset.headers, "X-Robots-Tag": "noindex, nofollow" } };
 }
 
 function html(body: string): PublicAsset {

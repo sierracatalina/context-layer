@@ -9,7 +9,10 @@ const publicRoot = join(projectRoot, "public");
 const expectedFiles = [
   "_headers",
   "agent-navigation-manifest.json",
+  "assets/context-layer-diagram.css",
+  "assets/context-layer-docs.css",
   "assets/context-layer-og.svg",
+  "assets/context-layer-reference.js",
   "assets/context-layer-responsive.css",
   "assets/context-layer.css",
   "assets/context-layer.js",
@@ -75,6 +78,50 @@ test("worker serves the verified public document with security headers", async (
   assert.equal(response.headers.get("cross-origin-opener-policy"), "same-origin");
 });
 
+test("worker publishes canonical essay and technical reference pages", async () => {
+  const worker = await loadWorker();
+  const essay = await worker.fetch(new Request("https://context.example/writing/context-layer"), testEnv());
+  assert.equal(essay.status, 200);
+  assert.match(essay.headers.get("content-type") ?? "", /^text\/html\b/i);
+  const essayHtml = await essay.text();
+  assert.match(essayHtml, /The Context Layer: Give AI the Context It Needs Without Giving It Everything/);
+  assert.match(essayHtml, /Published essay \/ Context Layer/);
+  assert.match(essayHtml, /<article class="document-body">/);
+  assert.match(essayHtml, /href="\/reference\/specification"/);
+  assert.doesNotMatch(essayHtml, /Publication draft/);
+
+  const specification = await worker.fetch(new Request("https://context.example/reference/specification"), testEnv());
+  assert.equal(specification.status, 200);
+  assert.match(await specification.text(), /Working Draft - not an adopted standard/);
+
+  const implementation = await worker.fetch(new Request("https://context.example/reference/implementation"), testEnv());
+  assert.equal(implementation.status, 200);
+  assert.match(await implementation.text(), /Implementation and Interoperability Profiles/);
+});
+
+test("architecture viewer keeps the full map legible and SVG styling CSP-safe", async () => {
+  const worker = await loadWorker();
+  const viewer = await worker.fetch(new Request("https://context.example/reference/architecture"), testEnv());
+  assert.equal(viewer.status, 200);
+  const viewerHtml = await viewer.text();
+  assert.match(viewerHtml, /data-diagram-action="fit"/);
+  assert.match(viewerHtml, /data-diagram-action="reading"/);
+  assert.match(viewerHtml, /data-diagram-action="actual"/);
+  assert.match(viewerHtml, /data-diagram-scroll/);
+  assert.match(viewerHtml, /context-layer-architecture-diagram\.svg/);
+
+  const diagram = await worker.fetch(new Request("https://context.example/reference/context-layer-architecture-diagram.svg"), testEnv());
+  assert.equal(diagram.status, 200);
+  assert.equal(diagram.headers.get("cache-control"), "no-cache");
+  assert.equal(diagram.headers.get("x-robots-tag"), "noindex, nofollow");
+  const svg = await diagram.text();
+  assert.match(svg, /xml-stylesheet[^>]+context-layer-diagram\.css/);
+  assert.match(svg, /fill="#0d1117"/);
+  assert.match(svg, /font-family="DM Sans, Segoe UI, sans-serif"/);
+  assert.doesNotMatch(svg, /<style>/);
+  assert.doesNotMatch(svg, /href="(?:context-layer-overview|demos\/)/);
+});
+
 test("worker limits the hosted surface to reviewed paths", async () => {
   const worker = await loadWorker();
   const asset = await worker.fetch(new Request("https://context.example/assets/context-layer.js"), testEnv());
@@ -83,6 +130,7 @@ test("worker limits the hosted surface to reviewed paths", async () => {
 
   const reference = await worker.fetch(new Request("https://context.example/reference/context-layer-technical-specification.md"), testEnv());
   assert.equal(reference.status, 200);
+  assert.equal(reference.headers.get("x-robots-tag"), "noindex, nofollow");
 
   const unknown = await worker.fetch(new Request("https://context.example/private-notes.txt"), testEnv());
   assert.equal(unknown.status, 404);

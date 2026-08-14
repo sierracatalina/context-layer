@@ -1,7 +1,7 @@
 ---
 title: "The Context Layer: Give AI the Context It Needs Without Giving It Everything"
 subtitle: "A proposal for user-owned memory, purpose-bound disclosure, reversible agent writes, and receipts people can inspect"
-status: "Publication draft"
+status: "Published"
 date: "2026-08-12"
 audience: "Product leaders, application developers, agent builders, protocol designers, privacy and security teams"
 ---
@@ -283,10 +283,10 @@ The Context Layer is an attempt to make the better architecture portable.
 
 ## Further reading
 
-- [Context Layer interactive overview](../context-layer-overview.html)
-- [Context Layer end-to-end demo](../demos/flow-carousel.html)
-- [Draft technical specification](context-layer-technical-specification.md)
-- [Implementation and interoperability profiles](context-layer-implementation-and-interoperability.md)
+- [Context Layer interactive overview](/)
+- [Context Layer end-to-end demo](/#demo)
+- [Draft technical specification](/reference/specification)
+- [Implementation and interoperability profiles](/reference/implementation)
 - [HTTP Semantics, RFC 9110](https://www.rfc-editor.org/rfc/rfc9110.html)
 - [TLS 1.3, RFC 8446](https://www.rfc-editor.org/info/rfc8446/)
 - [ActivityPub, W3C Recommendation](https://www.w3.org/TR/activitypub/)
@@ -297,4 +297,3 @@ The Context Layer is an attempt to make the better architecture portable.
 - [Agent2Agent Protocol](https://a2a-protocol.org/latest/)
 - [IPFS privacy and encryption](https://docs.ipfs.tech/concepts/privacy-and-encryption/)
 - [OpenAI Realtime API with WebRTC](https://developers.openai.com/api/docs/guides/realtime-webrtc)
-

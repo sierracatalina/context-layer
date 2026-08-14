@@ -11,6 +11,10 @@ This public site is a synthetic demonstrator. It does not connect to a productio
 - /#map — progressive architecture explorer
 - /#guide — protocol Q&A and allowlisted same-page navigation
 - /#reference — specification and implementation documents
+- /writing/context-layer — published essay by Sierra Catalina
+- /reference/architecture — zoomable complete architecture diagram
+- /reference/specification — rendered draft technical specification
+- /reference/implementation — rendered implementation and interoperability profiles
 
 ## Core flow
 
@@ -25,7 +29,14 @@ This public site is a synthetic demonstrator. It does not connect to a productio
 
 - /agent-navigation-manifest.json — allowed sections and navigation actions
 
-## Reference documents
+## Canonical human-readable documents
+
+- /writing/context-layer
+- /reference/architecture
+- /reference/specification
+- /reference/implementation
+
+## Reviewed source downloads
 
 - /reference/context-layer-technical-specification.md
 - /reference/context-layer-implementation-and-interoperability.md

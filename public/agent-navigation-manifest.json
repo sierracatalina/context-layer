@@ -1,6 +1,6 @@
 {
   "name": "Context Layer public protocol site",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Public, person-neutral navigation and concept manifest for the Context Layer working proposal.",
   "default_entry": "#top",
   "sections": [
@@ -24,6 +24,12 @@
     "map-receipts",
     "guide",
     "reference"
+  ],
+  "public_routes": [
+    { "path": "/writing/context-layer", "label": "Published essay", "format": "text/html" },
+    { "path": "/reference/architecture", "label": "Zoomable architecture", "format": "text/html" },
+    { "path": "/reference/specification", "label": "Draft technical specification", "format": "text/html" },
+    { "path": "/reference/implementation", "label": "Implementation profiles", "format": "text/html" }
   ],
   "constraints": {
     "same_page_only": true,
