@@ -1,396 +1,393 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?xml-stylesheet type="text/css" href="../assets/context-layer-diagram.css?v=20260814"?>
 <svg xmlns="http://www.w3.org/2000/svg" width="2200" height="1960" viewBox="0 0 2200 1960" role="img" aria-labelledby="title desc" id="protocol-map">
   <title id="title">Context Layer protocol map</title>
   <desc id="desc">An interactive architecture map for a user-owned context layer: ingestion, vault, policy gates, scoped bundles, interface surfaces, discovery, and receipt rail.</desc>
   <defs>
-    <marker id="arrow" viewBox="0 0 12 12" refX="10" refY="6" markerWidth="11" markerHeight="11" orient="auto-start-reverse"><path d="M2,2 L10,6 L2,10 Z" fill="#7ba5d4"/></marker>
-    <marker id="arrowGold" viewBox="0 0 12 12" refX="10" refY="6" markerWidth="11" markerHeight="11" orient="auto-start-reverse"><path d="M2,2 L10,6 L2,10 Z" fill="#d4a574"/></marker>
-    <marker id="arrowReceipt" viewBox="0 0 12 12" refX="10" refY="6" markerWidth="11" markerHeight="11" orient="auto-start-reverse"><path d="M2,2 L10,6 L2,10 Z" fill="#7ba5d4"/></marker>
-    <filter id="softShadow" x="-10%" y="-10%" width="120%" height="125%"><feDropShadow dx="0" dy="10" stdDeviation="10" flood-color="#1f2937" flood-opacity="0.08"/></filter>
-    <filter id="glow" x="-10%" y="-10%" width="120%" height="125%"><feDropShadow dx="0" dy="0" stdDeviation="8" flood-color="#a8c8eb" flood-opacity="0.35"/></filter>
+    <marker id="arrow" viewBox="0 0 12 12" refX="10" refY="6" markerWidth="11" markerHeight="11" orient="auto-start-reverse"><path d="M2,2 L10,6 L2,10 Z" fill="#a8a8a8"/></marker>
+    <marker id="arrowGold" viewBox="0 0 12 12" refX="10" refY="6" markerWidth="11" markerHeight="11" orient="auto-start-reverse"><path d="M2,2 L10,6 L2,10 Z" fill="#a8a8a8"/></marker>
+    <marker id="arrowReceipt" viewBox="0 0 12 12" refX="10" refY="6" markerWidth="11" markerHeight="11" orient="auto-start-reverse"><path d="M2,2 L10,6 L2,10 Z" fill="#a8a8a8"/></marker>
   </defs>
   
-  <rect width="2200" height="1960" fill="#0d1117"/>
+  <rect width="2200" height="1960" fill="#0a0a0a"/>
 
   <a class="svg-link" href="../#map">
     <g class="map-node is-linked category-vault" data-node="title" data-title="Context Layer" data-summary="A protocol layer for moving useful context between apps, agents, and discovery systems without exposing the raw user vault by default." data-category="vault" tabindex="0" role="link" aria-label="Context Layer overview">
-      <text class="node-title" x="1100" y="72" text-anchor="middle" font-family="DM Sans, Segoe UI, sans-serif" font-size="48" font-weight="600" font-style="normal" fill="#f5f1e8">
+      <text class="node-title" x="1100" y="72" text-anchor="middle" font-family="DM Sans, Segoe UI, sans-serif" font-size="48" font-weight="600" font-style="normal" fill="#fafaf8">
     <tspan x="1100" dy="0">Context Layer</tspan>
   </text>
     </g>
   </a>
-  <text x="1100" y="118" text-anchor="middle" font-family="DM Sans, Segoe UI, sans-serif" font-size="21" font-weight="600" font-style="normal" fill="#b8b4ac">
+  <text x="1100" y="118" text-anchor="middle" font-family="DM Sans, Segoe UI, sans-serif" font-size="21" font-weight="600" font-style="normal" fill="#b0b0b0">
     <tspan x="1100" dy="0">A portable protocol layer for sharing useful context with apps, agents, and discovery</tspan>
     <tspan x="1100" dy="28">without handing over the user's raw vault by default.</tspan>
   </text>
 
-  <rect x="120" y="165" width="1500" height="400" rx="22" fill="#111923" stroke="#7ba5d4" stroke-width="2.5" opacity="1"/>
-  <text x="145" y="206" text-anchor="start" font-family="DM Sans, Segoe UI, sans-serif" font-size="25" font-weight="600" font-style="italic" fill="#f5f1e8">
+  <rect x="120" y="165" width="1500" height="400" rx="22" fill="#111111" stroke="#a8a8a8" stroke-width="2.5" opacity="1"/>
+  <text x="145" y="206" text-anchor="start" font-family="DM Sans, Segoe UI, sans-serif" font-size="25" font-weight="600" font-style="italic" fill="#fafaf8">
     <tspan x="145" dy="0">data plane  ·  ingestion → vault</tspan>
   </text>
 
   <a class="svg-link" href="../#reference"><g class="map-node category-control is-linked" data-node="protocols" data-title="Open protocols" data-summary="The substrate the context layer can ride on: web standards, social protocols, storage protocols, agent protocols, and payment rails." data-category="control" tabindex="0" role="link" aria-label="Open protocols">
-    <rect class="node-outline" x="385" y="220" width="920" height="92" rx="14" fill="#161c24" stroke="#7ba5d4" stroke-width="3" opacity="1"/>
+    <rect class="node-outline" x="385" y="220" width="920" height="92" rx="14" fill="#1a1a1a" stroke="#a8a8a8" stroke-width="3" opacity="1"/>
     
-    <text class="node-title" x="845" y="254" text-anchor="middle" font-family="DM Sans, Segoe UI, sans-serif" font-size="25" font-weight="700" font-style="normal" fill="#f5f1e8">
+    <text class="node-title" x="845" y="254" text-anchor="middle" font-family="DM Sans, Segoe UI, sans-serif" font-size="25" font-weight="700" font-style="normal" fill="#fafaf8">
     <tspan x="845" dy="0">open protocols</tspan>
   </text>
-    <text class="node-body" x="845" y="278" text-anchor="middle" font-family="DM Sans, Segoe UI, sans-serif" font-size="17" font-weight="500" font-style="normal" fill="#b8b4ac">
+    <text class="node-body" x="845" y="278" text-anchor="middle" font-family="DM Sans, Segoe UI, sans-serif" font-size="17" font-weight="500" font-style="normal" fill="#b0b0b0">
     <tspan x="845" dy="0">HTTP/DNS/TLS · ActivityPub/ATProto/Nostr · IPFS</tspan>
     <tspan x="845" dy="22">Matrix · MCP/A2A · payment x402</tspan>
   </text>
-    <path class="node-link-mark" d="M1275 244 L1288 244 L1288 257 M1287 245 L1271 261" fill="none" stroke="#a8c8eb" opacity="0" stroke-width="2.5" stroke-linecap="round"/>
+    <path class="node-link-mark" d="M1275 244 L1288 244 L1288 257 M1287 245 L1271 261" fill="none" stroke="#ffffff" opacity="0" stroke-width="2.5" stroke-linecap="round"/>
   </g></a>
   <a class="svg-link" href="../#reference"><g class="map-node category-control is-linked" data-node="transport" data-title="Raw data transport" data-summary="The channels where source events arrive before they are normalized into the vault. Some are standards, some are app or device protocols." data-category="control" tabindex="0" role="link" aria-label="Raw data transport">
-    <rect class="node-outline" x="385" y="340" width="920" height="92" rx="14" fill="#161c24" stroke="#7ba5d4" stroke-width="3" opacity="1"/>
+    <rect class="node-outline" x="385" y="340" width="920" height="92" rx="14" fill="#1a1a1a" stroke="#a8a8a8" stroke-width="3" opacity="1"/>
     
-    <text class="node-title" x="845" y="380" text-anchor="middle" font-family="DM Sans, Segoe UI, sans-serif" font-size="25" font-weight="700" font-style="normal" fill="#f5f1e8">
+    <text class="node-title" x="845" y="380" text-anchor="middle" font-family="DM Sans, Segoe UI, sans-serif" font-size="25" font-weight="700" font-style="normal" fill="#fafaf8">
     <tspan x="845" dy="0">raw data transport</tspan>
   </text>
-    <text class="node-body" x="845" y="406" text-anchor="middle" font-family="DM Sans, Segoe UI, sans-serif" font-size="17" font-weight="500" font-style="normal" fill="#b8b4ac">
+    <text class="node-body" x="845" y="406" text-anchor="middle" font-family="DM Sans, Segoe UI, sans-serif" font-size="17" font-weight="500" font-style="normal" fill="#b0b0b0">
     <tspan x="845" dy="0">web · APIs · BLE mesh · Signal · BitChat · files · audio · email</tspan>
   </text>
-    <path class="node-link-mark" d="M1275 364 L1288 364 L1288 377 M1287 365 L1271 381" fill="none" stroke="#a8c8eb" opacity="0" stroke-width="2.5" stroke-linecap="round"/>
+    <path class="node-link-mark" d="M1275 364 L1288 364 L1288 377 M1287 365 L1271 381" fill="none" stroke="#ffffff" opacity="0" stroke-width="2.5" stroke-linecap="round"/>
   </g></a>
   <a class="svg-link" href="../#demo"><g class="map-node category-receipt is-linked" data-node="capture" data-title="Capture" data-summary="Turns incoming signals into timestamped events. Examples: message received, file imported, browser page clipped, payment receipt, voice note, device ping." data-category="receipt" tabindex="0" role="link" aria-label="Capture">
-    <rect class="node-outline" x="250" y="456" width="280" height="100" rx="14" fill="#161c24" stroke="#7ba5d4" stroke-width="3" opacity="1"/>
+    <rect class="node-outline" x="250" y="456" width="280" height="100" rx="14" fill="#1a1a1a" stroke="#a8a8a8" stroke-width="3" opacity="1"/>
     
-    <text class="node-title" x="390" y="496" text-anchor="middle" font-family="DM Sans, Segoe UI, sans-serif" font-size="23" font-weight="700" font-style="normal" fill="#f5f1e8">
+    <text class="node-title" x="390" y="496" text-anchor="middle" font-family="DM Sans, Segoe UI, sans-serif" font-size="23" font-weight="700" font-style="normal" fill="#fafaf8">
     <tspan x="390" dy="0">capture</tspan>
   </text>
-    <text class="node-body" x="390" y="522" text-anchor="middle" font-family="DM Sans, Segoe UI, sans-serif" font-size="17" font-weight="500" font-style="normal" fill="#b8b4ac">
+    <text class="node-body" x="390" y="522" text-anchor="middle" font-family="DM Sans, Segoe UI, sans-serif" font-size="17" font-weight="500" font-style="normal" fill="#b0b0b0">
     <tspan x="390" dy="0">event ingestion</tspan>
     <tspan x="390" dy="22">source tagging</tspan>
   </text>
-    <path class="node-link-mark" d="M500 480 L513 480 L513 493 M512 481 L496 497" fill="none" stroke="#a8c8eb" opacity="0" stroke-width="2.5" stroke-linecap="round"/>
+    <path class="node-link-mark" d="M500 480 L513 480 L513 493 M512 481 L496 497" fill="none" stroke="#ffffff" opacity="0" stroke-width="2.5" stroke-linecap="round"/>
   </g></a>
   <a class="svg-link" href="../#demo"><g class="map-node category-receipt is-linked" data-node="normalize" data-title="Normalize" data-summary="Maps different event shapes into stable schemas. Example: email, chat, and browser clips all become source events with consistent actor/time/content fields." data-category="receipt" tabindex="0" role="link" aria-label="Normalize">
-    <rect class="node-outline" x="600" y="456" width="280" height="100" rx="14" fill="#161c24" stroke="#7ba5d4" stroke-width="3" opacity="1"/>
+    <rect class="node-outline" x="600" y="456" width="280" height="100" rx="14" fill="#1a1a1a" stroke="#a8a8a8" stroke-width="3" opacity="1"/>
     
-    <text class="node-title" x="740" y="496" text-anchor="middle" font-family="DM Sans, Segoe UI, sans-serif" font-size="23" font-weight="700" font-style="normal" fill="#f5f1e8">
+    <text class="node-title" x="740" y="496" text-anchor="middle" font-family="DM Sans, Segoe UI, sans-serif" font-size="23" font-weight="700" font-style="normal" fill="#fafaf8">
     <tspan x="740" dy="0">normalize</tspan>
   </text>
-    <text class="node-body" x="740" y="522" text-anchor="middle" font-family="DM Sans, Segoe UI, sans-serif" font-size="17" font-weight="500" font-style="normal" fill="#b8b4ac">
+    <text class="node-body" x="740" y="522" text-anchor="middle" font-family="DM Sans, Segoe UI, sans-serif" font-size="17" font-weight="500" font-style="normal" fill="#b0b0b0">
     <tspan x="740" dy="0">schema unify</tspan>
     <tspan x="740" dy="22">dedup · canonical</tspan>
   </text>
-    <path class="node-link-mark" d="M850 480 L863 480 L863 493 M862 481 L846 497" fill="none" stroke="#a8c8eb" opacity="0" stroke-width="2.5" stroke-linecap="round"/>
+    <path class="node-link-mark" d="M850 480 L863 480 L863 493 M862 481 L846 497" fill="none" stroke="#ffffff" opacity="0" stroke-width="2.5" stroke-linecap="round"/>
   </g></a>
   <a class="svg-link" href="../#demo"><g class="map-node category-receipt is-linked" data-node="extract" data-title="Extract" data-summary="Pulls structured objects out of normalized events: entities, relationships, claims, embeddings, time ranges, locations, commitments, and contradictions." data-category="receipt" tabindex="0" role="link" aria-label="Extract">
-    <rect class="node-outline" x="950" y="456" width="280" height="100" rx="14" fill="#161c24" stroke="#7ba5d4" stroke-width="3" opacity="1"/>
+    <rect class="node-outline" x="950" y="456" width="280" height="100" rx="14" fill="#1a1a1a" stroke="#a8a8a8" stroke-width="3" opacity="1"/>
     
-    <text class="node-title" x="1090" y="496" text-anchor="middle" font-family="DM Sans, Segoe UI, sans-serif" font-size="23" font-weight="700" font-style="normal" fill="#f5f1e8">
+    <text class="node-title" x="1090" y="496" text-anchor="middle" font-family="DM Sans, Segoe UI, sans-serif" font-size="23" font-weight="700" font-style="normal" fill="#fafaf8">
     <tspan x="1090" dy="0">extract</tspan>
   </text>
-    <text class="node-body" x="1090" y="522" text-anchor="middle" font-family="DM Sans, Segoe UI, sans-serif" font-size="17" font-weight="500" font-style="normal" fill="#b8b4ac">
+    <text class="node-body" x="1090" y="522" text-anchor="middle" font-family="DM Sans, Segoe UI, sans-serif" font-size="17" font-weight="500" font-style="normal" fill="#b0b0b0">
     <tspan x="1090" dy="0">entities · relations</tspan>
     <tspan x="1090" dy="22">embeddings · claims</tspan>
   </text>
-    <path class="node-link-mark" d="M1200 480 L1213 480 L1213 493 M1212 481 L1196 497" fill="none" stroke="#a8c8eb" opacity="0" stroke-width="2.5" stroke-linecap="round"/>
+    <path class="node-link-mark" d="M1200 480 L1213 480 L1213 493 M1212 481 L1196 497" fill="none" stroke="#ffffff" opacity="0" stroke-width="2.5" stroke-linecap="round"/>
   </g></a>
 
   
-  <line class="map-edge " x1="845" y1="312" x2="845" y2="338" stroke="#7ba5d4" stroke-width="3" marker-end="url(#arrow)"/>
+  <line class="map-edge " x1="845" y1="312" x2="845" y2="338" stroke="#a8a8a8" stroke-width="3" marker-end="url(#arrow)"/>
   
 
   
-  <path class="map-edge " d="M845 432 L845 448 M845 448 L390 448 L390 454" fill="none" stroke="#7ba5d4" stroke-width="3" marker-end="url(#arrow)"/>
+  <path class="map-edge " d="M845 432 L845 448 M845 448 L390 448 L390 454" fill="none" stroke="#a8a8a8" stroke-width="3" marker-end="url(#arrow)"/>
   
 
   
-  <line class="map-edge " x1="845" y1="432" x2="740" y2="454" stroke="#7ba5d4" stroke-width="3" marker-end="url(#arrow)"/>
+  <line class="map-edge " x1="845" y1="432" x2="740" y2="454" stroke="#a8a8a8" stroke-width="3" marker-end="url(#arrow)"/>
   
 
   
-  <path class="map-edge " d="M845 432 L1090 448 L1090 454" fill="none" stroke="#7ba5d4" stroke-width="3" marker-end="url(#arrow)"/>
+  <path class="map-edge " d="M845 432 L1090 448 L1090 454" fill="none" stroke="#a8a8a8" stroke-width="3" marker-end="url(#arrow)"/>
   
 
   
-  <line class="map-edge " x1="530" y1="502" x2="598" y2="502" stroke="#7ba5d4" stroke-width="3" marker-end="url(#arrow)"/>
+  <line class="map-edge " x1="530" y1="502" x2="598" y2="502" stroke="#a8a8a8" stroke-width="3" marker-end="url(#arrow)"/>
   
 
   
-  <line class="map-edge " x1="880" y1="502" x2="948" y2="502" stroke="#7ba5d4" stroke-width="3" marker-end="url(#arrow)"/>
+  <line class="map-edge " x1="880" y1="502" x2="948" y2="502" stroke="#a8a8a8" stroke-width="3" marker-end="url(#arrow)"/>
   
 
 
-  <g filter="url(#softShadow)"><rect class="category-vault" x="120" y="585" width="1500" height="315" rx="20" fill="#11161d" stroke="#11161d" stroke-width="2" opacity="1"/></g>
+  <rect class="category-vault" x="120" y="585" width="1500" height="315" rx="20" fill="#111111" stroke="#111111" stroke-width="2" opacity="1"/>
   <a class="svg-link" href="../#map">
     <g class="map-node is-linked category-vault" data-node="vault" data-title="User-owned context vault" data-summary="The private store that keeps memory, provenance, identity, policy, and summaries under user control. External systems request scoped context instead of raw vault reads." data-category="vault" tabindex="0" role="link" aria-label="User-owned context vault">
-      <text x="145" y="630" text-anchor="start" font-family="DM Sans, Segoe UI, sans-serif" font-size="26" font-weight="600" font-style="italic" fill="#f5f1e8">
+      <text x="145" y="630" text-anchor="start" font-family="DM Sans, Segoe UI, sans-serif" font-size="26" font-weight="600" font-style="italic" fill="#fafaf8">
     <tspan x="145" dy="0">user-owned context vault</tspan>
   </text>
     </g>
   </a>
   <a class="svg-link" href="../#map"><g class="map-node category-vault is-linked" data-node="vault" data-title="User-owned context vault" data-summary="The private store that keeps memory, provenance, identity, policy, and summaries under user control. External systems request scoped context instead of raw vault reads." data-category="vault" tabindex="0" role="link" aria-label="User-owned context vault">
-    <rect class="node-outline" x="180" y="665" width="410" height="100" rx="14" fill="#161c24" stroke="#7ba5d4" stroke-width="2.5" opacity="1"/>
+    <rect class="node-outline" x="180" y="665" width="410" height="100" rx="14" fill="#1a1a1a" stroke="#a8a8a8" stroke-width="2.5" opacity="1"/>
     
-    <text class="node-title" x="385" y="705" text-anchor="middle" font-family="DM Sans, Segoe UI, sans-serif" font-size="24" font-weight="700" font-style="normal" fill="#161c24">
+    <text class="node-title" x="385" y="705" text-anchor="middle" font-family="DM Sans, Segoe UI, sans-serif" font-size="24" font-weight="700" font-style="normal" fill="#fafaf8">
     <tspan x="385" dy="0">memory graph</tspan>
   </text>
-    <text class="node-body" x="385" y="731" text-anchor="middle" font-family="DM Sans, Segoe UI, sans-serif" font-size="17" font-weight="600" font-style="normal" fill="#d5dfea">
+    <text class="node-body" x="385" y="731" text-anchor="middle" font-family="DM Sans, Segoe UI, sans-serif" font-size="17" font-weight="600" font-style="normal" fill="#e8e8e6">
     <tspan x="385" dy="0">entities · relations</tspan>
     <tspan x="385" dy="22">temporal layers</tspan>
   </text>
-    <path class="node-link-mark" d="M560 689 L573 689 L573 702 M572 690 L556 706" fill="none" stroke="#a8c8eb" opacity="0" stroke-width="2.5" stroke-linecap="round"/>
+    <path class="node-link-mark" d="M560 689 L573 689 L573 702 M572 690 L556 706" fill="none" stroke="#ffffff" opacity="0" stroke-width="2.5" stroke-linecap="round"/>
   </g></a>
   <a class="svg-link" href="../#map"><g class="map-node category-vault is-linked" data-node="vault" data-title="User-owned context vault" data-summary="The private store that keeps memory, provenance, identity, policy, and summaries under user control. External systems request scoped context instead of raw vault reads." data-category="vault" tabindex="0" role="link" aria-label="User-owned context vault">
-    <rect class="node-outline" x="635" y="665" width="410" height="100" rx="14" fill="#161c24" stroke="#7ba5d4" stroke-width="2.5" opacity="1"/>
+    <rect class="node-outline" x="635" y="665" width="410" height="100" rx="14" fill="#1a1a1a" stroke="#a8a8a8" stroke-width="2.5" opacity="1"/>
     
-    <text class="node-title" x="840" y="705" text-anchor="middle" font-family="DM Sans, Segoe UI, sans-serif" font-size="23" font-weight="700" font-style="normal" fill="#161c24">
+    <text class="node-title" x="840" y="705" text-anchor="middle" font-family="DM Sans, Segoe UI, sans-serif" font-size="23" font-weight="700" font-style="normal" fill="#fafaf8">
     <tspan x="840" dy="0">versioned summaries</tspan>
   </text>
-    <text class="node-body" x="840" y="731" text-anchor="middle" font-family="DM Sans, Segoe UI, sans-serif" font-size="17" font-weight="600" font-style="normal" fill="#d5dfea">
+    <text class="node-body" x="840" y="731" text-anchor="middle" font-family="DM Sans, Segoe UI, sans-serif" font-size="17" font-weight="600" font-style="normal" fill="#e8e8e6">
     <tspan x="840" dy="0">re-summarization</tspan>
     <tspan x="840" dy="22">compaction</tspan>
   </text>
-    <path class="node-link-mark" d="M1015 689 L1028 689 L1028 702 M1027 690 L1011 706" fill="none" stroke="#a8c8eb" opacity="0" stroke-width="2.5" stroke-linecap="round"/>
+    <path class="node-link-mark" d="M1015 689 L1028 689 L1028 702 M1027 690 L1011 706" fill="none" stroke="#ffffff" opacity="0" stroke-width="2.5" stroke-linecap="round"/>
   </g></a>
   <a class="svg-link" href="../#map"><g class="map-node category-vault is-linked" data-node="vault" data-title="User-owned context vault" data-summary="The private store that keeps memory, provenance, identity, policy, and summaries under user control. External systems request scoped context instead of raw vault reads." data-category="vault" tabindex="0" role="link" aria-label="User-owned context vault">
-    <rect class="node-outline" x="1090" y="665" width="410" height="100" rx="14" fill="#161c24" stroke="#7ba5d4" stroke-width="2.5" opacity="1"/>
+    <rect class="node-outline" x="1090" y="665" width="410" height="100" rx="14" fill="#1a1a1a" stroke="#a8a8a8" stroke-width="2.5" opacity="1"/>
     
-    <text class="node-title" x="1295" y="705" text-anchor="middle" font-family="DM Sans, Segoe UI, sans-serif" font-size="23" font-weight="700" font-style="normal" fill="#161c24">
+    <text class="node-title" x="1295" y="705" text-anchor="middle" font-family="DM Sans, Segoe UI, sans-serif" font-size="23" font-weight="700" font-style="normal" fill="#fafaf8">
     <tspan x="1295" dy="0">contradiction handling</tspan>
   </text>
-    <text class="node-body" x="1295" y="731" text-anchor="middle" font-family="DM Sans, Segoe UI, sans-serif" font-size="17" font-weight="600" font-style="normal" fill="#d5dfea">
+    <text class="node-body" x="1295" y="731" text-anchor="middle" font-family="DM Sans, Segoe UI, sans-serif" font-size="17" font-weight="600" font-style="normal" fill="#e8e8e6">
     <tspan x="1295" dy="0">detect · score trust</tspan>
     <tspan x="1295" dy="22">preserve branches</tspan>
   </text>
-    <path class="node-link-mark" d="M1470 689 L1483 689 L1483 702 M1482 690 L1466 706" fill="none" stroke="#a8c8eb" opacity="0" stroke-width="2.5" stroke-linecap="round"/>
+    <path class="node-link-mark" d="M1470 689 L1483 689 L1483 702 M1482 690 L1466 706" fill="none" stroke="#ffffff" opacity="0" stroke-width="2.5" stroke-linecap="round"/>
   </g></a>
   <a class="svg-link" href="../#map"><g class="map-node category-vault is-linked" data-node="vault" data-title="User-owned context vault" data-summary="The private store that keeps memory, provenance, identity, policy, and summaries under user control. External systems request scoped context instead of raw vault reads." data-category="vault" tabindex="0" role="link" aria-label="User-owned context vault">
-    <rect class="node-outline" x="180" y="785" width="410" height="100" rx="14" fill="#161c24" stroke="#7ba5d4" stroke-width="2.5" opacity="1"/>
+    <rect class="node-outline" x="180" y="785" width="410" height="100" rx="14" fill="#1a1a1a" stroke="#a8a8a8" stroke-width="2.5" opacity="1"/>
     
-    <text class="node-title" x="385" y="825" text-anchor="middle" font-family="DM Sans, Segoe UI, sans-serif" font-size="23" font-weight="700" font-style="normal" fill="#161c24">
+    <text class="node-title" x="385" y="825" text-anchor="middle" font-family="DM Sans, Segoe UI, sans-serif" font-size="23" font-weight="700" font-style="normal" fill="#fafaf8">
     <tspan x="385" dy="0">provenance ledger</tspan>
   </text>
-    <text class="node-body" x="385" y="851" text-anchor="middle" font-family="DM Sans, Segoe UI, sans-serif" font-size="17" font-weight="600" font-style="normal" fill="#d5dfea">
+    <text class="node-body" x="385" y="851" text-anchor="middle" font-family="DM Sans, Segoe UI, sans-serif" font-size="17" font-weight="600" font-style="normal" fill="#e8e8e6">
     <tspan x="385" dy="0">source · time</tspan>
     <tspan x="385" dy="22">signing keys</tspan>
   </text>
-    <path class="node-link-mark" d="M560 809 L573 809 L573 822 M572 810 L556 826" fill="none" stroke="#a8c8eb" opacity="0" stroke-width="2.5" stroke-linecap="round"/>
+    <path class="node-link-mark" d="M560 809 L573 809 L573 822 M572 810 L556 826" fill="none" stroke="#ffffff" opacity="0" stroke-width="2.5" stroke-linecap="round"/>
   </g></a>
   <a class="svg-link" href="../#map"><g class="map-node category-vault is-linked" data-node="vault" data-title="User-owned context vault" data-summary="The private store that keeps memory, provenance, identity, policy, and summaries under user control. External systems request scoped context instead of raw vault reads." data-category="vault" tabindex="0" role="link" aria-label="User-owned context vault">
-    <rect class="node-outline" x="635" y="785" width="410" height="100" rx="14" fill="#161c24" stroke="#7ba5d4" stroke-width="2.5" opacity="1"/>
+    <rect class="node-outline" x="635" y="785" width="410" height="100" rx="14" fill="#1a1a1a" stroke="#a8a8a8" stroke-width="2.5" opacity="1"/>
     
-    <text class="node-title" x="840" y="825" text-anchor="middle" font-family="DM Sans, Segoe UI, sans-serif" font-size="23" font-weight="700" font-style="normal" fill="#161c24">
+    <text class="node-title" x="840" y="825" text-anchor="middle" font-family="DM Sans, Segoe UI, sans-serif" font-size="23" font-weight="700" font-style="normal" fill="#fafaf8">
     <tspan x="840" dy="0">identity &amp; permissions</tspan>
   </text>
-    <text class="node-body" x="840" y="851" text-anchor="middle" font-family="DM Sans, Segoe UI, sans-serif" font-size="17" font-weight="600" font-style="normal" fill="#d5dfea">
+    <text class="node-body" x="840" y="851" text-anchor="middle" font-family="DM Sans, Segoe UI, sans-serif" font-size="17" font-weight="600" font-style="normal" fill="#e8e8e6">
     <tspan x="840" dy="0">DID · DWN</tspan>
     <tspan x="840" dy="22">capability tokens</tspan>
   </text>
-    <path class="node-link-mark" d="M1015 809 L1028 809 L1028 822 M1027 810 L1011 826" fill="none" stroke="#a8c8eb" opacity="0" stroke-width="2.5" stroke-linecap="round"/>
+    <path class="node-link-mark" d="M1015 809 L1028 809 L1028 822 M1027 810 L1011 826" fill="none" stroke="#ffffff" opacity="0" stroke-width="2.5" stroke-linecap="round"/>
   </g></a>
   <a class="svg-link" href="../#map"><g class="map-node category-vault is-linked" data-node="vault" data-title="User-owned context vault" data-summary="The private store that keeps memory, provenance, identity, policy, and summaries under user control. External systems request scoped context instead of raw vault reads." data-category="vault" tabindex="0" role="link" aria-label="User-owned context vault">
-    <rect class="node-outline" x="1090" y="785" width="410" height="100" rx="14" fill="#161c24" stroke="#7ba5d4" stroke-width="2.5" opacity="1"/>
+    <rect class="node-outline" x="1090" y="785" width="410" height="100" rx="14" fill="#1a1a1a" stroke="#a8a8a8" stroke-width="2.5" opacity="1"/>
     
-    <text class="node-title" x="1295" y="825" text-anchor="middle" font-family="DM Sans, Segoe UI, sans-serif" font-size="23" font-weight="700" font-style="normal" fill="#161c24">
+    <text class="node-title" x="1295" y="825" text-anchor="middle" font-family="DM Sans, Segoe UI, sans-serif" font-size="23" font-weight="700" font-style="normal" fill="#fafaf8">
     <tspan x="1295" dy="0">policy bindings</tspan>
   </text>
-    <text class="node-body" x="1295" y="851" text-anchor="middle" font-family="DM Sans, Segoe UI, sans-serif" font-size="17" font-weight="600" font-style="normal" fill="#d5dfea">
+    <text class="node-body" x="1295" y="851" text-anchor="middle" font-family="DM Sans, Segoe UI, sans-serif" font-size="17" font-weight="600" font-style="normal" fill="#e8e8e6">
     <tspan x="1295" dy="0">scope · consent</tspan>
     <tspan x="1295" dy="22">expiration</tspan>
   </text>
-    <path class="node-link-mark" d="M1470 809 L1483 809 L1483 822 M1482 810 L1466 826" fill="none" stroke="#a8c8eb" opacity="0" stroke-width="2.5" stroke-linecap="round"/>
+    <path class="node-link-mark" d="M1470 809 L1483 809 L1483 822 M1482 810 L1466 826" fill="none" stroke="#ffffff" opacity="0" stroke-width="2.5" stroke-linecap="round"/>
   </g></a>
   
-  <line class="map-edge " x1="845" y1="556" x2="845" y2="582" stroke="#7ba5d4" stroke-width="3" marker-end="url(#arrow)"/>
+  <line class="map-edge " x1="845" y1="556" x2="845" y2="582" stroke="#a8a8a8" stroke-width="3" marker-end="url(#arrow)"/>
   
 
   
-  <line class="map-edge " x1="590" y1="715" x2="633" y2="715" stroke="#7ba5d4" stroke-width="3" marker-end="url(#arrow)"/>
+  <line class="map-edge " x1="590" y1="715" x2="633" y2="715" stroke="#a8a8a8" stroke-width="3" marker-end="url(#arrow)"/>
   
 
   
-  <line class="map-edge " x1="1045" y1="715" x2="1088" y2="715" stroke="#7ba5d4" stroke-width="3" marker-end="url(#arrow)"/>
+  <line class="map-edge " x1="1045" y1="715" x2="1088" y2="715" stroke="#a8a8a8" stroke-width="3" marker-end="url(#arrow)"/>
   
 
 
   
-  <line class="map-edge category-control" data-node="egress" data-title="Egress request" data-summary="A request for context to leave the vault. It must name purpose, recipient/tool, requested fields, retention window, and what receipt will be written." tabindex="0" x1="845" y1="900" x2="845" y2="945" stroke="#d4a574" stroke-width="3" marker-end="url(#arrowGold)"/>
-  <text class="edge-label edge-egress" x="930" y="930" text-anchor="middle" font-family="DM Sans, Segoe UI, sans-serif" font-size="17" font-weight="700" font-style="normal" fill="#d4a574">
+  <line class="map-edge category-control" data-node="egress" data-title="Egress request" data-summary="A request for context to leave the vault. It must name purpose, recipient/tool, requested fields, retention window, and what receipt will be written." tabindex="0" x1="845" y1="900" x2="845" y2="945" stroke="#a8a8a8" stroke-width="3" marker-end="url(#arrowGold)"/>
+  <text class="edge-label edge-egress" x="930" y="930" text-anchor="middle" font-family="DM Sans, Segoe UI, sans-serif" font-size="17" font-weight="700" font-style="normal" fill="#a8a8a8">
     <tspan x="930" dy="0">egress request</tspan>
   </text>
 
   <a class="svg-link" href="../#map"><g class="map-node category-control is-linked" data-node="policy" data-title="Policy boundary" data-summary="The explicit decision point for what can leave the vault. Defined by scope, consent, purpose, expiration, identity, requested task, and receipt requirements." data-category="control" tabindex="0" role="link" aria-label="Policy boundary">
-    <rect class="node-outline" x="160" y="950" width="1420" height="92" rx="14" fill="#1d1812" stroke="#d4a574" stroke-width="3" opacity="1"/>
+    <rect class="node-outline" x="160" y="950" width="1420" height="92" rx="14" fill="#1a1a1a" stroke="#a8a8a8" stroke-width="3" opacity="1"/>
     
-    <text class="node-title" x="870" y="990" text-anchor="middle" font-family="DM Sans, Segoe UI, sans-serif" font-size="25" font-weight="700" font-style="normal" fill="#f5f1e8">
+    <text class="node-title" x="870" y="990" text-anchor="middle" font-family="DM Sans, Segoe UI, sans-serif" font-size="25" font-weight="700" font-style="normal" fill="#fafaf8">
     <tspan x="870" dy="0">policy boundary</tspan>
   </text>
-    <text class="node-body" x="870" y="1016" text-anchor="middle" font-family="DM Sans, Segoe UI, sans-serif" font-size="18" font-weight="500" font-style="normal" fill="#b8b4ac">
+    <text class="node-body" x="870" y="1016" text-anchor="middle" font-family="DM Sans, Segoe UI, sans-serif" font-size="18" font-weight="500" font-style="normal" fill="#b0b0b0">
     <tspan x="870" dy="0">scope · consent · purpose · expiration  ·  decides what may leave the vault</tspan>
   </text>
-    <path class="node-link-mark" d="M1550 974 L1563 974 L1563 987 M1562 975 L1546 991" fill="none" stroke="#a8c8eb" opacity="0" stroke-width="2.5" stroke-linecap="round"/>
+    <path class="node-link-mark" d="M1550 974 L1563 974 L1563 987 M1562 975 L1546 991" fill="none" stroke="#ffffff" opacity="0" stroke-width="2.5" stroke-linecap="round"/>
   </g></a>
   <a class="svg-link" href="../#map"><g class="map-node category-control is-linked" data-node="semanticProxy" data-title="Semantic proxy" data-summary="The outbound gate. It redacts, aliases, compresses, and routes context so agents receive only what they need for a task." data-category="control" tabindex="0" role="link" aria-label="Semantic proxy">
-    <rect class="node-outline" x="160" y="1082" width="660" height="102" rx="14" fill="#1d1812" stroke="#d4a574" stroke-width="3" opacity="1"/>
-    <text class="node-eyebrow" x="490" y="1110" text-anchor="middle" font-family="DM Sans, Segoe UI, sans-serif" font-size="18" font-weight="600" font-style="italic" fill="#e8b884">
+    <rect class="node-outline" x="160" y="1082" width="660" height="102" rx="14" fill="#1a1a1a" stroke="#a8a8a8" stroke-width="3" opacity="1"/>
+    <text class="node-eyebrow" x="490" y="1110" text-anchor="middle" font-family="DM Sans, Segoe UI, sans-serif" font-size="18" font-weight="600" font-style="italic" fill="#e8e8e6">
     <tspan x="490" dy="0">mandatory egress gate</tspan>
   </text>
-    <text class="node-title" x="490" y="1139" text-anchor="middle" font-family="DM Sans, Segoe UI, sans-serif" font-size="25" font-weight="700" font-style="normal" fill="#f5f1e8">
+    <text class="node-title" x="490" y="1139" text-anchor="middle" font-family="DM Sans, Segoe UI, sans-serif" font-size="25" font-weight="700" font-style="normal" fill="#fafaf8">
     <tspan x="490" dy="0">semantic proxy</tspan>
   </text>
-    <text class="node-body" x="490" y="1166" text-anchor="middle" font-family="DM Sans, Segoe UI, sans-serif" font-size="18" font-weight="500" font-style="normal" fill="#b8b4ac">
+    <text class="node-body" x="490" y="1166" text-anchor="middle" font-family="DM Sans, Segoe UI, sans-serif" font-size="18" font-weight="500" font-style="normal" fill="#b0b0b0">
     <tspan x="490" dy="0">redact · alias · compress · route</tspan>
   </text>
-    <path class="node-link-mark" d="M790 1106 L803 1106 L803 1119 M802 1107 L786 1123" fill="none" stroke="#a8c8eb" opacity="0" stroke-width="2.5" stroke-linecap="round"/>
+    <path class="node-link-mark" d="M790 1106 L803 1106 L803 1119 M802 1107 L786 1123" fill="none" stroke="#ffffff" opacity="0" stroke-width="2.5" stroke-linecap="round"/>
   </g></a>
   <a class="svg-link" href="../#map"><g class="map-node category-control is-linked" data-node="discoveryProxy" data-title="Discovery proxy" data-summary="Matches external opportunities or people against private context without exposing the vault. It returns only the minimum reveal required to continue." data-category="control" tabindex="0" role="link" aria-label="Discovery proxy">
-    <rect class="node-outline" x="960" y="1082" width="620" height="102" rx="14" fill="#1d1812" stroke="#d4a574" stroke-width="3" opacity="1"/>
-    <text class="node-eyebrow" x="1270" y="1110" text-anchor="middle" font-family="DM Sans, Segoe UI, sans-serif" font-size="18" font-weight="600" font-style="italic" fill="#e8b884">
+    <rect class="node-outline" x="960" y="1082" width="620" height="102" rx="14" fill="#1a1a1a" stroke="#a8a8a8" stroke-width="3" opacity="1"/>
+    <text class="node-eyebrow" x="1270" y="1110" text-anchor="middle" font-family="DM Sans, Segoe UI, sans-serif" font-size="18" font-weight="600" font-style="italic" fill="#e8e8e6">
     <tspan x="1270" dy="0">inbound gate</tspan>
   </text>
-    <text class="node-title" x="1270" y="1139" text-anchor="middle" font-family="DM Sans, Segoe UI, sans-serif" font-size="25" font-weight="700" font-style="normal" fill="#f5f1e8">
+    <text class="node-title" x="1270" y="1139" text-anchor="middle" font-family="DM Sans, Segoe UI, sans-serif" font-size="25" font-weight="700" font-style="normal" fill="#fafaf8">
     <tspan x="1270" dy="0">discovery proxy</tspan>
   </text>
-    <text class="node-body" x="1270" y="1166" text-anchor="middle" font-family="DM Sans, Segoe UI, sans-serif" font-size="18" font-weight="500" font-style="normal" fill="#b8b4ac">
+    <text class="node-body" x="1270" y="1166" text-anchor="middle" font-family="DM Sans, Segoe UI, sans-serif" font-size="18" font-weight="500" font-style="normal" fill="#b0b0b0">
     <tspan x="1270" dy="0">match · reveal-minimum · verify · rate-limit</tspan>
   </text>
-    <path class="node-link-mark" d="M1550 1106 L1563 1106 L1563 1119 M1562 1107 L1546 1123" fill="none" stroke="#a8c8eb" opacity="0" stroke-width="2.5" stroke-linecap="round"/>
+    <path class="node-link-mark" d="M1550 1106 L1563 1106 L1563 1119 M1562 1107 L1546 1123" fill="none" stroke="#ffffff" opacity="0" stroke-width="2.5" stroke-linecap="round"/>
   </g></a>
   
-  <line class="map-edge " x1="490" y1="1042" x2="490" y2="1080" stroke="#d4a574" stroke-width="3" marker-end="url(#arrowGold)"/>
+  <line class="map-edge " x1="490" y1="1042" x2="490" y2="1080" stroke="#a8a8a8" stroke-width="3" marker-end="url(#arrowGold)"/>
   
 
   
-  <path class="map-edge " d="M1200 1042 L1200 1080" fill="none" stroke="#d4a574" stroke-width="3" marker-end="url(#arrowGold)"/>
+  <path class="map-edge " d="M1200 1042 L1200 1080" fill="none" stroke="#a8a8a8" stroke-width="3" marker-end="url(#arrowGold)"/>
   
 
 
   <a class="svg-link" href="../#map"><g class="map-node category-vault is-linked" data-node="bundle" data-title="Scoped context bundle" data-summary="A task-ready packet containing only approved context, AGENTS.md-style instructions, MCP manifests, tool limits, and receipt requirements." data-category="vault" tabindex="0" role="link" aria-label="Scoped context bundle">
-    <rect class="node-outline" x="420" y="1232" width="820" height="102" rx="14" fill="#11161d" stroke="#11161d" stroke-width="2.5" opacity="1"/>
+    <rect class="node-outline" x="420" y="1232" width="820" height="102" rx="14" fill="#111111" stroke="#111111" stroke-width="2.5" opacity="1"/>
     
-    <text class="node-title" x="830" y="1272" text-anchor="middle" font-family="DM Sans, Segoe UI, sans-serif" font-size="25" font-weight="700" font-style="normal" fill="#161c24">
+    <text class="node-title" x="830" y="1272" text-anchor="middle" font-family="DM Sans, Segoe UI, sans-serif" font-size="25" font-weight="700" font-style="normal" fill="#fafaf8">
     <tspan x="830" dy="0">scoped context bundle</tspan>
   </text>
-    <text class="node-body" x="830" y="1298" text-anchor="middle" font-family="DM Sans, Segoe UI, sans-serif" font-size="17" font-weight="600" font-style="normal" fill="#d5dfea">
+    <text class="node-body" x="830" y="1298" text-anchor="middle" font-family="DM Sans, Segoe UI, sans-serif" font-size="17" font-weight="600" font-style="normal" fill="#e8e8e6">
     <tspan x="830" dy="0">task-ready packet · AGENTS.md · MCP manifests · scoped instructions</tspan>
   </text>
-    <path class="node-link-mark" d="M1210 1256 L1223 1256 L1223 1269 M1222 1257 L1206 1273" fill="none" stroke="#a8c8eb" opacity="0" stroke-width="2.5" stroke-linecap="round"/>
+    <path class="node-link-mark" d="M1210 1256 L1223 1256 L1223 1269 M1222 1257 L1206 1273" fill="none" stroke="#ffffff" opacity="0" stroke-width="2.5" stroke-linecap="round"/>
   </g></a>
   
-  <line class="map-edge " x1="490" y1="1184" x2="585" y2="1230" stroke="#d4a574" stroke-width="3" marker-end="url(#arrowGold)"/>
+  <line class="map-edge " x1="490" y1="1184" x2="585" y2="1230" stroke="#a8a8a8" stroke-width="3" marker-end="url(#arrowGold)"/>
   
 
   <a class="svg-link" href="../#map"><g class="map-node category-untrusted is-linked" data-node="untrusted" data-title="Untrusted discovery" data-summary="Untrusted means the source is outside the user's authority boundary. Examples: public search results, relays, third-party APIs, strangers, stale pages, and scraped profiles." data-category="untrusted" tabindex="0" role="link" aria-label="Untrusted discovery">
-    <rect class="node-outline" x="1320" y="1220" width="300" height="150" rx="14" fill="#161c24" stroke="#7ba5d4" stroke-width="3" stroke-dasharray="8 8" opacity="1"/>
-    <text class="node-eyebrow" x="1470" y="1248" text-anchor="middle" font-family="DM Sans, Segoe UI, sans-serif" font-size="18" font-weight="600" font-style="italic" fill="#e8b884">
+    <rect class="node-outline" x="1320" y="1220" width="300" height="150" rx="14" fill="#1a1a1a" stroke="#a8a8a8" stroke-width="3" stroke-dasharray="8 8" opacity="1"/>
+    <text class="node-eyebrow" x="1470" y="1248" text-anchor="middle" font-family="DM Sans, Segoe UI, sans-serif" font-size="18" font-weight="600" font-style="italic" fill="#e8e8e6">
     <tspan x="1470" dy="0">untrusted</tspan>
   </text>
-    <text class="node-title" x="1470" y="1277" text-anchor="middle" font-family="DM Sans, Segoe UI, sans-serif" font-size="23" font-weight="700" font-style="normal" fill="#f5f1e8">
+    <text class="node-title" x="1470" y="1277" text-anchor="middle" font-family="DM Sans, Segoe UI, sans-serif" font-size="23" font-weight="700" font-style="normal" fill="#fafaf8">
     <tspan x="1470" dy="0">discovery layer</tspan>
   </text>
-    <text class="node-body" x="1470" y="1304" text-anchor="middle" font-family="DM Sans, Segoe UI, sans-serif" font-size="16" font-weight="500" font-style="normal" fill="#b8b4ac">
+    <text class="node-body" x="1470" y="1304" text-anchor="middle" font-family="DM Sans, Segoe UI, sans-serif" font-size="16" font-weight="500" font-style="normal" fill="#b0b0b0">
     <tspan x="1470" dy="0">private/public search</tspan>
     <tspan x="1470" dy="22">permissioned matching</tspan>
     <tspan x="1470" dy="22">Nostr relays</tspan>
   </text>
-    <path class="node-link-mark" d="M1590 1244 L1603 1244 L1603 1257 M1602 1245 L1586 1261" fill="none" stroke="#a8c8eb" opacity="0" stroke-width="2.5" stroke-linecap="round"/>
+    <path class="node-link-mark" d="M1590 1244 L1603 1244 L1603 1257 M1602 1245 L1586 1261" fill="none" stroke="#ffffff" opacity="0" stroke-width="2.5" stroke-linecap="round"/>
   </g></a>
   
-  <path class="map-edge " d="M1270 1184 L1270 1202 L1470 1202 L1470 1218" fill="none" stroke="#7ba5d4" stroke-width="3" marker-end="url(#arrow)"/>
-  <text class="edge-label" x="1390" y="1193" text-anchor="middle" font-family="DM Sans, Segoe UI, sans-serif" font-size="17" font-weight="700" font-style="normal" fill="#b8b4ac">
+  <path class="map-edge " d="M1270 1184 L1270 1202 L1470 1202 L1470 1218" fill="none" stroke="#a8a8a8" stroke-width="3" marker-end="url(#arrow)"/>
+  <text class="edge-label" x="1390" y="1193" text-anchor="middle" font-family="DM Sans, Segoe UI, sans-serif" font-size="17" font-weight="700" font-style="normal" fill="#b0b0b0">
     <tspan x="1390" dy="0">match request</tspan>
   </text>
 
   
-  <path class="map-edge category-control" data-node="minimumReveal" data-title="Minimum reveal" data-summary="The smallest useful disclosure needed to advance a match. Example: share an anonymized skill range, not the full work history or private notes." tabindex="0" d="M1320 1300 L1245 1300" fill="none" stroke="#7ba5d4" stroke-width="3" marker-end="url(#arrow)"/>
-  <text class="edge-label edge-minimumReveal" x="1285" y="1330" text-anchor="middle" font-family="DM Sans, Segoe UI, sans-serif" font-size="17" font-weight="700" font-style="normal" fill="#b8b4ac">
+  <path class="map-edge category-control" data-node="minimumReveal" data-title="Minimum reveal" data-summary="The smallest useful disclosure needed to advance a match. Example: share an anonymized skill range, not the full work history or private notes." tabindex="0" d="M1320 1300 L1245 1300" fill="none" stroke="#a8a8a8" stroke-width="3" marker-end="url(#arrow)"/>
+  <text class="edge-label edge-minimumReveal" x="1285" y="1330" text-anchor="middle" font-family="DM Sans, Segoe UI, sans-serif" font-size="17" font-weight="700" font-style="normal" fill="#b0b0b0">
     <tspan x="1285" dy="0">minimum reveal</tspan>
   </text>
 
 
-  <rect x="120" y="1395" width="1500" height="295" rx="22" fill="#121b19" stroke="#9bc58f" stroke-width="2.5" opacity="1"/>
+  <rect x="120" y="1395" width="1500" height="295" rx="22" fill="#111111" stroke="#a8a8a8" stroke-width="2.5" opacity="1"/>
   <a class="svg-link" href="../#map">
     <g class="map-node is-linked category-control" data-node="interface" data-title="Interface plane" data-summary="Where agents, UI, and user experience consume approved bundles. The interface should show provenance, permissions, and receipt state where decisions happen." data-category="control" tabindex="0" role="link" aria-label="Interface plane">
-      <text x="145" y="1436" text-anchor="start" font-family="DM Sans, Segoe UI, sans-serif" font-size="25" font-weight="600" font-style="italic" fill="#f5f1e8">
+      <text x="145" y="1436" text-anchor="start" font-family="DM Sans, Segoe UI, sans-serif" font-size="25" font-weight="600" font-style="italic" fill="#fafaf8">
     <tspan x="145" dy="0">interface plane  ·  agents → UI → experience</tspan>
   </text>
     </g>
   </a>
   <a class="svg-link" href="../#map"><g class="map-node category-control is-linked" data-node="runtime" data-title="Agent runtime" data-summary="Execution environments that use scoped bundles: local agents, cloud agents, model calls, workflow runners, and tool adapters." data-category="control" tabindex="0" role="link" aria-label="Agent runtime">
-    <rect class="node-outline" x="210" y="1470" width="500" height="90" rx="14" fill="#161c24" stroke="#7ba5d4" stroke-width="3" opacity="1"/>
+    <rect class="node-outline" x="210" y="1470" width="500" height="90" rx="14" fill="#1a1a1a" stroke="#a8a8a8" stroke-width="3" opacity="1"/>
     
-    <text class="node-title" x="460" y="1510" text-anchor="middle" font-family="DM Sans, Segoe UI, sans-serif" font-size="24" font-weight="700" font-style="normal" fill="#f5f1e8">
+    <text class="node-title" x="460" y="1510" text-anchor="middle" font-family="DM Sans, Segoe UI, sans-serif" font-size="24" font-weight="700" font-style="normal" fill="#fafaf8">
     <tspan x="460" dy="0">agent runtime</tspan>
   </text>
-    <text class="node-body" x="460" y="1536" text-anchor="middle" font-family="DM Sans, Segoe UI, sans-serif" font-size="17" font-weight="500" font-style="normal" fill="#b8b4ac">
+    <text class="node-body" x="460" y="1536" text-anchor="middle" font-family="DM Sans, Segoe UI, sans-serif" font-size="17" font-weight="500" font-style="normal" fill="#b0b0b0">
     <tspan x="460" dy="0">Goose · Codex · local · cloud models</tspan>
   </text>
-    <path class="node-link-mark" d="M680 1494 L693 1494 L693 1507 M692 1495 L676 1511" fill="none" stroke="#a8c8eb" opacity="0" stroke-width="2.5" stroke-linecap="round"/>
+    <path class="node-link-mark" d="M680 1494 L693 1494 L693 1507 M692 1495 L676 1511" fill="none" stroke="#ffffff" opacity="0" stroke-width="2.5" stroke-linecap="round"/>
   </g></a>
   <a class="svg-link" href="../#map"><g class="map-node category-control is-linked" data-node="selfUi" data-title="Self-assembling UI" data-summary="The bundle describes the task and available data; the UI chooses suitable surfaces such as cards, tables, maps, timelines, and workspaces." data-category="control" tabindex="0" role="link" aria-label="Self-assembling UI">
-    <rect class="node-outline" x="880" y="1470" width="600" height="90" rx="14" fill="#161c24" stroke="#7ba5d4" stroke-width="3" opacity="1"/>
+    <rect class="node-outline" x="880" y="1470" width="600" height="90" rx="14" fill="#1a1a1a" stroke="#a8a8a8" stroke-width="3" opacity="1"/>
     
-    <text class="node-title" x="1180" y="1510" text-anchor="middle" font-family="DM Sans, Segoe UI, sans-serif" font-size="24" font-weight="700" font-style="normal" fill="#f5f1e8">
+    <text class="node-title" x="1180" y="1510" text-anchor="middle" font-family="DM Sans, Segoe UI, sans-serif" font-size="24" font-weight="700" font-style="normal" fill="#fafaf8">
     <tspan x="1180" dy="0">self-assembling UI</tspan>
   </text>
-    <text class="node-body" x="1180" y="1536" text-anchor="middle" font-family="DM Sans, Segoe UI, sans-serif" font-size="17" font-weight="500" font-style="normal" fill="#b8b4ac">
+    <text class="node-body" x="1180" y="1536" text-anchor="middle" font-family="DM Sans, Segoe UI, sans-serif" font-size="17" font-weight="500" font-style="normal" fill="#b0b0b0">
     <tspan x="1180" dy="0">cards · tables · maps · timelines · workspaces</tspan>
   </text>
-    <path class="node-link-mark" d="M1450 1494 L1463 1494 L1463 1507 M1462 1495 L1446 1511" fill="none" stroke="#a8c8eb" opacity="0" stroke-width="2.5" stroke-linecap="round"/>
+    <path class="node-link-mark" d="M1450 1494 L1463 1494 L1463 1507 M1462 1495 L1446 1511" fill="none" stroke="#ffffff" opacity="0" stroke-width="2.5" stroke-linecap="round"/>
   </g></a>
   <a class="svg-link" href="../#map"><g class="map-node category-untrusted is-linked" data-node="proposedUpdate" data-title="Proposed memory update" data-summary="Agent-suggested writes are proposals, not automatic truth. They return through policy, provenance checks, contradiction handling, and user approval where required." data-category="untrusted" tabindex="0" role="link" aria-label="Proposed memory update">
-    <rect class="node-outline" x="210" y="1600" width="500" height="74" rx="14" fill="#161c24" stroke="#7ba5d4" stroke-width="3" stroke-dasharray="7 7" opacity="1"/>
+    <rect class="node-outline" x="210" y="1600" width="500" height="74" rx="14" fill="#1a1a1a" stroke="#a8a8a8" stroke-width="3" stroke-dasharray="7 7" opacity="1"/>
     
-    <text class="node-title" x="460" y="1633" text-anchor="middle" font-family="DM Sans, Segoe UI, sans-serif" font-size="22" font-weight="700" font-style="normal" fill="#f5f1e8">
+    <text class="node-title" x="460" y="1633" text-anchor="middle" font-family="DM Sans, Segoe UI, sans-serif" font-size="22" font-weight="700" font-style="normal" fill="#fafaf8">
     <tspan x="460" dy="0">proposed memory update</tspan>
   </text>
-    <text class="node-body" x="460" y="1658" text-anchor="middle" font-family="DM Sans, Segoe UI, sans-serif" font-size="16" font-weight="500" font-style="normal" fill="#b8b4ac">
+    <text class="node-body" x="460" y="1658" text-anchor="middle" font-family="DM Sans, Segoe UI, sans-serif" font-size="16" font-weight="500" font-style="normal" fill="#b0b0b0">
     <tspan x="460" dy="0">agent-suggested write routed back through policy</tspan>
   </text>
-    <path class="node-link-mark" d="M680 1624 L693 1624 L693 1637 M692 1625 L676 1641" fill="none" stroke="#a8c8eb" opacity="0" stroke-width="2.5" stroke-linecap="round"/>
+    <path class="node-link-mark" d="M680 1624 L693 1624 L693 1637 M692 1625 L676 1641" fill="none" stroke="#ffffff" opacity="0" stroke-width="2.5" stroke-linecap="round"/>
   </g></a>
   <a class="svg-link" href="../#map"><g class="map-node category-control is-linked" data-node="userExperience" data-title="User experience" data-summary="End-user surfaces built from scoped context: chat, search, social views, browser overlays, voice, AR, and automations." data-category="control" tabindex="0" role="link" aria-label="User experience">
-    <rect class="node-outline" x="880" y="1600" width="600" height="74" rx="14" fill="#161c24" stroke="#7ba5d4" stroke-width="3" opacity="1"/>
+    <rect class="node-outline" x="880" y="1600" width="600" height="74" rx="14" fill="#1a1a1a" stroke="#a8a8a8" stroke-width="3" opacity="1"/>
     
-    <text class="node-title" x="1180" y="1633" text-anchor="middle" font-family="DM Sans, Segoe UI, sans-serif" font-size="22" font-weight="700" font-style="normal" fill="#f5f1e8">
+    <text class="node-title" x="1180" y="1633" text-anchor="middle" font-family="DM Sans, Segoe UI, sans-serif" font-size="22" font-weight="700" font-style="normal" fill="#fafaf8">
     <tspan x="1180" dy="0">user experience</tspan>
   </text>
-    <text class="node-body" x="1180" y="1658" text-anchor="middle" font-family="DM Sans, Segoe UI, sans-serif" font-size="16" font-weight="500" font-style="normal" fill="#b8b4ac">
+    <text class="node-body" x="1180" y="1658" text-anchor="middle" font-family="DM Sans, Segoe UI, sans-serif" font-size="16" font-weight="500" font-style="normal" fill="#b0b0b0">
     <tspan x="1180" dy="0">chat · search · social · browser · voice · AR · automations</tspan>
   </text>
-    <path class="node-link-mark" d="M1450 1624 L1463 1624 L1463 1637 M1462 1625 L1446 1641" fill="none" stroke="#a8c8eb" opacity="0" stroke-width="2.5" stroke-linecap="round"/>
+    <path class="node-link-mark" d="M1450 1624 L1463 1624 L1463 1637 M1462 1625 L1446 1641" fill="none" stroke="#ffffff" opacity="0" stroke-width="2.5" stroke-linecap="round"/>
   </g></a>
   
-  <path class="map-edge " d="M620 1334 L462 1468" fill="none" stroke="#7ba5d4" stroke-width="3" marker-end="url(#arrow)"/>
+  <path class="map-edge " d="M620 1334 L462 1468" fill="none" stroke="#a8a8a8" stroke-width="3" marker-end="url(#arrow)"/>
   
 
   
-  <path class="map-edge " d="M1040 1334 L1178 1468" fill="none" stroke="#7ba5d4" stroke-width="3" marker-end="url(#arrow)"/>
+  <path class="map-edge " d="M1040 1334 L1178 1468" fill="none" stroke="#a8a8a8" stroke-width="3" marker-end="url(#arrow)"/>
   
 
   
-  <line class="map-edge " x1="460" y1="1560" x2="460" y2="1598" stroke="#7ba5d4" stroke-width="3" marker-end="url(#arrow)"/>
+  <line class="map-edge " x1="460" y1="1560" x2="460" y2="1598" stroke="#a8a8a8" stroke-width="3" marker-end="url(#arrow)"/>
   
 
   
-  <line class="map-edge " x1="1180" y1="1560" x2="1180" y2="1598" stroke="#7ba5d4" stroke-width="3" marker-end="url(#arrow)"/>
+  <line class="map-edge " x1="1180" y1="1560" x2="1180" y2="1598" stroke="#a8a8a8" stroke-width="3" marker-end="url(#arrow)"/>
   
 
   
-  <path class="map-edge category-untrusted" data-node="proposedUpdate" data-title="Proposed memory update" data-summary="Agent-suggested writes are proposals, not automatic truth. They return through policy, provenance checks, contradiction handling, and user approval where required." tabindex="0" d="M210 1638 L78 1638 L78 995 L158 995" fill="none" stroke="#7ba5d4" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrowReceipt)"/>
-  <text class="edge-label edge-proposedUpdate" x="420" y="1372" text-anchor="middle" font-family="DM Sans, Segoe UI, sans-serif" font-size="17" font-weight="700" font-style="normal" fill="#7ba5d4">
+  <path class="map-edge category-untrusted" data-node="proposedUpdate" data-title="Proposed memory update" data-summary="Agent-suggested writes are proposals, not automatic truth. They return through policy, provenance checks, contradiction handling, and user approval where required." tabindex="0" d="M210 1638 L78 1638 L78 995 L158 995" fill="none" stroke="#a8a8a8" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrowReceipt)"/>
+  <text class="edge-label edge-proposedUpdate" x="420" y="1372" text-anchor="middle" font-family="DM Sans, Segoe UI, sans-serif" font-size="17" font-weight="700" font-style="normal" fill="#a8a8a8">
     <tspan x="420" dy="0">proposed update returns through policy</tspan>
   </text>
 
   
-  <path class="map-edge " d="M1470 1370 L1470 1468" fill="none" stroke="#7ba5d4" stroke-width="3" marker-end="url(#arrow)"/>
+  <path class="map-edge " d="M1470 1370 L1470 1468" fill="none" stroke="#a8a8a8" stroke-width="3" marker-end="url(#arrow)"/>
   
 
 
-  <g filter="url(#softShadow)"><rect class="category-vault category-receipt" x="1780" y="185" width="290" height="1488" rx="16" fill="#11161d" stroke="#d4a574" stroke-width="4" opacity="1"/></g>
+  <rect class="category-vault category-receipt" x="1780" y="185" width="290" height="1488" rx="16" fill="#111111" stroke="#a8a8a8" stroke-width="4" opacity="1"/>
   <a class="svg-link" href="../#map">
     <g class="map-node is-linked category-receipt" data-node="receiptRail" data-title="Audit receipts rail" data-summary="Append-only receipts for sensitive operations: capture, normalize, extract, policy decisions, proxy operations, bundle creation, model calls, UI surfaces, and external calls." data-category="receipt" tabindex="0" role="link" aria-label="Audit receipts rail">
-      <text x="1925" y="252" text-anchor="middle" font-family="DM Sans, Segoe UI, sans-serif" font-size="28" font-weight="700" font-style="normal" fill="#f5f1e8">
+      <text x="1925" y="252" text-anchor="middle" font-family="DM Sans, Segoe UI, sans-serif" font-size="28" font-weight="700" font-style="normal" fill="#fafaf8">
     <tspan x="1925" dy="0">audit</tspan>
     <tspan x="1925" dy="50">receipts</tspan>
     <tspan x="1925" dy="50">rail</tspan>
   </text>
-      <text x="1925" y="406" text-anchor="middle" font-family="DM Sans, Segoe UI, sans-serif" font-size="17" font-weight="700" font-style="normal" fill="#e8b884">
+      <text x="1925" y="406" text-anchor="middle" font-family="DM Sans, Segoe UI, sans-serif" font-size="17" font-weight="700" font-style="normal" fill="#e8e8e6">
     <tspan x="1925" dy="0">signed</tspan>
     <tspan x="1925" dy="33">append-only</tspan>
     <tspan x="1925" dy="33">user-readable</tspan>
@@ -398,10 +395,10 @@
   </text>
     </g>
   </a>
-  <text x="1925" y="675" text-anchor="middle" font-family="DM Sans, Segoe UI, sans-serif" font-size="20" font-weight="700" font-style="normal" fill="#f5f1e8">
+  <text x="1925" y="675" text-anchor="middle" font-family="DM Sans, Segoe UI, sans-serif" font-size="20" font-weight="700" font-style="normal" fill="#fafaf8">
     <tspan x="1925" dy="0">receives from</tspan>
   </text>
-  <text x="1925" y="718" text-anchor="middle" font-family="DM Sans, Segoe UI, sans-serif" font-size="16" font-weight="600" font-style="normal" fill="#d5dfea">
+  <text x="1925" y="718" text-anchor="middle" font-family="DM Sans, Segoe UI, sans-serif" font-size="16" font-weight="600" font-style="normal" fill="#e8e8e6">
     <tspan x="1925" dy="0">capture</tspan>
     <tspan x="1925" dy="32">normalize</tspan>
     <tspan x="1925" dy="32">extract</tspan>
@@ -416,69 +413,65 @@
     <tspan x="1925" dy="32">external calls</tspan>
   </text>
   
-  <line class="map-edge category-receipt" x1="1620" y1="345" x2="1776" y2="345" stroke="#7ba5d4" stroke-width="2.5" stroke-dasharray="7 7" marker-end="url(#arrowReceipt)"/>
-  <text class="edge-label" x="1695" y="323" text-anchor="middle" font-family="DM Sans, Segoe UI, sans-serif" font-size="17" font-weight="700" font-style="normal" fill="#7ba5d4">
+  <line class="map-edge category-receipt" x1="1620" y1="345" x2="1776" y2="345" stroke="#a8a8a8" stroke-width="2.5" stroke-dasharray="7 7" marker-end="url(#arrowReceipt)"/>
+  <text class="edge-label" x="1695" y="323" text-anchor="middle" font-family="DM Sans, Segoe UI, sans-serif" font-size="17" font-weight="700" font-style="normal" fill="#a8a8a8">
     <tspan x="1695" dy="0">receipt write</tspan>
   </text>
 
   
-  <line class="map-edge category-receipt" x1="1620" y1="740" x2="1776" y2="740" stroke="#7ba5d4" stroke-width="2.5" stroke-dasharray="7 7" marker-end="url(#arrowReceipt)"/>
+  <line class="map-edge category-receipt" x1="1620" y1="740" x2="1776" y2="740" stroke="#a8a8a8" stroke-width="2.5" stroke-dasharray="7 7" marker-end="url(#arrowReceipt)"/>
   
 
   
-  <line class="map-edge category-receipt" x1="1580" y1="996" x2="1776" y2="996" stroke="#7ba5d4" stroke-width="2.5" stroke-dasharray="7 7" marker-end="url(#arrowReceipt)"/>
+  <line class="map-edge category-receipt" x1="1580" y1="996" x2="1776" y2="996" stroke="#a8a8a8" stroke-width="2.5" stroke-dasharray="7 7" marker-end="url(#arrowReceipt)"/>
   
 
   
-  <line class="map-edge category-receipt" x1="1580" y1="1133" x2="1776" y2="1133" stroke="#7ba5d4" stroke-width="2.5" stroke-dasharray="7 7" marker-end="url(#arrowReceipt)"/>
+  <line class="map-edge category-receipt" x1="1580" y1="1133" x2="1776" y2="1133" stroke="#a8a8a8" stroke-width="2.5" stroke-dasharray="7 7" marker-end="url(#arrowReceipt)"/>
   
 
   
-  <line class="map-edge category-receipt" x1="1620" y1="1294" x2="1776" y2="1294" stroke="#7ba5d4" stroke-width="2.5" stroke-dasharray="7 7" marker-end="url(#arrowReceipt)"/>
+  <line class="map-edge category-receipt" x1="1620" y1="1294" x2="1776" y2="1294" stroke="#a8a8a8" stroke-width="2.5" stroke-dasharray="7 7" marker-end="url(#arrowReceipt)"/>
   
 
   
-  <line class="map-edge category-receipt" x1="1620" y1="1530" x2="1776" y2="1530" stroke="#7ba5d4" stroke-width="2.5" stroke-dasharray="7 7" marker-end="url(#arrowReceipt)"/>
+  <line class="map-edge category-receipt" x1="1620" y1="1530" x2="1776" y2="1530" stroke="#a8a8a8" stroke-width="2.5" stroke-dasharray="7 7" marker-end="url(#arrowReceipt)"/>
   
 
 
-  <text x="160" y="1735" text-anchor="start" font-family="DM Sans, Segoe UI, sans-serif" font-size="24" font-weight="700" font-style="normal" fill="#f5f1e8">
+  <text x="160" y="1735" text-anchor="start" font-family="DM Sans, Segoe UI, sans-serif" font-size="24" font-weight="700" font-style="normal" fill="#fafaf8">
     <tspan x="160" dy="0">legend</tspan>
   </text>
   <a class="svg-link" href="../#map">
     <g class="legend-item category-control" data-node="controlLegend" data-title="Control gate category" data-summary="Policy and proxy components that decide what enters or leaves the vault and how much is revealed." data-category="control" tabindex="0" role="link" aria-label="Control gate category">
-      <rect class="node-outline" x="160" y="1760" width="78" height="26" rx="5" fill="#1d1812" stroke="#d4a574" stroke-width="3" opacity="1"/>
-      <text class="legend-label" x="260" y="1780" text-anchor="start" font-family="DM Sans, Segoe UI, sans-serif" font-size="16" font-weight="700" font-style="normal" fill="#f5f1e8">
+      <rect class="node-outline" x="160" y="1760" width="78" height="26" rx="5" fill="#1a1a1a" stroke="#a8a8a8" stroke-width="3" opacity="1"/>
+      <text class="legend-label" x="260" y="1780" text-anchor="start" font-family="DM Sans, Segoe UI, sans-serif" font-size="16" font-weight="700" font-style="normal" fill="#fafaf8">
     <tspan x="260" dy="0">control gate: policy + proxies</tspan>
   </text>
     </g>
   </a>
   <a class="svg-link" href="../#map">
     <g class="legend-item category-vault" data-node="vaultLegend" data-title="Vault interior category" data-summary="Private context, summaries, provenance, identity, policy bindings, scoped bundles, and the receipts rail." data-category="vault" tabindex="0" role="link" aria-label="Vault interior category">
-      <rect class="node-outline" x="555" y="1760" width="78" height="26" rx="5" fill="#11161d" stroke="#11161d" stroke-width="3" opacity="1"/>
-      <text class="legend-label" x="655" y="1780" text-anchor="start" font-family="DM Sans, Segoe UI, sans-serif" font-size="16" font-weight="700" font-style="normal" fill="#f5f1e8">
+      <rect class="node-outline" x="555" y="1760" width="78" height="26" rx="5" fill="#111111" stroke="#111111" stroke-width="3" opacity="1"/>
+      <text class="legend-label" x="655" y="1780" text-anchor="start" font-family="DM Sans, Segoe UI, sans-serif" font-size="16" font-weight="700" font-style="normal" fill="#fafaf8">
     <tspan x="655" dy="0">vault interior: context bundle + receipts rail</tspan>
   </text>
     </g>
   </a>
   <a class="svg-link" href="../#map">
     <g class="legend-item category-receipt" data-node="receiptLegend" data-title="Receipt write category" data-summary="Dashed lines show operations that write durable audit receipts." data-category="receipt" tabindex="0" role="link" aria-label="Receipt write category">
-      <line x1="1080" y1="1773" x2="1160" y2="1773" stroke="#7ba5d4" stroke-width="3" stroke-dasharray="7 7" marker-end="url(#arrowReceipt)"/>
-      <text class="legend-label" x="1180" y="1780" text-anchor="start" font-family="DM Sans, Segoe UI, sans-serif" font-size="16" font-weight="700" font-style="normal" fill="#f5f1e8">
+      <line x1="1080" y1="1773" x2="1160" y2="1773" stroke="#a8a8a8" stroke-width="3" stroke-dasharray="7 7" marker-end="url(#arrowReceipt)"/>
+      <text class="legend-label" x="1180" y="1780" text-anchor="start" font-family="DM Sans, Segoe UI, sans-serif" font-size="16" font-weight="700" font-style="normal" fill="#fafaf8">
     <tspan x="1180" dy="0">receipt write: sensitive operations write to rail</tspan>
   </text>
     </g>
   </a>
   <a class="svg-link" href="../#map">
     <g class="legend-item category-untrusted" data-node="untrustedLegend" data-title="Untrusted zone category" data-summary="Dashed boxes show sources outside the user's trust boundary that must pass through gates before touching private context." data-category="untrusted" tabindex="0" role="link" aria-label="Untrusted zone category">
-      <rect class="node-outline" x="1630" y="1760" width="78" height="26" rx="5" fill="#fff" stroke="#7ba5d4" stroke-width="3" stroke-dasharray="7 7" opacity="1"/>
-      <text class="legend-label" x="1730" y="1780" text-anchor="start" font-family="DM Sans, Segoe UI, sans-serif" font-size="16" font-weight="700" font-style="normal" fill="#f5f1e8">
+      <rect class="node-outline" x="1630" y="1760" width="78" height="26" rx="5" fill="#fafaf8" stroke="#a8a8a8" stroke-width="3" stroke-dasharray="7 7" opacity="1"/>
+      <text class="legend-label" x="1730" y="1780" text-anchor="start" font-family="DM Sans, Segoe UI, sans-serif" font-size="16" font-weight="700" font-style="normal" fill="#fafaf8">
     <tspan x="1730" dy="0">untrusted zone</tspan>
   </text>
     </g>
   </a>
-
-  <text x="1100" y="1942" text-anchor="middle" font-family="DM Sans, Segoe UI, sans-serif" font-size="18" font-weight="600" font-style="italic" fill="#b8b4ac">
-    <tspan x="1100" dy="0">signal editorial  ·  ouro.chat  ·  context layer map</tspan>
-  </text>
 </svg>

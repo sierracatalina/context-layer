@@ -11,14 +11,23 @@ const expectedFiles = [
   "agent-navigation-manifest.json",
   "assets/context-layer-diagram.css",
   "assets/context-layer-docs.css",
+  "assets/context-layer-native.css",
+  "assets/context-layer-native.js",
   "assets/context-layer-og.svg",
   "assets/context-layer-reference.js",
   "assets/context-layer-responsive.css",
   "assets/context-layer.css",
   "assets/context-layer.js",
+  "implementation/context-layer-reference.mjs",
+  "implementation/context-request.schema.json",
+  "implementation/invalid-secret-receipt.json",
+  "implementation/receipt.schema.json",
+  "implementation/scoped-context-bundle.schema.json",
+  "implementation/valid-exchange.json",
   "index.html",
   "llms.txt",
   "manifest.webmanifest",
+  "og.png",
   "ouroboros-architecture-v4-legible.html",
   "reference/context-layer-architecture-diagram.svg",
   "reference/context-layer-blog-post.md",
@@ -69,57 +78,89 @@ test("worker serves the verified public document with security headers", async (
   assert.equal(response.status, 200);
   assert.match(response.headers.get("content-type") ?? "", /^text\/html\b/i);
   const html = await response.text();
-  assert.match(html, /<title>Context Layer \| Useful context, without total access<\/title>/i);
-  assert.match(html, /Synthetic protocol demo/i);
-  assert.match(html, /Progressive protocol map/i);
-  assert.match(html, /Ask the site to explain or move/i);
+  assert.match(html, /<title>the Context Layer \| sierra catalina<\/title>/i);
+  assert.match(html, /minimum useful context/i);
+  assert.match(html, /one boundary\. six recorded steps\./i);
+  assert.match(html, /href="\/context-layer\/architecture"/);
+  assert.match(html, /href="\/context-layer\/code"/);
+  assert.match(html, /property="og:image" content="https:\/\/sierracatalina\.com\/context-layer\/og\.png"/);
   assert.match(response.headers.get("content-security-policy") ?? "", /default-src 'self'/);
   assert.equal(response.headers.get("x-frame-options"), "DENY");
   assert.equal(response.headers.get("cross-origin-opener-policy"), "same-origin");
 });
 
+test("worker serves the validated social preview as PNG", async () => {
+  const worker = await loadWorker();
+  const response = await worker.fetch(
+    new Request("https://context.example/context-layer/og.png"),
+    testEnv(),
+  );
+  assert.equal(response.status, 200);
+  assert.equal(response.headers.get("content-type"), "image/png");
+  assert.ok((await response.arrayBuffer()).byteLength > 100_000);
+});
+
 test("worker publishes canonical essay and technical reference pages", async () => {
   const worker = await loadWorker();
-  const essay = await worker.fetch(new Request("https://context.example/writing/context-layer"), testEnv());
+  const essay = await worker.fetch(new Request("https://context.example/signal/the-context-layer"), testEnv());
   assert.equal(essay.status, 200);
   assert.match(essay.headers.get("content-type") ?? "", /^text\/html\b/i);
   const essayHtml = await essay.text();
-  assert.match(essayHtml, /The Context Layer: Give AI the Context It Needs Without Giving It Everything/);
-  assert.match(essayHtml, /Published essay \/ Context Layer/);
+  assert.match(essayHtml, /the Context Layer: give AI the context it needs without giving it everything/);
+  assert.match(essayHtml, /signal editorial \/ dossier 001/);
   assert.match(essayHtml, /<article class="document-body">/);
-  assert.match(essayHtml, /href="\/reference\/specification"/);
+  assert.match(essayHtml, /href="\/context-layer\/specification"/);
   assert.doesNotMatch(essayHtml, /Publication draft/);
 
-  const specification = await worker.fetch(new Request("https://context.example/reference/specification"), testEnv());
+  const specification = await worker.fetch(new Request("https://context.example/context-layer/specification"), testEnv());
   assert.equal(specification.status, 200);
-  assert.match(await specification.text(), /Working Draft - not an adopted standard/);
+  assert.match(await specification.text(), /working draft/i);
 
-  const implementation = await worker.fetch(new Request("https://context.example/reference/implementation"), testEnv());
+  const implementation = await worker.fetch(new Request("https://context.example/context-layer/implementation"), testEnv());
   assert.equal(implementation.status, 200);
-  assert.match(await implementation.text(), /Implementation and Interoperability Profiles/);
+  assert.match(await implementation.text(), /implementation &amp; interoperability profiles/i);
 });
 
-test("architecture viewer keeps the full map legible and SVG styling CSP-safe", async () => {
+test("architecture page is responsive without a pan or zoom canvas", async () => {
   const worker = await loadWorker();
-  const viewer = await worker.fetch(new Request("https://context.example/reference/architecture"), testEnv());
+  const viewer = await worker.fetch(new Request("https://context.example/context-layer/architecture"), testEnv());
   assert.equal(viewer.status, 200);
   const viewerHtml = await viewer.text();
-  assert.match(viewerHtml, /data-diagram-action="fit"/);
-  assert.match(viewerHtml, /data-diagram-action="reading"/);
-  assert.match(viewerHtml, /data-diagram-action="actual"/);
-  assert.match(viewerHtml, /data-diagram-scroll/);
-  assert.match(viewerHtml, /context-layer-architecture-diagram\.svg/);
+  assert.match(viewerHtml, /class="protocol-flow"/);
+  assert.match(viewerHtml, /class="trust-grid"/);
+  assert.match(viewerHtml, /class="lifecycle-list"/);
+  assert.match(viewerHtml, /\/context-layer\/downloads\/context-layer-architecture\.svg/);
+  assert.doesNotMatch(viewerHtml, /data-diagram-action|data-diagram-scroll|wheel to zoom|drag to pan/i);
 
-  const diagram = await worker.fetch(new Request("https://context.example/reference/context-layer-architecture-diagram.svg"), testEnv());
+  const diagram = await worker.fetch(new Request("https://context.example/context-layer/downloads/context-layer-architecture.svg"), testEnv());
   assert.equal(diagram.status, 200);
   assert.equal(diagram.headers.get("cache-control"), "no-cache");
   assert.equal(diagram.headers.get("x-robots-tag"), "noindex, nofollow");
+  assert.match(diagram.headers.get("content-disposition") ?? "", /attachment; filename="context-layer-architecture\.svg"/);
   const svg = await diagram.text();
-  assert.match(svg, /xml-stylesheet[^>]+context-layer-diagram\.css/);
-  assert.match(svg, /fill="#0d1117"/);
-  assert.match(svg, /font-family="DM Sans, Segoe UI, sans-serif"/);
+  assert.doesNotMatch(svg, /xml-stylesheet|(?:href|src)="https?:\/\//);
+  assert.match(svg, /<rect[^>]+width="2200"[^>]+height="1960"[^>]+fill="#0[aA]0[aA]0[aA]"/);
+  assert.doesNotMatch(svg, /ouro\.chat|linearGradient|radialGradient|url\(#glow\)/i);
   assert.doesNotMatch(svg, /<style>/);
-  assert.doesNotMatch(svg, /href="(?:context-layer-overview|demos\/)/);
+});
+
+test("native prefix routes keep the Sierra URL surface intact", async () => {
+  const worker = await loadWorker();
+  for (const path of ["/context-layer", "/context-layer/code", "/context-layer/assets/context-layer-native.css"]) {
+    const response = await worker.fetch(new Request("https://context.example" + path), testEnv());
+    assert.equal(response.status, 200, path);
+  }
+});
+
+test("rendered prose follows the Signal editorial formatting contract", async () => {
+  const worker = await loadWorker();
+  for (const path of ["/context-layer", "/signal/the-context-layer", "/context-layer/specification", "/context-layer/implementation"]) {
+    const response = await worker.fetch(new Request("https://context.example" + path), testEnv());
+    const visible = visibleText(await response.text());
+    assert.doesNotMatch(visible, /\band\b/i, path + " contains 'and'");
+    assert.doesNotMatch(visible, /—|[“”"]/u, path + " contains forbidden punctuation");
+    assert.doesNotMatch(visible, /\b(?:leverage|unlock|harness|robust|seamless)\b/i, path + " contains forbidden filler");
+  }
 });
 
 test("worker limits the hosted surface to reviewed paths", async () => {
@@ -128,7 +169,7 @@ test("worker limits the hosted surface to reviewed paths", async () => {
   assert.equal(asset.status, 200);
   assert.match(await asset.text(), /const demoStages/);
 
-  const reference = await worker.fetch(new Request("https://context.example/reference/context-layer-technical-specification.md"), testEnv());
+  const reference = await worker.fetch(new Request("https://context.example/context-layer/source/context-layer-technical-specification.md"), testEnv());
   assert.equal(reference.status, 200);
   assert.equal(reference.headers.get("x-robots-tag"), "noindex, nofollow");
 
@@ -213,4 +254,16 @@ function contentType(pathname) {
     ".txt": "text/plain; charset=utf-8",
     ".webmanifest": "application/manifest+json; charset=utf-8",
   }[extname(pathname)] || "application/octet-stream";
+}
+
+function visibleText(html) {
+  return html
+    .replace(/<script\b[\s\S]*?<\/script>/gi, " ")
+    .replace(/<style\b[\s\S]*?<\/style>/gi, " ")
+    .replace(/<pre\b[\s\S]*?<\/pre>/gi, " ")
+    .replace(/<code\b[\s\S]*?<\/code>/gi, " ")
+    .replace(/<[^>]+>/g, " ")
+    .replace(/&amp;/g, "&")
+    .replace(/&#39;/g, "'")
+    .replace(/\s+/g, " ");
 }

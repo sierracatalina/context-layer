@@ -10,7 +10,7 @@
     "dev": "node node_modules/vinext/dist/cli.js dev",
     "build": "node node_modules/vinext/dist/cli.js build",
     "start": "node node_modules/vinext/dist/cli.js start",
-    "test": "npm run build && node --test tests/rendered-html.test.mjs",
+    "test": "npm run build && node --test tests/rendered-html.test.mjs tests/reference-implementation.test.mjs",
     "lint": "node node_modules/eslint/bin/eslint.js . --ignore-pattern dist --ignore-pattern .next"
   },
   "dependencies": {
