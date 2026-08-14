@@ -109,7 +109,11 @@ test("worker publishes canonical essay and technical reference pages", async () 
   assert.match(essayHtml, /the Context Layer: give AI the context it needs without giving it everything/);
   assert.match(essayHtml, /signal editorial \/ dossier 001/);
   assert.match(essayHtml, /<article class="document-body">/);
+  assert.match(essayHtml, /href="\/context-layer"/);
+  assert.match(essayHtml, /href="\/context-layer\/architecture"/);
   assert.match(essayHtml, /href="\/context-layer\/specification"/);
+  assert.match(essayHtml, /href="\/context-layer\/implementation"/);
+  assert.doesNotMatch(essayHtml, /href="\/(?:#demo|reference\/)/);
   assert.doesNotMatch(essayHtml, /Publication draft/);
 
   const specification = await worker.fetch(new Request("https://context.example/context-layer/specification"), testEnv());
@@ -119,6 +123,12 @@ test("worker publishes canonical essay and technical reference pages", async () 
   const implementation = await worker.fetch(new Request("https://context.example/context-layer/implementation"), testEnv());
   assert.equal(implementation.status, 200);
   assert.match(await implementation.text(), /implementation &amp; interoperability profiles/i);
+
+  const code = await worker.fetch(new Request("https://context.example/context-layer/code"), testEnv());
+  assert.equal(code.status, 200);
+  const codeHtml = await code.text();
+  assert.match(codeHtml, /href="\/context-layer\/implementation\/context-layer-reference\.mjs" download/);
+  assert.doesNotMatch(codeHtml, /github\.com\/sierracatalina\/ship-goblin/);
 });
 
 test("architecture page is responsive without a pan or zoom canvas", async () => {
@@ -142,6 +152,7 @@ test("architecture page is responsive without a pan or zoom canvas", async () =>
   assert.match(svg, /<rect[^>]+width="2200"[^>]+height="1960"[^>]+fill="#0[aA]0[aA]0[aA]"/);
   assert.doesNotMatch(svg, /ouro\.chat|linearGradient|radialGradient|url\(#glow\)/i);
   assert.doesNotMatch(svg, /<style>/);
+  assert.doesNotMatch(svg, /<a\b|href=|role="link"|tabindex=/);
 });
 
 test("native prefix routes keep the Sierra URL surface intact", async () => {

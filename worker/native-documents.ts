@@ -16,7 +16,7 @@ interface TocItem {
 const SITE_ORIGIN = 'https://sierracatalina.com';
 const CONTEXT_ROOT = '/context-layer';
 const ESSAY_PATH = '/signal/the-context-layer';
-const CODE_REPOSITORY = 'https://github.com/sierracatalina/ship-goblin';
+const REFERENCE_MODULE_PATH = CONTEXT_ROOT + '/implementation/context-layer-reference.mjs';
 
 export function renderLandingPage(): string {
   const body = [
@@ -247,7 +247,7 @@ export function renderCodePage(): string {
     '<section><p class="context-meta">adjacent public code</p><h2>agent-aware application starter.</h2>',
     '<p>the AAA starter demonstrates agent-aware application structure. it does not claim Context Layer protocol conformance.</p>',
     '<p class="code-links"><a href="https://github.com/sierracatalina/agent-aware-starter" rel="noreferrer">open the AAA starter ↗</a>',
-    '<a href="' + CODE_REPOSITORY + '" rel="noreferrer">open the Sierra site source ↗</a></p></section>',
+    '<a href="' + REFERENCE_MODULE_PATH + '" download>open the Context Layer reference module ↓</a></p></section>',
     '</div>',
     '</section>',
     '</main>',
@@ -556,6 +556,10 @@ export function formatEditorialText(value: string): string {
 
 function normalizeHref(href: string): string {
   const routeMap: Record<string, string> = {
+    '/': CONTEXT_ROOT,
+    '/#demo': CONTEXT_ROOT + '/architecture',
+    '/reference/specification': CONTEXT_ROOT + '/specification',
+    '/reference/implementation': CONTEXT_ROOT + '/implementation',
     '../context-layer-overview.html': CONTEXT_ROOT,
     '../demos/flow-carousel.html': CONTEXT_ROOT + '/architecture',
     'context-layer-blog-post.md': ESSAY_PATH,
