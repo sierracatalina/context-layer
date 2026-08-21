@@ -4,6 +4,7 @@ import {
   mkdir,
   readFile,
   readdir,
+  realpath,
   rm,
   symlink,
   writeFile,
@@ -1047,7 +1048,7 @@ test("UTF-8 files adapter captures only inside allowed roots and keeps paths vau
   assert.equal(JSON.stringify(event).includes(filePath), false);
   const payload = await vault.readPayload(event.payload_ref.ref);
   const privateRecord = JSON.parse(payload.bytes.toString("utf8"));
-  assert.equal(privateRecord.original_path, filePath);
+  assert.equal(privateRecord.original_path, await realpath(filePath));
   assert.equal(privateRecord.text, "approved local text");
 });
 
