@@ -52,6 +52,7 @@ export async function createUtf8FilesAdapter({
     const rootStat = await stat(canonical);
     if (!rootStat.isDirectory()) fail("FILES_ROOT_NOT_DIRECTORY", "allowed file root is not a directory");
     roots.push({
+      configured,
       canonical,
       id: digestJson({ adapter: "files.local", root: canonical }),
     });
@@ -77,7 +78,7 @@ export async function createUtf8FilesAdapter({
     const root = findContainingRoot(roots, requestedPath);
     if (!root) fail("FILE_OUTSIDE_ALLOWED_ROOT", "file is outside every allowed root");
 
-    await assertNoSymlinkSegments(root.canonical, requestedPath);
+    await assertNoSymlinkSegments(root.configured, requestedPath);
     const canonicalPath = await realpath(requestedPath);
     if (!isContained(root.canonical, canonicalPath)) {
       fail("FILE_OUTSIDE_ALLOWED_ROOT", "resolved file escaped the allowed root");
@@ -106,7 +107,7 @@ export async function createUtf8FilesAdapter({
       await handle.close();
     }
 
-    await assertNoSymlinkSegments(root.canonical, requestedPath);
+    await assertNoSymlinkSegments(root.configured, requestedPath);
     const finalPath = await realpath(requestedPath);
     if (finalPath !== canonicalPath) fail("FILE_CHANGED_DURING_CAPTURE", "file target changed during capture");
 
@@ -213,7 +214,10 @@ export async function createUtf8FilesAdapter({
 }
 
 function findContainingRoot(roots, candidate) {
-  return roots.find((root) => isContained(root.canonical, candidate)) ?? null;
+  // Compare the requested path with the configured spelling of the root.
+  // Windows realpath() may canonicalize the root to an 8.3 or namespaced path
+  // that is equivalent on disk but not lexically relative to the request.
+  return roots.find((root) => isContained(root.configured, candidate)) ?? null;
 }
 
 function isContained(root, candidate) {
