@@ -1,0 +1,2 @@
+# Keep SHA-bound protocol vectors byte-identical on every checkout.
+test-vectors/v0.2/*.json text eol=lf
