@@ -217,7 +217,7 @@ Local databases, encrypted object stores, and content-addressed systems can hold
 
 ### Models, agents, and voice systems
 
-Local models, cloud models, Codex-style coding agents, Goose-style local agents, workflow engines, and custom runtimes can consume scoped bundles. The current project also includes a local demonstration that creates an [OpenAI Realtime WebRTC](https://developers.openai.com/api/docs/guides/realtime-webrtc) session for a voice walkthrough. That demo illustrates a user interface; it does not read from or write to a production vault.
+Local models, cloud models, Codex-style coding agents, Goose-style local agents, workflow engines, and custom runtimes can consume scoped bundles. The current public proof includes one capability-bound local-agent consumer. Realtime voice remains an informative future profile, not a conforming implementation.
 
 ### Payment and metering
 
@@ -259,14 +259,13 @@ The proposal can be judged by a small set of principles:
 
 The current project contains:
 
-- A public editorial explanation of the problem and proposed layer
-- A deterministic synthetic request-to-receipt walkthrough
+- A plain-language overview of the problem and proposed layer
+- A reviewed v0.2 technical specification and implementation profiles
 - A complete protocol architecture map
-- A machine-readable navigation manifest and AI-oriented index
 - Five v0.2 core schemas and a dependency-free reference runtime
 - An experimental encrypted local core with four policy states, authenticated bundle envelopes, and anchored receipts
 - One narrow UTF-8 files adapter, one local-agent consumer, a minimized demo, and executable test vectors
-- A redirect-only compatibility worker that keeps the Sierra site canonical
+- An unsubmitted Nostr interoperability discussion draft
 
 These artifacts make the current contract and tested single-user profile reviewable as one flow. They do not prove production security, third-party interoperability, managed key custody, hostile-administrator resistance, or independent conformance.
 

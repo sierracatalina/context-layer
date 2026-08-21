@@ -12,14 +12,14 @@ The highest-risk paths are failures that let raw vault material or excess capabi
 In scope:
 
 - `packages/local-core/`: vault, policy, bundle authority, bundle issuer, files adapter, local-agent consumer, memory proposals, receipt log, and receipt anchor.
-- `public/implementation/`: v0.2 schemas, fixtures, and dependency-free reference runtime.
-- `worker/index.ts`: redirect-only OpenAI Sites compatibility worker.
+- `protocol/spec/`: v0.2 specification prose, implementation guidance, and architecture diagram.
+- `protocol/reference/`, `protocol/schemas/`, and `protocol/fixtures/`: dependency-free reference runtime, strict object contracts, and synthetic examples.
 - `examples/`, `test-vectors/v0.2/`, and `tests/`: synthetic proof and security regressions.
 - `.github/workflows/ci.yml`, `package.json`, and `package-lock.json`: release integrity and dependency boundary.
 
 Out of scope:
 
-- The native Sierra site's application internals and deployment account.
+- Website application, hosting, routing, and deployment source, which are intentionally maintained outside this protocol repository.
 - A production identity provider, approval service, key-management service, multi-tenant vault, or remote MCP server.
 - Operating-system, hypervisor, kernel, or cryptographic primitive compromise.
 - Recovery from an attacker who can replace both a receipt log and its authenticated anchor with an older valid pair.
@@ -31,7 +31,6 @@ Material assumptions:
 - Capability-handler implementations are operator-controlled, trusted in-process host code. Their source/model-derived inputs and returned values may be attacker-controlled; admitting attacker-supplied handler code is same-process compromise and outside this profile.
 - Vault and HMAC keys arrive through external key providers, are not committed, and are unavailable to untrusted source content or bundle consumers.
 - Requests, files, source instructions, claims, bundles, and handler output may be attacker-controlled.
-- The hosted surface is documentation plus a redirect-only compatibility worker; no vault, policy engine, model key, or local-core state is exposed by that worker.
 - A deployment stores the receipt anchor on a boundary at least independent from accidental log damage. A same-filesystem attacker can still coordinate rollback.
 
 These assumptions were presented during the working session and no corrections were received before this provisional report. Risk rankings are conditional on them.
@@ -52,9 +51,8 @@ Open questions that would materially change risk:
 - **Bundle boundary:** filters claims, applies declared transforms, derives minimum expiry, strips raw provenance, and authenticates a recipient-bound envelope; see `packages/local-core/bundle.mjs` and `packages/local-core/authority.mjs`.
 - **Local-agent consumer:** verifies envelope authority, recipient, expiry, revocation, replay state, and capability before invoking trusted in-process host handler code with potentially untrusted inputs; memory writes remain proposals; see `packages/local-core/consumer.mjs` (`createLocalAgentConsumer`).
 - **Receipt subsystem:** validates minimized receipts, serializes append operations across processes, hash-chains entries, and authenticates a sidecar checkpoint; see `packages/local-core/receipt-log.mjs` and `packages/local-core/receipt-anchor.mjs`.
-- **Public contract:** strict JSON Schemas and a dependency-free reference implementation define the portable v0.2 object boundary; see `public/implementation/`.
-- **Hosted compatibility boundary:** a strict route allowlist returns permanent redirects to the canonical Sierra origin and serves no dossier or vault data; see `worker/index.ts`.
-- **Build and release:** locked npm dependencies, Linux and Windows CI, lint, audit, hygiene, build, and tests gate the public snapshot; see `.github/workflows/ci.yml`.
+- **Public contract:** strict JSON Schemas, synthetic fixtures, and a dependency-free reference implementation define the portable v0.2 object boundary; see `protocol/schemas/`, `protocol/fixtures/`, and `protocol/reference/`.
+- **CI and release:** locked npm dependencies, Linux and Windows CI, lint, audit, hygiene, and tests gate the public snapshot; see `.github/workflows/ci.yml`.
 
 ### Data flows and trust boundaries
 
@@ -64,7 +62,6 @@ Open questions that would materially change risk:
 - **Authenticated envelope -> local-agent consumer -> trusted host handler:** scoped context and capabilities cross from the trusted issuer through the consumer into operator-controlled in-process code. Envelope content and model-derived arguments may be attacker-controlled. HMAC verification, recipient binding, expiry, revocation, single-use replay control, capability checks, and receipt preflight run before invocation; they do not sandbox the handler or constrain its ambient process authority.
 - **Trusted host handler -> receipt log:** potentially attacker-influenced output digest, outcome, summary, and bounded string metadata cross from action execution into integrity-critical audit state. Raw payload inclusion is forbidden; post-action persistence failure is reported as indeterminate.
 - **Consumer -> memory proposal:** derived claims cross toward durable memory only as a pending, provenance-bound proposal requiring user confirmation. No commit API exists in the local profile.
-- **Internet -> redirect worker -> Sierra:** path, query, and HTTP method cross a public network boundary. Exact path allowlists, method restrictions, no-store errors, noindex, CSP, framing denial, and fixed-origin redirects apply. Authentication and rate limiting are not needed for content-free redirects but availability monitoring is.
 - **Developer dependency graph -> CI -> GitHub release:** source and third-party packages cross a supply-chain boundary. A lockfile, clean install, lint, dependency audit, release-hygiene scan, two-OS tests, and exact-tag procedure provide evidence; maintainer and GitHub account security are external.
 
 #### Diagram
@@ -82,8 +79,6 @@ flowchart LR
   C --> M["Pending memory proposal"]
   C --> L["Receipt log"]
   L --> K["Authenticated anchor"]
-  I["Internet client"] --> W["Redirect worker"]
-  W --> S["Canonical Sierra docs"]
   D["Developer and dependencies"] --> CI["Release CI"]
   CI --> G["GitHub prerelease"]
 ```
@@ -100,7 +95,6 @@ flowchart LR
 | Receipt log and authenticated anchor | Audit truth, replay prevention, and indeterminate outcomes depend on them | I, A |
 | Pending memory proposals | Silent or forged durable memory can corrupt later decisions | I |
 | Canonical schemas, code, test vectors, and release tag | Reviewers rely on a stable, reproducible proof-of-work snapshot | I, A |
-| Canonical site routing and version labels | Redirect loops or stale contracts mislead implementers | I, A |
 
 ## Attacker model
 
@@ -109,7 +103,6 @@ flowchart LR
 - Supply malicious files, filenames, encodings, source instructions, context requests, claims, bundles, handler output, and protocol objects to an embedding application.
 - Replay, modify, truncate, or replace unprotected local files that the embedding process permits them to reach.
 - Control source/model-derived values that reach trusted orchestration or cause a trusted handler to return malformed or non-serializable values.
-- Send arbitrary unauthenticated HTTP methods, paths, and query strings to the redirect worker.
 - Publish a malicious or vulnerable transitive dependency if upstream package or maintainer controls fail.
 
 ### Non-capabilities
@@ -132,9 +125,8 @@ flowchart LR
 | Capability handler | Consumer `execute` | Scoped authority -> trusted host code -> external side effect | Handler code is trusted and deployment-supplied; its source/model-derived inputs and returned values may be malicious or unreliable, and no in-process sandbox is provided | `packages/local-core/consumer.mjs:execute` |
 | Memory proposal | Consumer `proposeMemoryUpdate` | Model output -> durable-memory review | Only pending proposals with provenance and user confirmation requirements are emitted | `packages/local-core/consumer.mjs:validateMemoryUpdateProposal` |
 | Receipt append and reopen | `openReceiptLog`, `append`, `verifyReceiptLog` | Runtime events -> audit state | Multi-process locking, chain checks, and authenticated anchor state protect integrity | `packages/local-core/receipt-log.mjs`; `receipt-anchor.mjs` |
-| Public protocol objects | Validator functions or JSON Schema | External object -> reference runtime | Closed schemas reject unknown fields and forbidden secret-bearing names | `public/implementation/context-layer-reference.mjs`; `*.schema.json` |
-| Redirect worker | HTTP `fetch` | Internet -> compatibility host | Exact route allowlists and fixed-origin 308 responses; no application data | `worker/index.ts:fetch`; `canonicalPath` |
-| Release pipeline | Push or pull request | Maintainer/dependencies -> public artifact | Locked install, audit, hygiene, build, and tests; account controls are external | `.github/workflows/ci.yml` |
+| Public protocol objects | Validator functions or JSON Schema | External object -> reference runtime | Closed schemas reject unknown fields and forbidden secret-bearing names | `protocol/reference/context-layer-reference.mjs`; `protocol/schemas/*.schema.json` |
+| Release pipeline | Push or pull request | Maintainer/dependencies -> public artifact | Locked install, audit, hygiene, lint, and tests; account controls are external | `.github/workflows/ci.yml` |
 
 ## Top abuse paths
 
@@ -144,10 +136,9 @@ flowchart LR
 4. **Turn content into instructions:** place prompt-injection text in an allowed file or claim -> induce trusted orchestration to request a granted but unintended capability or unsafe destination -> exploit a host integration that derives authority-bearing arguments from source prose rather than approved policy and user intent.
 5. **Erase audit evidence after a side effect:** complete an irreversible trusted-handler action -> trigger an attacker-controlled non-serializable result, force receipt persistence failure, or replace audit files -> cause downstream logic to treat the outcome as failed, absent, or replayable.
 6. **Escape file roots:** use traversal, symlinks, reparse behavior, or a time-of-check/time-of-use swap -> capture a file outside an approved root -> encrypt it correctly but disclose data the user never selected.
-7. **Leak a credential through metadata or errors:** place secret-shaped content in a request, handler result, summary, or metadata -> serialize it into a bundle, receipt, log, demo output, or client asset -> expose it to reviewers or consumers.
+7. **Leak a credential through metadata or errors:** place secret-shaped content in a request, handler result, summary, or metadata -> serialize it into a bundle, receipt, log, demo output, or published protocol artifact -> expose it to reviewers or consumers.
 8. **Roll back local authorization history:** obtain write access to both receipt log and co-located anchor -> restore an older valid pair -> remove evidence and replay state without breaking HMAC verification.
 9. **Publish the wrong contract:** compromise a dependency, maintainer account, CI configuration, or tag procedure -> ship stale schemas, malicious code, or an unreviewed build under `v0.2-draft`.
-10. **Create a routing integrity failure:** deploy the redirect worker before native Sierra routes, or admit an unreviewed path -> create a redirect loop, stale 404 target, or misleading canonical contract.
 
 ## Threat model table
 
@@ -161,22 +152,21 @@ flowchart LR
 | TM-006 | Malicious local file or filesystem actor | Attacker controls paths or can change files during capture | Escape an allowed root or swap file identity/content during read | Unauthorized local data capture | Raw files, vault | Canonical roots, component-wise symlink rejection, regular-file and size checks, before/after state, strict UTF-8 (`files-adapter.mjs`) | Platform-specific reparse points and network filesystems need deployment testing | Open by trusted directory handle where supported; document supported filesystems; keep Windows and Linux integration tests | Count path, symlink, race, size, and encoding rejections; audit configured roots | Low | High | Medium |
 | TM-007 | Malicious input, attacker-controlled action output, or developer fixture | Attacker can place secret-like values in serialized fields or logs | Persist credentials or raw payload in receipts, bundles, errors, demos, or release files | Credential compromise or secondary private dataset | Keys, receipts, public artifacts | Closed schemas, forbidden field names, bounded flat receipt metadata, payload flag false, sanitized handler errors, release hygiene (`canonical.mjs`, `receipt-log.mjs`, `scripts/release-hygiene.mjs`) | Arbitrary prose can contain secrets that do not match patterns | Add deployment DLP for configured credential formats; keep summaries templated; never log raw validation objects | Scan release artifacts and structured logs; alert on secret-field rejection and unusually long summaries | Medium | High | High |
 | TM-008 | Host administrator or same-process compromise | Attacker obtains process memory, key provider, or both log and anchor | Steal keys, decrypt vault, forge HMAC records, or replay old state | Total local confidentiality and integrity loss | Vault key, authority key, all local data | Keys supplied externally, copied then zeroed on close; no committed keys (`vault.mjs`, `authority.mjs`) | Hostile administrator and memory inspection are explicitly out of scope | For production, use OS keystore or hardware-backed non-exportable keys, process isolation, least privilege, and external receipt checkpoint | OS key-access audit, process integrity monitoring, rotation events, failed key IDs | Low under stated assumption | High | Medium |
-| TM-009 | Remote HTTP client or release operator | Redirect boundary is deployed against missing or proxied targets | Trigger unknown routes, unsafe methods, loops, or stale targets | Documentation outage or contract confusion | Canonical routing, version integrity | Exact allowlists, method checks, fixed origin, security headers, route tests (`worker/index.ts`, `tests/rendered-html.test.mjs`) | Target availability is external and redirect tests cannot prove it | Require live same-origin route verification before redirect deploy; monitor every canonical target and loop depth | Synthetic route probes, redirect-loop alarm, schema-version checks | Medium | Medium | Medium |
-| TM-010 | Compromised dependency, maintainer, or CI identity | Upstream or publishing account is compromised | Modify code, lockfile, CI, tag, or release notes | Malicious public artifact and loss of reviewer trust | Source, build, tag, GitHub repo | Locked install, zero-high audit gate, lint, hygiene, Windows/Linux tests, exact-tag checklist (`.github/workflows/ci.yml`, `RELEASE.md`) | Branch protection, signed tags, maintainer MFA, and artifact attestations are external | Require protected main and CI, least-privilege tokens, MFA, signed tag or provenance attestation, dependency update review | GitHub audit log, dependency alerts, tag-to-commit verification, release checksum | Low to Medium | High | High |
-| TM-011 | Curious or malicious requester | Attacker can make repeated semantically similar requests | Infer private attributes from allow/deny/reduction/timing responses | Privacy leakage without direct payload access | Policy state, subject privacy | Purpose binding, reasoned decisions, rate/anomaly hooks, spec guidance on uniform responses (`policy.mjs`; technical specification section 11) | Local core does not implement a semantic privacy budget or uniform response service | Add requester/subject/purpose privacy budgets, batching, response normalization, and coordinated-client detection in network profiles | Track semantically similar probes and decision distributions without raw prompts | Medium for a future network service | Medium | Medium |
+| TM-009 | Compromised dependency, maintainer, or CI identity | Upstream or publishing account is compromised | Modify code, lockfile, CI, tag, or release notes | Malicious public artifact and loss of reviewer trust | Source, test and release evidence, tag, GitHub repo | Locked install, zero-high audit gate, lint, hygiene, Windows/Linux tests, exact-tag checklist (`.github/workflows/ci.yml`, `RELEASE.md`) | Branch protection, signed tags, maintainer MFA, and artifact attestations are external | Require protected main and CI, least-privilege tokens, MFA, signed tag or provenance attestation, dependency update review | GitHub audit log, dependency alerts, tag-to-commit verification, release checksum | Low to Medium | High | High |
+| TM-010 | Curious or malicious requester | Attacker can make repeated semantically similar requests | Infer private attributes from allow/deny/reduction/timing responses | Privacy leakage without direct payload access | Policy state, subject privacy | Purpose binding, reasoned decisions, rate/anomaly hooks, spec guidance on uniform responses (`policy.mjs`; technical specification section 11) | Local core does not implement a semantic privacy budget or uniform response service | Add requester/subject/purpose privacy budgets, batching, response normalization, and coordinated-client detection in network profiles | Track semantically similar probes and decision distributions without raw prompts | Medium for a future network service | Medium | Medium |
 
 ## Criticality calibration
 
 - **Critical:** remotely reachable compromise with no trusted-user action that exposes an entire real vault, forges production authorization across tenants, or executes arbitrary privileged code. Examples: unauthenticated remote raw-vault dump; remote capability execution as another tenant; release-key compromise that silently ships malicious runtime code.
 - **High:** practical bypass of a core invariant with meaningful private-data or external-action impact. Examples: forged approval issues a valid bundle; recipient/replay bypass executes a granted action twice; raw source content enters a scoped bundle or receipt.
-- **Medium:** targeted integrity, availability, or partial disclosure requiring local access, unusual timing, or a future network deployment. Examples: file-capture race on an unsupported filesystem; redirect loop or stale contract; coordinated log-and-anchor rollback by a local actor.
-- **Low:** noisy or easily reversible failures with no sensitive payload or authority impact. Examples: an unknown redirect path returns the wrong error body; a malformed synthetic fixture causes a local test-only denial; a bounded unauthenticated request causes negligible worker load.
+- **Medium:** targeted integrity, availability, or partial disclosure requiring local access, unusual timing, or a future network deployment. Examples: file-capture race on an unsupported filesystem; coordinated log-and-anchor rollback by a local actor; repeated policy probing that reveals a bounded private attribute.
+- **Low:** noisy or easily reversible failures with no sensitive payload or authority impact. Examples: a malformed synthetic fixture causes a local test-only denial or an invalid protocol object is rejected without exposing protected state.
 
 ## Focus paths for security review
 
 | Path | Why it matters | Related Threat IDs |
 | --- | --- | --- |
-| `packages/local-core/policy.mjs` | Authorization, purpose, approval, reduction, expiry, and receipt-preflight decisions converge here | TM-002, TM-011 |
+| `packages/local-core/policy.mjs` | Authorization, purpose, approval, reduction, expiry, and receipt-preflight decisions converge here | TM-002, TM-010 |
 | `packages/local-core/bundle.mjs` | This is the raw-vault disclosure boundary and authenticated-envelope constructor | TM-001, TM-003, TM-007 |
 | `packages/local-core/authority.mjs` | HMAC key ownership, signing, verification, and zeroing protect bundle authenticity | TM-003, TM-008 |
 | `packages/local-core/consumer.mjs` | Recipient, replay, revocation, capability, handler, and memory-proposal enforcement occur here | TM-003, TM-004, TM-005 |
@@ -185,15 +175,15 @@ flowchart LR
 | `packages/local-core/receipt-log.mjs` | Audit validation, append serialization, replay state, and crash recovery are integrity-critical | TM-005, TM-007 |
 | `packages/local-core/receipt-anchor.mjs` | Anchor authentication is the only local evidence against log-only rollback and rewrite | TM-005, TM-008 |
 | `packages/local-core/canonical.mjs` | Canonical serialization, record identity, and forbidden-material detection affect every signed object | TM-001, TM-003, TM-007 |
-| `public/implementation/context-layer-reference.mjs` | Portable runtime/schema parity prevents downstream fail-open behavior | TM-001, TM-002, TM-007 |
-| `public/implementation/*.schema.json` | Closed object contracts bound extension, transform, receipt, and authority surfaces | TM-001, TM-002, TM-003 |
-| `worker/index.ts` | The public compatibility host must remain content-free, allowlisted, and loop-safe | TM-009 |
-| `.github/workflows/ci.yml` | The public proof-of-work claim depends on reproducible, cross-platform, audited release checks | TM-010 |
+| `protocol/reference/context-layer-reference.mjs` | Portable runtime/schema parity prevents downstream fail-open behavior | TM-001, TM-002, TM-007 |
+| `protocol/schemas/*.schema.json` | Closed object contracts bound extension, transform, receipt, and authority surfaces | TM-001, TM-002, TM-003 |
+| `protocol/fixtures/*.json` | Valid and invalid synthetic examples expose contract drift without real user data | TM-001, TM-002, TM-007 |
+| `.github/workflows/ci.yml` | The public proof-of-work claim depends on reproducible, cross-platform, audited release checks | TM-009 |
 
 ## Quality check
 
-- [x] Covered every discovered runtime entry point: file capture, request, approval, claims, envelope, handler, memory proposal, receipt state, schemas, redirects, and release pipeline.
+- [x] Covered every discovered runtime and contract entry point: file capture, request, approval, claims, envelope, handler, memory proposal, receipt state, schemas, reference runtime, and release pipeline.
 - [x] Represented each trust boundary in at least one abuse path and threat.
-- [x] Separated local runtime, hosted redirect behavior, build/CI, and tests/examples.
+- [x] Separated local runtime, portable protocol artifacts, CI/release, and tests/examples; website and deployment source are outside this repository's scope.
 - [x] Recorded that the assumption-validation questions received no correction before this provisional report.
 - [x] Kept production identity, key custody, remote multi-tenancy, hostile administrator, and real-data use as explicit open questions rather than implied controls.

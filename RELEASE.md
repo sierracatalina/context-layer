@@ -17,12 +17,13 @@ It is not an adopted standard, a production security implementation, or a confor
 
 The release snapshot may include only reviewed repository content:
 
-- Draft specification, implementation guide, architecture, and technical essay
-- Protocol schemas, synthetic fixtures, and reference module
+- Draft specification, implementation guide, architecture, and technical essay under `protocol/spec/`
+- Protocol schemas, synthetic fixtures, and reference module under `protocol/schemas/`, `protocol/fixtures/`, and `protocol/reference/`
 - Local-first core modules and their tests
 - Synthetic demo, deterministic test vectors, and unsubmitted interoperability drafts
-- Reviewed Sierra publication sources and redirect-boundary route tests
 - Public release, security, contribution, and CI metadata
+
+Website application, hosting, and deployment source are intentionally maintained outside this repository and are excluded from the protocol release snapshot.
 
 Generated builds, dependency directories, environment files, browser profiles, screenshots, logs, private drafts, local vault data, credentials, and unrelated project history are excluded.
 
@@ -32,7 +33,7 @@ Before tagging:
 
 1. Install exactly the locked dependencies with `npm ci`.
 2. Run `npm run lint`.
-3. Run `npm test`, which builds the redirect-only Sites worker and runs the route, reference-contract, local-core, receipt-hardening, demo, and proof-vector suites.
+3. Run `npm test`, which runs the repository-boundary, reference-contract, local-core, receipt-hardening, demo, and proof-vector suites.
 4. Confirm the local-core suite is also directly runnable through `npm run test:local-core`.
 5. Run `git diff --check`.
 6. Confirm the candidate tree contains no credential values, private filesystem paths, real personal data, local vault artifacts, or generated output.
@@ -45,7 +46,7 @@ Before tagging:
 2. Confirm GitHub private vulnerability reporting remains enabled.
 3. Require the repository CI check on the candidate commit.
 4. Create the exact `v0.2-draft` tag from that commit and a matching GitHub prerelease that repeats the experimental status and licensing boundary.
-5. Treat deployment of a saved OpenAI Sites version as a separate public-release decision. A repository tag does not implicitly deploy the site.
+5. Do not attach or deploy website assets from the protocol tag; website releases are managed from their separate source location.
 
 ## Source-use status
 
@@ -60,4 +61,4 @@ The exact file boundary and attribution guidance are defined in `LICENSING.md`; 
 - A same-filesystem attacker can coordinate rollback of both a receipt log and its sidecar anchor; strong rollback resistance requires a separate protected checkpoint boundary.
 - No independent conformance or security certification exists.
 - Production source adapters and consumer integrations remain future work; this snapshot includes one narrow local-files adapter and one local-agent consumer for conformance evidence.
-- The public demonstrator may trail the repository while a saved deployment awaits separate approval.
+- Website rendering and deployment behavior are not verified by this repository because their source is intentionally maintained elsewhere.

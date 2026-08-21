@@ -17,7 +17,7 @@ It uses **adapter compatibility** as a precise term:
 
 Adapter compatibility does not imply that an adapter exists in this repository, that two vendors have tested interoperability, or that the Context Layer is part of the external protocol's official specification.
 
-The current repository contains reviewed publication sources, a dependency-free reference runtime, and an experimental single-user local core with synthetic data. Its OpenAI Sites worker is a redirect-only compatibility boundary; the profiles below define the broader implementation target.
+The current repository contains the draft specification, five schemas, a dependency-free reference runtime, and an experimental single-user local core with synthetic data. The profiles below define broader implementation targets; website publication and deployment source are maintained separately.
 
 ## 2. Where the Context Layer fits
 
@@ -127,7 +127,7 @@ This is the recommended first implementation profile because it keeps the trust 
 | A2A | Agent-to-agent task transport | Bundle carried as structured task data or artifact; remote agent bound as recipient | Reference link only | Remote agent retention and onward disclosure must be explicit |
 | Local/cloud models | Context consumers | Prompt or model input assembled only from a scoped bundle | Illustrative runtime references | Provider retention and logging remain part of recipient policy |
 | OpenAI Realtime | Voice or multimodal consumer | WebRTC session receives scoped instructions and context through a backend | Informative profile only; no conforming implementation | Standard API keys must remain server-side and a demo is not hardened production infrastructure |
-| Web UI | Approval and consumption surface | Show bundle provenance, permissions, expiry, actions, and receipts | Reviewed static Sierra publication sources | Static pages do not enforce policy |
+| Web UI | Approval and consumption surface | Show bundle provenance, permissions, expiry, actions, and receipts | Informative profile only; publication UI maintained separately | Static pages do not enforce policy |
 | iOS/mobile | Approval and consumption surface | Native app consumes bundles and short-lived sessions; credentials use platform storage | Not implemented | Never embed provider API keys in an app binary |
 | x402 | Optional payment condition | Request or action can reference a payment requirement and payment receipt | Reference link only | Payment does not grant context permission |
 
@@ -403,7 +403,7 @@ Recommended Context Layer flow:
 7. Session creation, model calls, tools, and any writeback proposals create receipts.
 8. The session and bundle expire together or the earlier expiry wins.
 
-The public Sierra experience is documentation and demonstration, not evidence of a conforming Realtime voice profile. The redirect-only Sites worker neither creates Realtime sessions nor executes a protocol guide. Any future Realtime implementation must add public-user authentication, durable abuse controls, policy-aware tool handlers, explicit consent, and receipt behavior before deployment.
+This repository does not include a conforming Realtime voice profile. Any future Realtime implementation must add public-user authentication, durable abuse controls, policy-aware tool handlers, explicit consent, and receipt behavior before deployment.
 
 ## 8. User interface profiles
 

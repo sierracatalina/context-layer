@@ -43,20 +43,11 @@ This draft specifies:
 - Conformance roles and failure behavior
 - Security and privacy requirements that are specific to context movement
 
-### 2.2 Out of scope
+### 2.2 Protocol boundary
 
-This draft does not define:
+Context Layer governs the context exchange: purpose-bound requests, policy decisions, scoped bundles, receipts, and proposed writeback. It composes with deployment-selected transport, identity, authentication, cryptography, storage, source authorization, and payment systems.
 
-- A network transport, cryptographic suite, identity provider, or user authentication ceremony
-- A universal ontology for every domain
-- A required database, graph engine, vector store, model provider, or UI framework
-- A replacement for source-protocol authorization or terms of service
-- A payment protocol
-- A legal definition of consent or compliance certification
-- An algorithm that guarantees correct redaction, summarization, matching, or policy decisions
-- A consensus system for globally shared memory
-
-Deployments MUST select suitable identity, authorization, encryption, key management, storage, and audit mechanisms for their threat model.
+A conforming deployment MUST preserve source permissions and select identity, encryption, key-management, storage, audit, and redaction controls appropriate to its threat model. Conformance does not imply legal compliance or correct model output.
 
 ## 3. Design goals and invariants
 
@@ -1026,7 +1017,7 @@ As of 2026-08-21, the public project provides:
 - An experimental single-user local core with an AES-256-GCM vault, four-state policy evaluation, HMAC-authenticated bundle envelopes, and an authenticated append-only receipt log
 - One narrow UTF-8 files adapter and one local-agent consumer as conformance evidence
 - Synthetic positive and negative fixtures, a minimized demo, and SHA-bound test vectors
-- Reviewed Sierra publication sources plus a redirect-only OpenAI Sites compatibility worker
+- A reviewed v0.2 technical specification and informative implementation profiles
 - An unsubmitted Nostr interoperability discussion draft
 
 It does **not** currently provide:

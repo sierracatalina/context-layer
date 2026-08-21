@@ -1,121 +1,102 @@
 # Context Layer
 
-**v0.2-draft · experimental · not an adopted standard**
+**v0.2-draft · experimental protocol · open specification and reference implementation**
 
-Context Layer is a working protocol proposal for giving applications and agents the minimum context required for a declared purpose without exposing a user's entire private memory. It models the path from a purpose-bound request through policy, scoped disclosure, action, and receipt.
+Context Layer is a protocol for moving the minimum useful context across applications, models, and agents while keeping authority with the user. Every exchange begins with a declared purpose, passes through policy, produces a recipient-bound scoped bundle, and leaves a minimized receipt.
 
-This repository is the canonical public source for the draft specification, reference artifacts, local-first implementation work, tests, and reviewed public-site source.
+This is the canonical protocol repository. It contains the specification, schemas, reference runtime, local-core proof, threat model, test vectors, and executable tests. Website source and deployment configuration intentionally live outside this repository.
 
-## Status
+## Start here
 
-- `v0.2-draft` is the first public prerelease line and an inspectable proof-of-work snapshot. Draft objects and interfaces may change incompatibly.
-- The reference code demonstrates contract validation and deterministic policy reduction. The local core adds an encrypted vault, authenticated bundle envelopes, anchored receipts, one files adapter, and one local-agent consumer. It is not a production security implementation.
-- `sierracatalina.com` is the canonical public host. The OpenAI Sites worker is a redirect-only compatibility boundary and is deployed only after Sierra's same-origin routes are verified.
-- The hosted site is a synthetic demonstrator and may trail the repository draft while a release is being reviewed.
-- Conformance requires evidence against the declared profile. Passing the repository tests alone is not a security certification.
+- [Draft technical specification](protocol/spec/context-layer-technical-specification.md)
+- [Implementation and interoperability guide](protocol/spec/context-layer-implementation-and-interoperability.md)
+- [Architecture diagram](protocol/spec/context-layer-architecture-diagram.svg)
+- [JSON Schemas](protocol/schemas/)
+- [Dependency-free reference runtime](protocol/reference/context-layer-reference.mjs)
+- [Experimental local core](packages/local-core/)
+- [Threat model](docs/context-layer-threat-model.md)
+- [Executable v0.2 vectors](test-vectors/v0.2/)
 
-## Core invariants
+## Protocol flow
 
-Every conforming profile should preserve these boundaries:
+~~~text
+purpose-bound request
+  -> policy decision
+  -> minimum approved bundle
+  -> capability-bound action
+  -> minimized receipt
+  -> reviewable memory proposal
+~~~
 
-1. **Purpose before access.** A request identifies the requester, recipient, purpose, fields, actions, and retention window before context is evaluated.
-2. **Minimum necessary disclosure.** Policy may allow, reduce, deny, or require approval; it does not silently broaden scope.
-3. **Raw-vault isolation.** External consumers cannot enumerate or resolve private vault objects.
-4. **Recipient binding and expiry.** A scoped bundle is bound to its intended consumer and becomes unusable after its declared lifetime.
-5. **Proposal-only memory writes.** Generated observations do not become durable memory without a distinct proposal and approval path.
-6. **Minimized receipts.** Security-relevant operations leave a traceable record without copying raw private payloads into the receipt log.
-7. **Fail-closed behavior.** Missing identity, ambiguous purpose, invalid scope, expired authorization, or receipt failure cannot produce broader access.
-8. **Native-protocol preservation.** Adapters retain security-relevant identifiers and semantics from the systems they connect.
+The protocol preserves seven core boundaries:
 
-## Quickstart
+1. Purpose is declared before access.
+2. Policy can allow, reduce, require approval, or deny.
+3. Raw-vault material never enters a scoped bundle.
+4. Bundles are bound to a recipient, expiry, and single-use rule.
+5. Consumers receive explicit capabilities rather than ambient authority.
+6. Sensitive operations produce payload-minimized receipts.
+7. New memory enters through a proposal and review path.
+
+## Implemented proof
+
+The v0.2 draft includes:
+
+- Closed JSON Schemas for requests, decisions, bundles, receipts, and memory proposals
+- A dependency-free reference validator and deterministic policy/bundle flow
+- An encrypted single-user local vault
+- Four-state policy evaluation
+- Authenticated scoped-bundle envelopes
+- An append-only receipt log with an authenticated anchor
+- One root-confined UTF-8 files adapter
+- One capability-bound local-agent consumer
+- Synthetic fixtures, executable vectors, and an end-to-end demo
+
+The proof is experimental and is not an adopted standard or a production security certification.
+
+## Run the proof
 
 Requirements:
 
 - Node.js 22.13 or later
 - npm
 
-Install the locked dependencies and run the release checks:
-
-```sh
+~~~sh
 npm ci
 npm run lint
 npm test
-```
-
-`npm test` builds the Cloudflare-compatible redirect worker and then runs the redirect-route, reference-contract, local-core, receipt-hardening, demo, and proof-vector suites.
-
-Start the local development server with:
-
-```sh
-npm run dev
-```
-
-Run the synthetic, minimized local-core demonstration with:
-
-```sh
 npm run demo:local-core
-```
+~~~
 
-The demo uses temporary files and test-only keys, then prints one payload-free JSON summary.
+npm test runs the repository-boundary, public-contract, local-core, receipt-hardening, demo, and proof-vector suites. All fixtures and demos are synthetic.
 
-The archived demonstrator, redirect worker, and tests do not require an API key. This repository does not execute the native Sierra guide or hold its deployment credentials; never place credentials in client code, fixtures, or committed environment files.
-
-## Artifact map
+## Repository map
 
 | Path | Purpose |
 | --- | --- |
-| `public/reference/` | Draft specification, implementation guidance, architecture, and the readable technical essay |
-| `public/implementation/` | Portable schemas, synthetic fixtures, and the dependency-free reference module |
-| `packages/local-core/` | Local-first vault, policy, bundle, and receipt boundary work for the v0.2 implementation line |
-| `worker/` | Redirect-only Sites compatibility boundary with a reviewed path allowlist |
-| `public/` | Reviewed Sierra publication sources, archive assets, metadata, downloads, and machine-readable navigation |
-| `tests/` | Redirect-route, reference-contract, and local-core verification |
-| `examples/` | Runnable synthetic local-core demonstration |
-| `test-vectors/v0.2/` | SHA-bound deterministic protocol and security vectors |
-| `docs/context-layer-threat-model.md` | Provisional repository-grounded threat model for the tested single-user profile |
-| `docs/nostr/` | Unsubmitted Nostr interoperability discussion draft |
-| `.openai/hosting.json` | Non-secret binding to the existing OpenAI Sites project |
+| protocol/spec/ | Draft specification, implementation guide, architecture, and technical essay |
+| protocol/schemas/ | Portable JSON Schemas |
+| protocol/fixtures/ | Valid and invalid synthetic contract fixtures |
+| protocol/reference/ | Dependency-free reference runtime |
+| packages/local-core/ | Experimental vault, policy, bundle, receipt, adapter, and consumer modules |
+| docs/ | Threat model and interoperability drafts |
+| test-vectors/v0.2/ | SHA-bound deterministic protocol/security vectors |
+| examples/ | Minimized executable local-core demonstration |
+| tests/ | Contract, boundary, local-core, receipt, demo, and vector verification |
 
-## Live documentation
+## Public documentation
 
-The current public demonstrator is available at:
-
-- [Context Layer overview](https://sierracatalina.com/context-layer)
-- [Technical essay](https://sierracatalina.com/signal/the-context-layer)
+- [Overview](https://sierracatalina.com/context-layer)
 - [Architecture](https://sierracatalina.com/context-layer/architecture)
-- [Draft specification](https://sierracatalina.com/context-layer/specification)
-- [Implementation guide](https://sierracatalina.com/context-layer/implementation)
-- [Reference code and schemas](https://sierracatalina.com/context-layer/code)
+- [Specification](https://sierracatalina.com/context-layer/specification)
+- [Implementation](https://sierracatalina.com/context-layer/implementation)
+- [Reference code](https://sierracatalina.com/context-layer/code)
+- [Interactive synthetic demo](https://sierracatalina.com/context-layer/demo)
 
-Check the status and version identifier inside each artifact before treating live documentation as matching the repository HEAD.
+The website is a documentation surface. The protocol repository is authoritative for source and versioned proof artifacts.
 
-## Current limits
+## Security and licensing
 
-This project does not currently provide:
+Report vulnerabilities through [GitHub private vulnerability reporting](https://github.com/sierracatalina/context-layer/security/advisories/new); do not post exploit details in a public issue.
 
-- An adopted standard or independent conformance program
-- A production context vault, multi-user identity service, or approval service
-- A mandated canonicalization or cryptographic signature suite
-- Production source adapters or consumer integrations
-- Proof of deletion by already-compromised recipients
-- A security certification, privacy guarantee, or authorization to use real sensitive data
-
-All committed fixtures and walkthroughs must remain synthetic. Production use requires an independent threat model, deployment-specific authentication and authorization, key management, abuse controls, recovery procedures, and security review.
-
-The local receipt sidecar detects rollback only while its authenticated anchor remains intact. Deployments requiring hostile-local-process rollback resistance must store the checkpoint on a separate protected monotonic or compare-and-set boundary.
-
-## Versioning
-
-- Protocol objects carry an explicit draft identifier such as `context-layer/0.2-draft`.
-- The first public proof-of-work snapshot uses the exact `v0.2-draft` tag; package metadata uses the semver-compatible `0.2.0-draft.1` identifier.
-- Draft identifiers are unstable. Do not store production data against a draft without a migration plan.
-- A change that weakens a security invariant or changes a required field is breaking, even when a serializer still accepts the object.
-- The public site and repository may advance independently during review; the artifact's own identifier is authoritative.
-
-See [RELEASE.md](RELEASE.md) for the public prerelease checklist, [CHANGELOG.md](CHANGELOG.md) for release notes, [SECURITY.md](SECURITY.md) for the disclosure process and security boundary, [docs/context-layer-threat-model.md](docs/context-layer-threat-model.md) for the current repository threat model, and [CONTRIBUTING.md](CONTRIBUTING.md) before proposing changes.
-
-## Public source and reuse
-
-The `v0.2-draft` tag publishes experimental proof of work under free and open licenses. Software, schemas, fixtures, tests, and executable examples are available under Apache License 2.0. Specifications, prose documentation, and diagrams are available under Creative Commons Attribution 4.0 International.
-
-See [LICENSING.md](LICENSING.md) for the exact file boundary, attribution guidance, and the controlling license texts. Licensing permits reuse; it does not turn this draft into an adopted standard, production security implementation, or conformance certification.
+Software, schemas, fixtures, tests, and executable examples are licensed under Apache License 2.0. Specifications, prose documentation, and diagrams are licensed under Creative Commons Attribution 4.0 International. See [LICENSING.md](LICENSING.md) for the exact boundary.
