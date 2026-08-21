@@ -1,8 +1,16 @@
 {
-  "name": "context-layer-sites",
-  "version": "0.1.0",
+  "name": "context-layer",
+  "version": "0.2.0-draft.1",
   "private": true,
-  "description": "OpenAI Sites adapter for the verified Context Layer public microsite.",
+  "description": "Draft Context Layer protocol, reference artifacts, and local-first core.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sierracatalina/context-layer.git"
+  },
+  "homepage": "https://sierracatalina.com/context-layer",
+  "bugs": {
+    "url": "https://github.com/sierracatalina/context-layer/issues"
+  },
   "engines": {
     "node": ">=22.13.0"
   },
@@ -10,7 +18,11 @@
     "dev": "node node_modules/vinext/dist/cli.js dev",
     "build": "node node_modules/vinext/dist/cli.js build",
     "start": "node node_modules/vinext/dist/cli.js start",
-    "test": "npm run build && node --test tests/rendered-html.test.mjs tests/reference-implementation.test.mjs",
+    "test": "npm run build && npm run test:contracts && npm run test:local-core && npm run test:proof",
+    "test:contracts": "node --test tests/rendered-html.test.mjs tests/reference-implementation.test.mjs",
+    "test:local-core": "node --test tests/local-core.test.mjs tests/receipt-log-hardening.test.mjs",
+    "test:proof": "node --test tests/local-core-demo.test.mjs tests/test-vectors.test.mjs",
+    "demo:local-core": "node examples/local-core-demo.mjs",
     "lint": "node node_modules/eslint/bin/eslint.js . --ignore-pattern dist --ignore-pattern .next"
   },
   "dependencies": {
