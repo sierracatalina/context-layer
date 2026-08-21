@@ -4,7 +4,7 @@
 | --- | --- |
 | Status | Working Draft - informative companion to the technical specification |
 | Date | 2026-08-12 |
-| Applies to | `context-layer/0.1-draft` |
+| Applies to | `context-layer/0.2-draft` |
 | Primary audience | Application architects, adapter authors, agent developers, mobile and web teams, security reviewers |
 
 ## 1. Purpose
@@ -649,4 +649,3 @@ These limitations are part of the protocol design problem, not reasons to hide t
 - [Agent2Agent Protocol](https://a2a-protocol.org/latest/)
 - [OpenAI Realtime with WebRTC](https://developers.openai.com/api/docs/guides/realtime-webrtc)
 - [x402 documentation](https://docs.x402.org/introduction)
-

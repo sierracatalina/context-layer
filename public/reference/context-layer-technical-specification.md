@@ -1,14 +1,18 @@
 # Context Layer Protocol
 
-## Draft Technical Specification v0.1
+## Draft Technical Specification v0.2
 
 | Field | Value |
 | --- | --- |
 | Status | Working Draft - not an adopted standard |
-| Version identifier | `context-layer/0.1-draft` |
-| Date | 2026-08-12 |
+| Version identifier | `context-layer/0.2-draft` |
+| Date | 2026-08-17 |
 | Editors' target | Reviewable core contract for implementation and interoperability experiments |
 | Canonical local context | [`../agent-navigation-manifest.json`](../agent-navigation-manifest.json) |
+
+## Change log
+
+- 2026.08.17 · v0.2 draft · purpose codes, Lite profile, expires_at unification
 
 ## Abstract
 
@@ -162,7 +166,7 @@ Every top-level object MUST contain:
 
 | Field | Type | Requirement |
 | --- | --- | --- |
-| `spec_version` | string | MUST equal a supported protocol identifier such as `context-layer/0.1-draft` |
+| `spec_version` | string | MUST equal a supported protocol identifier such as `context-layer/0.2-draft` |
 | `type` | string | MUST identify the object type |
 | `id` | string | MUST be unique within the issuing authority |
 | `created_at` | string | MUST be an RFC 3339 timestamp |
@@ -219,7 +223,7 @@ Required fields:
 
 ```json
 {
-  "spec_version": "context-layer/0.1-draft",
+  "spec_version": "context-layer/0.2-draft",
   "type": "source_event",
   "id": "urn:cl:event:evt_1042",
   "created_at": "2026-08-12T14:31:04Z",
@@ -259,7 +263,7 @@ Required fields:
 
 ```json
 {
-  "spec_version": "context-layer/0.1-draft",
+  "spec_version": "context-layer/0.2-draft",
   "type": "context_claim",
   "id": "urn:cl:claim:deadline-1042",
   "created_at": "2026-08-12T14:31:10Z",
@@ -269,7 +273,7 @@ Required fields:
   "object": { "value": "2026-08-14", "datatype": "date" },
   "status": "derived",
   "confidence": 0.93,
-  "validity": { "from": "2026-08-12T14:30:55Z", "until": null },
+  "validity": { "from": "2026-08-12T14:30:55Z", "expires_at": null },
   "provenance_refs": ["urn:cl:event:evt_1042"]
 }
 ```
@@ -285,7 +289,7 @@ Required fields:
 - `subject_ref`
 - `requester`
 - `recipient`
-- `purpose`
+- `purpose_code`
 - `task`
 - `selectors`
 - `requested_actions`
@@ -295,7 +299,7 @@ Required fields:
 
 ```json
 {
-  "spec_version": "context-layer/0.1-draft",
+  "spec_version": "context-layer/0.2-draft",
   "type": "context_request",
   "id": "urn:cl:request:req_701",
   "created_at": "2026-08-12T14:33:00Z",
@@ -310,6 +314,7 @@ Required fields:
     "principal": "urn:model:configured-drafting-model",
     "onward_disclosure": "forbidden"
   },
+  "purpose_code": "draft.response",
   "purpose": "draft a response to the launch-timeline request",
   "task": { "kind": "draft_only", "user_visible": true },
   "selectors": [
@@ -323,7 +328,23 @@ Required fields:
 }
 ```
 
-Free-form purpose text alone is insufficient for high-risk operations. Deployments SHOULD pair it with a controlled purpose code and policy category. A request MUST NOT use wildcards for selectors or actions unless a separate policy explicitly permits that wildcard for the requester and subject.
+`purpose_code` is the normative policy input. Optional `purpose` text is informative and MUST NOT broaden authorization beyond the registered code. A request MUST NOT use wildcards for selectors or actions unless a separate policy explicitly permits that wildcard for the requester and subject.
+
+#### 7.3.1 Purpose code registry
+
+The v0.2 core registry is deliberately small:
+
+| Code | Intended use |
+| --- | --- |
+| `draft.response` | Draft a response without sending it |
+| `summarize.material` | Summarize supplied or authorized material |
+| `retrieve.context` | Retrieve approved context for a declared task |
+| `plan.task` | Produce a plan without executing side effects |
+| `execute.approved_action` | Execute an action already covered by explicit approval |
+| `discover.minimum_reveal` | Evaluate discovery while returning only approved fields |
+| `propose.memory_update` | Submit a proposal for later validation and approval |
+
+Core codes are lowercase dotted names. Deployment extensions MUST use a collision-resistant lowercase namespace beginning with `x.`, for example `x.example.review.contract`. An unknown code MUST be denied unless policy lists the exact code. Implementations MUST NOT authorize a purpose by prefix matching, semantic similarity, or inference from optional `purpose` text.
 
 ### 7.4 `policy_decision`
 
@@ -335,11 +356,14 @@ Required fields:
 - `decision`
 - `policy_snapshot`
 - `granted_selectors`
+- `denied_selectors`
 - `granted_actions`
+- `denied_actions`
 - `transform_requirements`
 - `retention`
+- `onward_disclosure`
 - `receipt_requirement`
-- `valid_until`
+- `expires_at`
 - `reason_codes`
 
 Valid decisions are:
@@ -351,7 +375,7 @@ Valid decisions are:
 
 ```json
 {
-  "spec_version": "context-layer/0.1-draft",
+  "spec_version": "context-layer/0.2-draft",
   "type": "policy_decision",
   "id": "urn:cl:decision:dec_701",
   "created_at": "2026-08-12T14:33:01Z",
@@ -372,7 +396,7 @@ Valid decisions are:
   "transform_requirements": ["redact:confidential-budget", "compress:task-facts"],
   "retention": { "mode": "ephemeral", "max_seconds": 86400 },
   "receipt_requirement": { "level": "operation", "required": true },
-  "valid_until": "2026-08-12T14:38:00Z",
+  "expires_at": "2026-08-12T14:38:00Z",
   "reason_codes": ["PURPOSE_ALLOWED", "SCOPE_REDUCED", "SEND_NOT_APPROVED"]
 }
 ```
@@ -388,6 +412,8 @@ Required fields:
 - `subject_alias`
 - `request_ref`
 - `decision_ref`
+- `recipient`
+- `purpose_code`
 - `issued_at`
 - `expires_at` or `single_use`
 - `context`
@@ -399,7 +425,7 @@ Required fields:
 
 ```json
 {
-  "spec_version": "context-layer/0.1-draft",
+  "spec_version": "context-layer/0.2-draft",
   "type": "scoped_context_bundle",
   "id": "urn:cl:bundle:ctxb_209",
   "created_at": "2026-08-12T14:33:02Z",
@@ -407,6 +433,9 @@ Required fields:
   "subject_alias": "urn:cl:alias:subject-for-req-701",
   "request_ref": "urn:cl:request:req_701",
   "decision_ref": "urn:cl:decision:dec_701",
+  "recipient": "urn:model:configured-drafting-model",
+  "purpose_code": "draft.response",
+  "purpose": "draft a response to the launch-timeline request",
   "issued_at": "2026-08-12T14:33:02Z",
   "expires_at": "2026-08-13T14:33:02Z",
   "context": [
@@ -452,11 +481,11 @@ Required fields:
 - `reveal`
 - `requires_user_approval`
 - `query_budget_state`
-- `valid_until`
+- `expires_at`
 
 ```json
 {
-  "spec_version": "context-layer/0.1-draft",
+  "spec_version": "context-layer/0.2-draft",
   "type": "minimum_reveal_response",
   "id": "urn:cl:discovery-result:mr_88",
   "created_at": "2026-08-12T15:00:00Z",
@@ -469,7 +498,7 @@ Required fields:
   },
   "requires_user_approval": true,
   "query_budget_state": { "remaining": 4, "window_ends_at": "2026-08-12T16:00:00Z" },
-  "valid_until": "2026-08-12T15:15:00Z"
+  "expires_at": "2026-08-12T15:15:00Z"
 }
 ```
 
@@ -489,10 +518,11 @@ Required fields:
 - `submitted_by`
 - `status`
 - `approval_requirement`
+- `expires_at`
 
 ```json
 {
-  "spec_version": "context-layer/0.1-draft",
+  "spec_version": "context-layer/0.2-draft",
   "type": "memory_update_proposal",
   "id": "urn:cl:proposal:mup_17",
   "created_at": "2026-08-12T15:12:00Z",
@@ -510,7 +540,8 @@ Required fields:
   "rationale": "The latest conversation may imply Thursday, but no source was captured.",
   "submitted_by": "urn:agent:reply-drafter",
   "status": "pending_validation",
-  "approval_requirement": ["source_required", "user_confirm"]
+  "approval_requirement": ["source_required", "user_confirm"],
+  "expires_at": "2026-08-13T15:12:00Z"
 }
 ```
 
@@ -537,7 +568,7 @@ Required fields:
 
 ```json
 {
-  "spec_version": "context-layer/0.1-draft",
+  "spec_version": "context-layer/0.2-draft",
   "type": "receipt",
   "id": "urn:cl:receipt:rcpt_812",
   "created_at": "2026-08-12T15:13:02Z",
@@ -626,7 +657,7 @@ The policy engine MUST evaluate at least:
 - Authenticated requester and client instance
 - Subject and delegated authority
 - Recipient and onward-disclosure status
-- Purpose and task class
+- Registered `purpose_code` and task class, plus optional explanatory purpose text
 - Requested selectors and sensitivity labels
 - Requested actions and side-effect class
 - Retention and bundle expiry
@@ -642,7 +673,7 @@ Policy decisions MUST be deterministic with respect to their recorded inputs and
 Policies SHOULD deny by default when:
 
 - Requester identity cannot be verified to the required assurance level
-- Purpose is absent or too broad
+- `purpose_code` is absent, unknown, or not authorized for the requester
 - Recipient is ambiguous
 - Requested scope uses an unauthorized wildcard
 - Consent or approval is missing
@@ -666,6 +697,10 @@ An approval surface MUST show, in user-readable form:
 
 Approval identifiers MUST be single-use or bound to the exact request digest. A changed request MUST invalidate the prior approval.
 
+### 9.4 Writeback isolation
+
+Consumer writeback MUST enter the authority boundary as a `memory_update_proposal`. A Core consumer MUST NOT receive a direct raw-vault mutation capability. Validation, contradiction handling, approval, commit, and the resulting receipt remain distinct authority-side operations. A future companion profile MAY define those authority-side operations, but it MUST preserve proposal-only submission at the consumer boundary.
+
 ## 10. Optional HTTP binding
 
 The Context Layer core is transport-neutral. This section defines an experimental HTTP profile using [HTTP Semantics](https://www.rfc-editor.org/rfc/rfc9110.html).
@@ -678,7 +713,7 @@ The Context Layer core is transport-neutral. This section defines an experimenta
 - Bearer tokens MUST be audience-restricted and least-privilege.
 - Credentials MUST NOT appear in URLs.
 - Mutating requests SHOULD support an `Idempotency-Key` header.
-- Requests MUST include `Context-Layer-Version: 0.1-draft` or negotiate an equivalent version.
+- Requests MUST include `Context-Layer-Version: 0.2-draft` or negotiate an equivalent version.
 - Request and response bodies use `application/vnd.context-layer+json` for this experimental profile.
 
 ### 10.2 Capability document
@@ -706,6 +741,32 @@ This path is an unregistered draft convention. The response should list protocol
 
 These paths are a draft binding, not globally registered endpoints.
 
+The following minimal [OpenAPI 3.1](https://spec.openapis.org/oas/v3.1.0) fragment is informative. It illustrates schema reuse without defining authentication or deployment-specific error policy:
+
+```yaml
+openapi: 3.1.0
+info:
+  title: Context Layer Core Lite
+  version: 0.2-draft
+paths:
+  /context/v1/requests:
+    post:
+      operationId: submitContextRequest
+      requestBody:
+        required: true
+        content:
+          application/vnd.context-layer+json:
+            schema:
+              $ref: https://sierracatalina.com/context-layer/implementation/context-request.schema.json
+      responses:
+        "201":
+          description: Policy decision recorded
+          content:
+            application/vnd.context-layer+json:
+              schema:
+                $ref: https://sierracatalina.com/context-layer/implementation/policy-decision.schema.json
+```
+
 ### 10.4 Status and error behavior
 
 Recommended HTTP statuses:
@@ -729,7 +790,7 @@ Error bodies MUST use a stable machine code and a safe user message. They MUST N
 
 ```json
 {
-  "spec_version": "context-layer/0.1-draft",
+  "spec_version": "context-layer/0.2-draft",
   "type": "error",
   "id": "urn:cl:error:err_44",
   "created_at": "2026-08-12T16:00:00Z",
@@ -739,6 +800,21 @@ Error bodies MUST use a stable machine code and a safe user message. They MUST N
   "retryable": false
 }
 ```
+
+### 10.5 `CL-Core-Lite` profile
+
+`CL-Core-Lite` is the smallest v0.2 implementation profile intended for interoperable experiments. A conforming implementation MUST:
+
+- Validate the v0.2 `context_request`, `policy_decision`, `scoped_context_bundle`, `memory_update_proposal`, and `receipt` contracts
+- Support `allow`, `allow_with_reductions`, `deny`, and `needs_approval`
+- Authorize the exact registered or explicitly extended `purpose_code`; optional purpose text is never an authorization input
+- Use `expires_at` for every expiring protocol object and reject expired objects
+- Bind every decision to the exact policy snapshot and every bundle to its request, decision, and recipient
+- Keep raw vault objects and resolvable vault credentials outside consumer bundles
+- Accept consumer memory writeback only as a proposal
+- Produce the receipts required by the request and decision before reporting success
+
+Lite conformance does not imply production security, adoption as a standard, or conformance with the optional discovery, adapter, signature, or network deployment profiles.
 
 ## 11. Security and privacy requirements
 
@@ -933,7 +1009,7 @@ A test that merely confirms valid JSON is insufficient evidence of policy or pri
 
 Objects carry an explicit `spec_version`. Implementations MUST reject unsupported major versions. A compatible minor version MUST NOT change the meaning of existing required fields or weaken an invariant.
 
-Draft identifiers are unstable. Production data SHOULD NOT be committed to `0.1-draft` schemas without a migration plan.
+Draft identifiers are unstable. Production data SHOULD NOT be committed to `0.2-draft` schemas without a migration plan.
 
 Schema evolution rules:
 
@@ -945,21 +1021,23 @@ Schema evolution rules:
 
 ## 16. Implementation status of this repository
 
-As of 2026-08-13, the public project provides:
+As of 2026-08-17, the public project provides:
 
 - A public editorial site with a deterministic request-to-receipt scenario
 - A progressive architecture explorer with current-world examples
 - A machine navigation manifest and AI-oriented index
 - An optional server-side protocol guide restricted to same-page navigation actions
+- Five Phase 0 v0.2 JSON schemas for requests, decisions, bundles, memory proposals, and receipts
+- A dependency-free reference module with deterministic reduction and validation
+- Synthetic positive and negative fixtures plus basic contract and boundary tests
 
 It does **not** currently provide:
 
 - A production context vault
-- The normative JSON schemas implied by this draft
 - A production policy engine or approval service
 - Cryptographic bundle or receipt verification
 - Real source adapters for the listed external protocols
-- A conformance test suite
+- An independent conformance program or security certification
 - A hardened multi-user network service
 - A completed iOS client
 
@@ -1007,4 +1085,3 @@ The next specification revision needs decisions on:
 - [IPFS privacy and encryption](https://docs.ipfs.tech/concepts/privacy-and-encryption/)
 - [OpenAI Realtime API with WebRTC](https://developers.openai.com/api/docs/guides/realtime-webrtc)
 - [x402 documentation](https://docs.x402.org/introduction)
-
