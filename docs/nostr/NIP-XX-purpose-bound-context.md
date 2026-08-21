@@ -30,6 +30,8 @@ The following terms are used:
 - **Relay:** an untrusted transport and storage intermediary. A relay is not a policy authority and does not perform private matching.
 - **Optional HTTP gateway:** a TLS endpoint that accepts or returns the same encrypted Nostr envelopes. It does not gain raw-vault access merely by being a gateway.
 
+No v0.1 field, approval reference, relay tag, or wrapper construction delegates a reveal to a third party. A future profile may relax the requester-only rule only after it defines an independently testable, issuer-authenticated authorization summary that commits to the third-party recipient and every disclosure bound below. Implementations of this discussion version MUST NOT infer such authority.
+
 ## Scope
 
 This microstandard covers one flow:
@@ -57,6 +59,7 @@ This proposal composes existing Nostr mechanisms rather than redefining them:
 - **NIP-44 v2** supplies versioned encryption. Version 2 is REQUIRED; version 1 and NIP-04 are not part of this profile.
 - **NIP-59** supplies rumors, `kind:13` seals, and `kind:1059` or ephemeral `kind:21059` gift wraps.
 - **NIP-98** MAY authenticate requests to an optional HTTP gateway. It is not the relay protocol, disclosure policy, or encrypted message format.
+- **RFC 8785 JSON Canonicalization Scheme (JCS)** supplies deterministic encoding for the approval commitment.
 
 NIP-90 is explicitly not a dependency.
 
@@ -67,9 +70,10 @@ NIP-90 is explicitly not a dependency.
 3. A result MUST NOT contain raw vault context, private match features, private negative evidence, similarity vectors, rankings, or private match scores.
 4. A reveal MUST contain only fields approved for the exact purpose, recipient, actions, and validity window.
 5. A purpose code is an exact authorization input. Human-readable purpose text MUST NOT broaden it.
-6. Any change to the requester, reveal recipient, purpose code, selectors, requested fields, or requested actions requires a new request and policy decision.
-7. Receipts MUST be minimized and MUST contain `"payload_included": false`.
-8. Missing identity, ambiguous purpose, expired state, replay conflict, missing required approval, or unavailable required receipt/revocation state MUST fail closed.
+6. In v0.1 the reveal recipient MUST equal the requester. No approval reference or custodian assertion may redirect the reveal to another principal.
+7. Any change to the requester, reveal recipient, purpose code, selectors, requested fields, or requested actions requires a new request and policy decision.
+8. Receipts MUST be minimized and MUST contain `"payload_included": false`.
+9. Missing identity, ambiguous purpose, expired state, replay conflict, missing required approval, or unavailable required receipt/revocation state MUST fail closed.
 
 ## Event kinds
 
@@ -139,7 +143,24 @@ Each rumor `content` MUST decode to an object containing:
 
 Identifiers MUST be scoped per relationship or request and MUST NOT be stable subject identifiers. Unknown `purpose_code` values MUST be denied. An implementation MUST NOT authorize a purpose through prefix matching, semantic similarity, or the optional explanatory text.
 
-For every message, the receiver MUST compare the encrypted payload's sender and recipient with the envelope, compare purpose and references with the active request chain, enforce expiry using the rumor time and a documented clock-skew allowance, and reject conflicting duplicates.
+For every message, the receiver MUST compare the encrypted payload's sender and recipient with the envelope, compare purpose and references with the active request chain, enforce expiry against its local clock and the configured bounds below, and reject conflicting duplicates.
+
+### Local-clock freshness and causal acceptance
+
+Rumor and payload times are sender assertions. They MUST be checked against the receiver's local clock and MUST NOT be treated as fresh merely because a relay delivered them. Each implementation MUST configure, for every message type, a positive `max_ttl_seconds` and a non-negative `max_clock_skew_seconds`. A deployment MAY choose stricter values by purpose. Missing or unbounded values are invalid configuration for processing a new reveal or action.
+
+At first processing, let `local_now` be the receiver's current Unix time. The receiver MUST reject a message unless all of these hold:
+
+1. `created_at` and `expires_at` are integer Unix seconds.
+2. `created_at < expires_at`.
+3. `expires_at - created_at <= max_ttl_seconds` for that message type.
+4. `created_at <= local_now + max_clock_skew_seconds`.
+5. `local_now <= expires_at`.
+6. `local_now - created_at <= max_ttl_seconds + max_clock_skew_seconds`.
+
+Clock skew is an acceptance tolerance, not an authorization extension. A new reveal or external action MUST NOT begin when the receiver's local clock is later than the applicable reveal or approval expiry. An exact duplicate received later MAY return a previously stored receipt but MUST NOT repeat processing or a side effect. Seal, gift-wrap, relay-observation, and HTTP-gateway times never replace these checks.
+
+References, not timestamps alone, establish causality. A result MUST reference an already accepted request; a reveal MUST reference the already accepted request and result plus a valid approval commitment; and a receipt MUST reference an already accepted target or its retained terminal tombstone. Within one chain, a child `created_at` plus the configured clock-skew allowance MUST NOT precede its parent's `created_at`; `approved_at` plus that allowance MUST NOT precede the result; reveal `created_at` plus that allowance MUST NOT precede `approved_at`; and receipt `occurred_at` plus that allowance MUST NOT precede the referenced operation or message. A timestamp-consistent message with an unknown or conflicting parent MUST still fail closed.
 
 ## Private request payload
 
@@ -155,6 +176,8 @@ A `TBD_REQUEST` payload adds:
 - `retention_seconds`: requested recipient retention after reveal;
 - `receipt_required`: whether the chain requires receipts;
 - optional opaque query-budget proof understood by the custodian.
+
+The request sender, `requested_reveal_recipient_pubkey`, and any later reveal's `requester_pubkey` and `recipient_pubkey` MUST all be the same key in v0.1. A request that names a different reveal recipient is invalid rather than a delegation request.
 
 The request MUST NOT contain subject records, embeddings, private work history, private messages, private graph edges, vault object references, vault credentials, or any other raw private context.
 
@@ -249,17 +272,48 @@ A `TBD_REVEAL` payload adds:
 
 - `request_event_id` and `result_event_id`;
 - `requester_pubkey` and the already bound direct `recipient_pubkey`;
-- `approval`: a signed-in-reveal summary containing a fresh opaque `ref`, `approved_at`, `expires_at`, recipient, purpose, reveal field names, valid actions, and retention;
+- `approval_expires_at`: the last Unix second covered by the issuer's approval assertion;
+- `approval`: the exact issuer-authenticated authorization summary defined below;
+- `approval_commitment`: the lowercase SHA-256 commitment to that summary, encoded as `sha256:<64 lowercase hex characters>`;
+- `revocation_generation`: the integer revocation counter bound into this reveal, with exact initial value `1` in v0.1;
 - `reveal`: the minimum policy-approved fields and values;
 - `valid_actions`: the exact actions the reveal may support;
 - `retention_seconds`: no longer than the approved request value;
 - `single_use`: whether only one action may consume the reveal;
-- `revocation_generation`: a positive integer beginning at `1`;
 - `receipt_required`;
 - `raw_vault_context_included`: exact value `false`;
 - `private_match_score_included`: exact value `false`.
 
-Every value in `approval` MUST exactly match the corresponding request and reveal value. The reveal expiry MUST be no later than the request, result, and `approval.expires_at` values. A changed recipient, purpose, field set, action set, or retention period requires new approval; it MUST NOT be patched in transit.
+The `approval` object MUST contain exactly these fields and no others:
+
+- `approval_ref`: a fresh opaque identifier scoped to this authorization;
+- `request_event_id` and `result_event_id`;
+- `issuer_pubkey`: the reveal rumor pubkey and `kind:13` seal signer;
+- `requester_pubkey` and `recipient_pubkey`, which MUST be equal in v0.1;
+- `purpose_code`;
+- `reveal_field_names`: a unique, lexicographically sorted list;
+- `valid_actions`: a unique, lexicographically sorted list;
+- `retention_seconds`;
+- `single_use`;
+- `approved_at`;
+- `approval_expires_at`.
+
+`approved_at` and `approval_expires_at` MUST be integer Unix seconds. Their difference MUST be positive and no greater than the `max_ttl_seconds` configured for `TBD_REVEAL`; `approved_at` MUST NOT be later than the receiver's local time plus `max_clock_skew_seconds`, and a new reveal or action MUST NOT be accepted after `approval_expires_at`.
+
+To compute `approval_commitment`, construct an object with exactly these four members:
+
+```json
+{
+  "protocol": "context-layer.nostr/0.1-discussion",
+  "approval": "<the exact approval object>",
+  "reveal": "<the exact reveal object>",
+  "revocation_generation": 1
+}
+```
+
+The placeholders above stand for the actual JSON objects, not strings. Both objects MUST be valid I-JSON without duplicate property names. Canonicalize this four-member input according to RFC 8785 JCS, SHA-256 hash the resulting UTF-8 bytes, and encode the result as `"sha256:"` followed by the 64-character lowercase hexadecimal digest. The `approval_commitment` field itself is not part of the commitment input. Because the exact reveal object and initial generation are included, changing a disclosed value, field name, authorization bound, or initial revocation state invalidates the commitment.
+
+The receiver MUST verify the issuer-signed `kind:13` seal, authenticated NIP-44 layers, rumor identity, exact approval-object keys, and recomputed commitment before trusting the summary. The seal signature and both authenticated-encryption layers bind the rumor containing this summary; this draft does not invent a nested signature. Every approval value MUST exactly match the corresponding request, result, and reveal value. Top-level `approval_expires_at` MUST equal `approval.approval_expires_at`, MUST be greater than `approved_at`, and MUST be no later than the request and result expiries. Reveal `expires_at` MUST be no later than `approval_expires_at`. The keys of `reveal` MUST exactly equal `approval.reveal_field_names`; the top-level action list, retention, and `single_use` value MUST exactly equal the approval summary. `revocation_generation` MUST be an integer in the inclusive range `1` through `4294967295`, MUST equal `1` on every newly approved v0.1 reveal, and MUST match the value in the commitment input. A changed recipient, purpose, field set or value, action set, retention period, single-use rule, expiry, or initial revocation generation requires a new approval and reveal; it MUST NOT be patched in transit.
 
 Synthetic decoded example:
 
@@ -277,10 +331,13 @@ Synthetic decoded example:
   "request_event_id": "abababababababababababababababababababababababababababababababab",
   "result_event_id": "bcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbc",
   "requester_pubkey": "1111111111111111111111111111111111111111111111111111111111111111",
+  "approval_expires_at": 1787307000,
   "approval": {
-    "ref": "approval-opaque-91d2",
-    "approved_at": 1787306500,
-    "expires_at": 1787307000,
+    "approval_ref": "approval-opaque-91d2",
+    "request_event_id": "abababababababababababababababababababababababababababababababab",
+    "result_event_id": "bcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbc",
+    "issuer_pubkey": "2222222222222222222222222222222222222222222222222222222222222222",
+    "requester_pubkey": "1111111111111111111111111111111111111111111111111111111111111111",
     "recipient_pubkey": "1111111111111111111111111111111111111111111111111111111111111111",
     "purpose_code": "discover.minimum_reveal",
     "reveal_field_names": [
@@ -290,8 +347,12 @@ Synthetic decoded example:
     "valid_actions": [
       "contact.reply"
     ],
-    "retention_seconds": 3600
+    "retention_seconds": 3600,
+    "single_use": true,
+    "approved_at": 1787306500,
+    "approval_expires_at": 1787307000
   },
+  "approval_commitment": "sha256:3c96cb23dccd7dc280fdeba7c3aaeee407dd9d3a6bdb37860522a46cddc9b900",
   "reveal": {
     "availability_statement": "Available for one paid prototype engagement in September",
     "reply_route": "reply_to_request"
@@ -319,7 +380,7 @@ A `TBD_RECEIPT` payload adds:
 - `outcome`: one of `success`, `denied`, `expired`, `replayed`, `revoked`, `failed`, or `indeterminate`;
 - `occurred_at`: Unix seconds;
 - `reason_codes`: zero or more non-sensitive categorical codes;
-- `revocation_generation` when a reveal is referenced; non-issuer receipts MUST echo the reveal's generation and MUST NOT advance it;
+- `revocation_generation` when a reveal is referenced; it MUST be an integer from `1` through `4294967295`; only an authenticated revocation from the reveal issuer may advance stored generation, while every other receipt MUST echo the latest issuer-authored generation exactly;
 - optional encrypted `relay_sightings` as defined below;
 - `payload_included`: exact value `false`.
 
@@ -368,10 +429,10 @@ The following checks are REQUIRED before a result, reveal, receipt, or action is
 2. `sender_pubkey` equals the rumor pubkey and seal signer.
 3. `purpose_code` exactly equals the active request's purpose code.
 4. The request, result, and reveal event IDs form one known chain.
-5. The request's `requested_reveal_recipient_pubkey` equals the reveal's direct recipient.
-6. Request, result, approval, and reveal expiries are monotonically non-increasing and still in the future within documented clock skew. A receipt's processing expiry MAY extend beyond the referenced message, but it MUST NOT authorize a new use of expired state.
-7. Causal times satisfy request `created_at` <= result `created_at` <= `approval.approved_at` <= reveal `created_at`; a deployment MUST also reject sender times outside its local freshness window and durations above its published per-message maximum TTL.
-8. The selected reveal fields, actions, and retention are subsets of the request and exactly match the signed-in-reveal approval summary.
+5. The request sender, requester's `requested_reveal_recipient_pubkey`, reveal `requester_pubkey`, reveal direct recipient, payload recipient, and outer `p` value are the same key in v0.1.
+6. Request, result, `approval_expires_at`, and reveal expiries are monotonically non-increasing and satisfy the local-clock and maximum-TTL rules above. A receipt's processing expiry MAY extend beyond the referenced message, but it MUST NOT authorize a new use of expired state.
+7. Every referenced parent was already accepted and the chain satisfies the causal-order rules above; timestamps alone do not create a parent relationship.
+8. The approval object has exactly the defined fields, its commitment recomputes over the exact approval, reveal, and initial `revocation_generation`, its issuer equals the authenticated reveal issuer, and its recipient, purpose, fields, actions, retention, single-use rule, expiry, and initial generation exactly bind the request and reveal.
 9. Every nonce and message ID is fresh for the sender and purpose, or is an idempotent duplicate of the exact same rumor ID.
 
 An outer gift wrap may be re-created or observed on more than one relay. Processing identity is therefore the inner rumor ID, not the outer wrap ID. A different rumor using a previously seen message ID or nonce is a conflict and MUST fail closed.
@@ -401,9 +462,20 @@ Recipients MUST retain a replay record for each accepted inner rumor ID, message
 
 ## Revocation
 
-Revocation uses `TBD_RECEIPT` with `operation: "reveal.revoke"`, `outcome: "revoked"`, the target `reveal_event_id`, the exact purpose and recipient, and a `revocation_generation` greater than the reveal generation and any prior issuer-authored revocation generation. Only the reveal issuer may advance this counter or revoke the reveal in this profile; recipient-authored receipts merely echo the generation they processed.
+Revocation uses `TBD_RECEIPT` with `operation: "reveal.revoke"`, `outcome: "revoked"`, the target `reveal_event_id`, the exact purpose and recipient, and a `revocation_generation` exactly one greater than the latest issuer-authored generation. The value MUST remain in the inclusive integer range `1` through `4294967295`. The receipt's authenticated rumor and `kind:13` seal signer MUST equal the original reveal issuer. Key similarity, a higher untrusted counter, a skipped generation, or a recipient assertion is not authority to revoke.
 
-A recipient MUST reject stale or conflicting generations. Once observed, revocation is terminal and its local tombstone MUST be retained through at least the later of the reveal expiry and its approved retention/action-audit window. Expiry or deletion of the revocation message MUST NOT reactivate the reveal; reinstatement requires a newly approved reveal with a new message and event ID. A revocation prevents future conforming retrieval and use after it is observed; it cannot recall plaintext already disclosed, undo an irreversible side effect, force an untrusted relay to delete a wrap, or prove deletion by a compromised recipient.
+For each reveal, a receiver MUST maintain `issuer_revocation_generation`, initialized to the issuer-authenticated reveal's committed value `1`. Only a valid `reveal.revoke` message from that same issuer may replace it, and the replacement MUST equal the stored value plus one. Any receipt from the requester, recipient, relay gateway, or other principal MUST carry exactly the current issuer-authored generation. A lower, higher, skipped, out-of-range, or missing value is invalid and MUST NOT change stored generation or terminal state. If advancing would exceed `4294967295`, the receiver MUST retain terminal revoked state and MUST NOT authorize another use. These rules prevent an attacker from poisoning revocation state by announcing an arbitrarily high generation.
+
+A recipient MUST reject stale or conflicting issuer generations. Once a valid issuer revocation is observed, revocation is terminal. Let `max_action_duration_seconds` be the largest finite, locally configured duration for any action authorized by the reveal. The local tombstone MUST be retained until at least:
+
+```text
+max(
+  reveal.created_at + reveal.retention_seconds,
+  reveal.expires_at + max_clock_skew_seconds + max_action_duration_seconds
+)
+```
+
+If an authorized action has no finite configured maximum duration, or the receiver cannot durably retain state through that deadline, the tombstone MUST be retained indefinitely or the action MUST fail closed. Expiry or relay deletion of the revocation message MUST NOT reactivate the reveal. After the required tombstone-retention deadline, the reveal's own expired state still cannot authorize new processing. Reinstatement requires a newly approved reveal with a new message and event ID. A revocation prevents future conforming retrieval and use after it is observed; it cannot recall plaintext already disclosed, undo an irreversible side effect, force an untrusted relay to delete a wrap, or prove deletion by a compromised recipient.
 
 Relays are unordered and delivery is not guaranteed. For high-risk or delayed actions, policy SHOULD require a fresh online revocation check with the custodian immediately before use. If that required authority is unavailable, the action MUST fail closed. Public NIP-09 deletion events are not application revocation receipts and SHOULD NOT be used when they would expose recipient or relationship metadata.
 
@@ -469,7 +541,7 @@ Repeated yes/no or coarse-result requests can reconstruct private attributes. Ra
 
 ### Approval and issuer trust
 
-A valid seal proves which Nostr key authored the encrypted message; it does not prove the issuer evaluated policy correctly, obtained meaningful consent, or computed a truthful match. Clients MUST bind trusted custodian keys to subjects out of band and MUST treat the opaque `approval.ref` as a reference, not public proof of consent. The signed-in-reveal approval summary binds scope but does not expose or independently prove the underlying consent record. Key rotation and approval verification need deployment-specific policy.
+A valid seal proves which Nostr key authored the encrypted message; it does not prove the issuer evaluated policy correctly, obtained meaningful consent, or computed a truthful match. Clients MUST bind trusted custodian keys to subjects out of band and MUST treat `approval.approval_ref` and `approval_commitment` as an issuer assertion, not public proof of consent. The exact commitment makes scope tampering detectable but does not expose or independently prove the underlying consent record. Key rotation, subject-controller approval evidence, and delegated approval verification need deployment-specific policy.
 
 ### Context and prompt injection
 
@@ -503,8 +575,12 @@ Open design questions include whether a future profile may support reveal recipi
 ## References
 
 - [NIP-01: Basic protocol flow description](https://github.com/nostr-protocol/nips/blob/master/01.md)
+- [NIP-09: Event Deletion Request](https://github.com/nostr-protocol/nips/blob/master/09.md) (not an application revocation mechanism)
+- [NIP-13: Proof of Work](https://github.com/nostr-protocol/nips/blob/master/13.md) (excluded from the core wrapper profile)
+- [NIP-42: Authentication of clients to relays](https://github.com/nostr-protocol/nips/blob/master/42.md)
 - [NIP-44: Versioned Encrypted Payloads](https://github.com/nostr-protocol/nips/blob/master/44.md)
 - [NIP-59: Gift Wrap](https://github.com/nostr-protocol/nips/blob/master/59.md)
 - [NIP-90: Data Vending Machine](https://github.com/nostr-protocol/nips/blob/master/90.md) (`draft`, `unrecommended`; not a dependency)
 - [NIP-98: HTTP Auth](https://github.com/nostr-protocol/nips/blob/master/98.md) (optional gateway authentication only)
+- [RFC 8785: JSON Canonicalization Scheme](https://www.rfc-editor.org/rfc/rfc8785.html) (approval commitment encoding)
 - [Official Nostr event-kind registry](https://github.com/nostr-protocol/registry-of-kinds)

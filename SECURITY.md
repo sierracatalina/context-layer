@@ -14,7 +14,7 @@ Use GitHub private vulnerability reporting for this repository:
 
 <https://github.com/sierracatalina/context-layer/security/advisories/new>
 
-Private vulnerability reporting must be enabled when the public repository is created. If the private form is unavailable, do not post exploit details, secrets, or affected data publicly; wait for the maintainers to establish a private reporting channel.
+Private vulnerability reporting is enabled for the public repository. If the private form is unavailable, do not post exploit details, secrets, or affected data publicly; wait for the maintainers to restore a private reporting channel.
 
 Include only synthetic evidence and provide:
 
