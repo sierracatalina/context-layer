@@ -1,4 +1,15 @@
-const SPEC_VERSION = "context-layer/0.1-draft";
+const SPEC_VERSION = "context-layer/0.2-draft";
+
+const PURPOSE_CODES = Object.freeze([
+  "draft.response",
+  "summarize.material",
+  "retrieve.context",
+  "plan.task",
+  "execute.approved_action",
+  "discover.minimum_reveal",
+  "propose.memory_update",
+]);
+const PURPOSE_CODE_SET = new Set(PURPOSE_CODES);
 
 const REQUEST_KEYS = new Set([
   "spec_version",
@@ -9,6 +20,7 @@ const REQUEST_KEYS = new Set([
   "subject_ref",
   "requester",
   "recipient",
+  "purpose_code",
   "purpose",
   "task",
   "selectors",
@@ -17,6 +29,88 @@ const REQUEST_KEYS = new Set([
   "receipt_requirement",
   "expires_at",
 ]);
+
+const POLICY_DECISION_KEYS = new Set([
+  "spec_version",
+  "type",
+  "id",
+  "created_at",
+  "issuer",
+  "request_ref",
+  "request_digest",
+  "decision",
+  "policy_snapshot",
+  "granted_selectors",
+  "denied_selectors",
+  "granted_actions",
+  "denied_actions",
+  "transform_requirements",
+  "bundle_instructions",
+  "retention",
+  "onward_disclosure",
+  "receipt_requirement",
+  "receipt_preflight",
+  "approval_verification",
+  "approval_binding",
+  "expires_at",
+  "reason_codes",
+  "integrity",
+]);
+const POLICY_DECISION_REQUIRED_KEYS = [
+  "spec_version",
+  "type",
+  "id",
+  "created_at",
+  "issuer",
+  "request_ref",
+  "decision",
+  "policy_snapshot",
+  "granted_selectors",
+  "denied_selectors",
+  "granted_actions",
+  "denied_actions",
+  "transform_requirements",
+  "retention",
+  "onward_disclosure",
+  "receipt_requirement",
+  "expires_at",
+  "reason_codes",
+];
+
+const MEMORY_UPDATE_PROPOSAL_KEYS = new Set([
+  "spec_version",
+  "type",
+  "id",
+  "created_at",
+  "issuer",
+  "subject_ref",
+  "bundle_ref",
+  "operation",
+  "proposed_claims",
+  "provenance_refs",
+  "rationale",
+  "submitted_by",
+  "status",
+  "approval_requirement",
+  "expires_at",
+  "integrity",
+]);
+const MEMORY_UPDATE_PROPOSAL_REQUIRED_KEYS = [
+  "spec_version",
+  "type",
+  "id",
+  "created_at",
+  "issuer",
+  "subject_ref",
+  "operation",
+  "proposed_claims",
+  "provenance_refs",
+  "rationale",
+  "submitted_by",
+  "status",
+  "approval_requirement",
+  "expires_at",
+];
 
 const SECRET_FIELD_NAMES = new Set([
   "accesstoken",
@@ -30,10 +124,13 @@ const SECRET_FIELD_NAMES = new Set([
   "privatekey",
   "rawpayload",
   "rawsourcepayload",
+  "rawvaultobject",
+  "rawvaultwrite",
   "refreshtoken",
   "secret",
   "sessiontoken",
   "token",
+  "vaultcredential",
 ]);
 
 const SHA256_CONSTANTS = [
@@ -128,7 +225,7 @@ export function validateContextRequest(request) {
     "subject_ref",
     "requester",
     "recipient",
-    "purpose",
+    "purpose_code",
     "task",
     "selectors",
     "requested_actions",
@@ -186,8 +283,14 @@ export function validateContextRequest(request) {
     errors.push("request.recipient.onward_disclosure must be allowed or forbidden");
   }
 
-  if (typeof request.purpose !== "string" || request.purpose.trim().length < 3) {
-    errors.push("request.purpose must contain at least three characters");
+  if (!isPurposeCode(request.purpose_code)) {
+    errors.push("request.purpose_code must be a registered code or a namespaced x. extension");
+  }
+  if (
+    request.purpose !== undefined
+    && (typeof request.purpose !== "string" || request.purpose.trim().length < 3)
+  ) {
+    errors.push("request.purpose must contain at least three characters when present");
   }
 
   if (!isPlainObject(request.task)) {
@@ -261,6 +364,355 @@ export function validateContextRequest(request) {
   return { valid: errors.length === 0, errors };
 }
 
+export function validatePolicyDecision(decision) {
+  const errors = [];
+
+  if (!isPlainObject(decision)) {
+    return { valid: false, errors: ["policy decision must be a JSON object"] };
+  }
+
+  try {
+    assertNoSecretFields(decision, "policy decision");
+  } catch (error) {
+    errors.push(error.message + ": " + error.details.join(", "));
+  }
+
+  rejectUnknownKeys(decision, POLICY_DECISION_KEYS, "decision", errors);
+  for (const key of POLICY_DECISION_REQUIRED_KEYS) {
+    if (!(key in decision)) errors.push("decision." + key + " is required");
+  }
+
+  if (decision.spec_version !== SPEC_VERSION) {
+    errors.push("decision.spec_version must equal " + SPEC_VERSION);
+  }
+  if (decision.type !== "policy_decision") {
+    errors.push("decision.type must equal policy_decision");
+  }
+  if (!isIdentifier(decision.id, "urn:cl:decision:")) {
+    errors.push("decision.id must be a Context Layer decision URN");
+  }
+  if (!isDateTime(decision.created_at)) {
+    errors.push("decision.created_at must be an RFC 3339 date-time");
+  }
+  if (!isDateTime(decision.expires_at)) {
+    errors.push("decision.expires_at must be an RFC 3339 date-time");
+  }
+  if (
+    isDateTime(decision.created_at)
+    && isDateTime(decision.expires_at)
+    && Date.parse(decision.expires_at) <= Date.parse(decision.created_at)
+  ) {
+    errors.push("decision.expires_at must be later than decision.created_at");
+  }
+
+  validateIdentity(decision.issuer, "decision.issuer", ["id"], errors);
+  if (!isIdentifier(decision.request_ref, "urn:cl:request:")) {
+    errors.push("decision.request_ref must be a Context Layer request URN");
+  }
+  if (decision.request_digest !== undefined && !isDigest(decision.request_digest)) {
+    errors.push("decision.request_digest must be a SHA-256 digest when present");
+  }
+  if (!["allow", "allow_with_reductions", "deny", "needs_approval"].includes(decision.decision)) {
+    errors.push("decision.decision is invalid");
+  }
+
+  if (!isPlainObject(decision.policy_snapshot)) {
+    errors.push("decision.policy_snapshot must be an object");
+  } else {
+    rejectUnknownKeys(
+      decision.policy_snapshot,
+      new Set(["version", "digest"]),
+      "decision.policy_snapshot",
+      errors,
+    );
+    if (
+      typeof decision.policy_snapshot.version !== "string"
+      || decision.policy_snapshot.version.length === 0
+    ) {
+      errors.push("decision.policy_snapshot.version is required");
+    }
+    if (!isDigest(decision.policy_snapshot.digest)) {
+      errors.push("decision.policy_snapshot.digest must be a SHA-256 digest");
+    }
+  }
+
+  validateSelectorArray(decision.granted_selectors, "decision.granted_selectors", errors);
+  validateSelectorArray(decision.denied_selectors, "decision.denied_selectors", errors);
+  for (const key of ["granted_actions", "denied_actions", "transform_requirements"]) {
+    if (!isUniqueNameArray(decision[key])) {
+      errors.push("decision." + key + " must be an array of unique names");
+    }
+  }
+  if (
+    decision.bundle_instructions !== undefined
+    && (
+      !Array.isArray(decision.bundle_instructions)
+      || decision.bundle_instructions.length > 32
+      || decision.bundle_instructions.some(function invalidInstruction(instruction) {
+        return typeof instruction !== "string"
+          || instruction.length === 0
+          || instruction.length > 500;
+      })
+      || new Set(decision.bundle_instructions).size !== decision.bundle_instructions.length
+    )
+  ) {
+    errors.push("decision.bundle_instructions must contain unique bounded strings");
+  }
+
+  if (!isPlainObject(decision.retention)) {
+    errors.push("decision.retention must be an object");
+  } else {
+    rejectUnknownKeys(
+      decision.retention,
+      new Set(["mode", "max_seconds"]),
+      "decision.retention",
+      errors,
+    );
+    if (!["ephemeral", "single_use"].includes(decision.retention.mode)) {
+      errors.push("decision.retention.mode must be ephemeral or single_use");
+    }
+    if (
+      !Number.isInteger(decision.retention.max_seconds)
+      || decision.retention.max_seconds < 0
+      || decision.retention.max_seconds > 86400
+    ) {
+      errors.push("decision.retention.max_seconds must be an integer from 0 through 86400");
+    }
+  }
+
+  if (!["allowed", "forbidden"].includes(decision.onward_disclosure)) {
+    errors.push("decision.onward_disclosure must be allowed or forbidden");
+  }
+  validateReceiptRequirement(
+    decision.receipt_requirement,
+    "decision.receipt_requirement",
+    errors,
+  );
+  if (decision.receipt_preflight !== undefined) {
+    if (!isPlainObject(decision.receipt_preflight)) {
+      errors.push("decision.receipt_preflight must be an object when present");
+    } else {
+      rejectUnknownKeys(
+        decision.receipt_preflight,
+        new Set(["required", "status"]),
+        "decision.receipt_preflight",
+        errors,
+      );
+      if (typeof decision.receipt_preflight.required !== "boolean") {
+        errors.push("decision.receipt_preflight.required must be boolean");
+      }
+      if (
+        !["not_required", "available", "unavailable"]
+          .includes(decision.receipt_preflight.status)
+      ) {
+        errors.push("decision.receipt_preflight.status is invalid");
+      }
+    }
+  }
+  if (
+    decision.approval_verification !== undefined
+    && ![
+      "not_required",
+      "not_provided",
+      "binding_invalid",
+      "expired",
+      "scope_incomplete",
+      "verifier_missing",
+      "rejected",
+      "verified",
+    ].includes(decision.approval_verification)
+  ) {
+    errors.push("decision.approval_verification is invalid");
+  }
+  if (decision.approval_binding !== undefined && decision.approval_binding !== null) {
+    if (!isPlainObject(decision.approval_binding)) {
+      errors.push("decision.approval_binding must be null or an object");
+    } else {
+      rejectUnknownKeys(
+        decision.approval_binding,
+        new Set(["approval_ref", "request_digest", "policy_digest", "expires_at"]),
+        "decision.approval_binding",
+        errors,
+      );
+      if (
+        typeof decision.approval_binding.approval_ref !== "string"
+        || decision.approval_binding.approval_ref.length < 3
+      ) {
+        errors.push("decision.approval_binding.approval_ref is required");
+      }
+      for (const key of ["request_digest", "policy_digest"]) {
+        if (!isDigest(decision.approval_binding[key])) {
+          errors.push("decision.approval_binding." + key + " must be a SHA-256 digest");
+        }
+      }
+      if (
+        decision.approval_binding.expires_at !== undefined
+        && !isDateTime(decision.approval_binding.expires_at)
+      ) {
+        errors.push("decision.approval_binding.expires_at must be an RFC 3339 timestamp");
+      }
+    }
+  }
+
+  if (
+    !Array.isArray(decision.reason_codes)
+    || decision.reason_codes.length === 0
+    || !decision.reason_codes.every(isReasonCode)
+    || new Set(decision.reason_codes).size !== decision.reason_codes.length
+  ) {
+    errors.push("decision.reason_codes must contain unique uppercase reason codes");
+  }
+
+  if (["deny", "needs_approval"].includes(decision.decision)) {
+    if (Array.isArray(decision.granted_selectors) && decision.granted_selectors.length > 0) {
+      errors.push("a deny or needs_approval decision cannot grant selectors");
+    }
+    if (Array.isArray(decision.granted_actions) && decision.granted_actions.length > 0) {
+      errors.push("a deny or needs_approval decision cannot grant actions");
+    }
+    if (isPlainObject(decision.retention) && decision.retention.max_seconds !== 0) {
+      errors.push("a deny or needs_approval decision must set retention.max_seconds to 0");
+    }
+  } else if (
+    isPlainObject(decision.retention)
+    && (!Number.isInteger(decision.retention.max_seconds) || decision.retention.max_seconds < 1)
+  ) {
+    errors.push("an allowing decision must set positive retention.max_seconds");
+  }
+
+  if (decision.integrity !== undefined) {
+    validateCanonicalIntegrity(decision, "urn:cl:decision:", "decision", errors);
+  }
+
+  return { valid: errors.length === 0, errors };
+}
+
+export function validateMemoryUpdateProposal(proposal) {
+  const errors = [];
+
+  if (!isPlainObject(proposal)) {
+    return { valid: false, errors: ["memory update proposal must be a JSON object"] };
+  }
+
+  try {
+    assertNoSecretFields(proposal, "memory update proposal");
+  } catch (error) {
+    errors.push(error.message + ": " + error.details.join(", "));
+  }
+
+  rejectUnknownKeys(proposal, MEMORY_UPDATE_PROPOSAL_KEYS, "proposal", errors);
+  for (const key of MEMORY_UPDATE_PROPOSAL_REQUIRED_KEYS) {
+    if (!(key in proposal)) errors.push("proposal." + key + " is required");
+  }
+
+  if (proposal.spec_version !== SPEC_VERSION) {
+    errors.push("proposal.spec_version must equal " + SPEC_VERSION);
+  }
+  if (proposal.type !== "memory_update_proposal") {
+    errors.push("proposal.type must equal memory_update_proposal");
+  }
+  if (!isIdentifier(proposal.id, "urn:cl:proposal:")) {
+    errors.push("proposal.id must be a Context Layer proposal URN");
+  }
+  if (!isDateTime(proposal.created_at)) {
+    errors.push("proposal.created_at must be an RFC 3339 date-time");
+  }
+  if (!isDateTime(proposal.expires_at)) {
+    errors.push("proposal.expires_at must be an RFC 3339 date-time");
+  }
+  if (
+    isDateTime(proposal.created_at)
+    && isDateTime(proposal.expires_at)
+    && Date.parse(proposal.expires_at) <= Date.parse(proposal.created_at)
+  ) {
+    errors.push("proposal.expires_at must be later than proposal.created_at");
+  }
+
+  validateIdentity(proposal.issuer, "proposal.issuer", ["id"], errors);
+  for (const key of ["subject_ref", "submitted_by"]) {
+    if (typeof proposal[key] !== "string" || proposal[key].length < 3) {
+      errors.push("proposal." + key + " must be a stable reference");
+    }
+  }
+  if (
+    proposal.bundle_ref !== undefined
+    && !isIdentifier(proposal.bundle_ref, "urn:cl:bundle:")
+  ) {
+    errors.push("proposal.bundle_ref must be a Context Layer bundle URN when present");
+  }
+  if (!["add", "add_or_contradict", "supersede", "retract"].includes(proposal.operation)) {
+    errors.push("proposal.operation is invalid");
+  }
+
+  if (!Array.isArray(proposal.proposed_claims) || proposal.proposed_claims.length === 0) {
+    errors.push("proposal.proposed_claims must contain at least one claim");
+  } else {
+    proposal.proposed_claims.forEach(function validateProposedClaim(claim, index) {
+      const path = "proposal.proposed_claims[" + index + "]";
+      if (!isPlainObject(claim)) {
+        errors.push(path + " must be an object");
+        return;
+      }
+      rejectUnknownKeys(claim, new Set(["predicate", "object", "confidence"]), path, errors);
+      if (!isName(claim.predicate)) errors.push(path + ".predicate is invalid");
+      if (!isPlainObject(claim.object)) {
+        errors.push(path + ".object must be an object");
+      } else {
+        rejectUnknownKeys(claim.object, new Set(["value", "datatype"]), path + ".object", errors);
+        if (!("value" in claim.object)) errors.push(path + ".object.value is required");
+        if (!isName(claim.object.datatype)) errors.push(path + ".object.datatype is invalid");
+      }
+      if (
+        typeof claim.confidence !== "number"
+        || claim.confidence < 0
+        || claim.confidence > 1
+      ) {
+        errors.push(path + ".confidence must be between zero and one");
+      }
+    });
+  }
+
+  if (
+    !Array.isArray(proposal.provenance_refs)
+    || !proposal.provenance_refs.every(function validReference(reference) {
+      return typeof reference === "string" && reference.length >= 3;
+    })
+    || new Set(proposal.provenance_refs).size !== proposal.provenance_refs.length
+  ) {
+    errors.push("proposal.provenance_refs must be unique stable references");
+  }
+  if (typeof proposal.rationale !== "string" || proposal.rationale.trim().length === 0) {
+    errors.push("proposal.rationale is required");
+  }
+  if (
+    ![
+      "pending_validation",
+      "pending_approval",
+      "approved",
+      "rejected",
+      "committed",
+      "expired",
+    ].includes(proposal.status)
+  ) {
+    errors.push("proposal.status is invalid");
+  }
+  if (!isUniqueNameArray(proposal.approval_requirement)) {
+    errors.push("proposal.approval_requirement must be an array of unique names");
+  }
+  if (
+    ["approved", "committed"].includes(proposal.status)
+    && Array.isArray(proposal.provenance_refs)
+    && proposal.provenance_refs.length === 0
+  ) {
+    errors.push("an approved or committed proposal requires provenance");
+  }
+  if (proposal.integrity !== undefined) {
+    validateCanonicalIntegrity(proposal, "urn:cl:proposal:", "proposal", errors);
+  }
+
+  return { valid: errors.length === 0, errors };
+}
+
 export function decideContextRequest(request, policy) {
   const validation = validateContextRequest(request);
   if (!validation.valid) {
@@ -273,12 +725,14 @@ export function decideContextRequest(request, policy) {
   validatePolicy(policy);
   assertNoSecretFields(policy, "policy");
 
-  const allowedPurposes = new Set(policy.allowed_purposes);
+  const allowedPurposeCodes = new Set(policy.allowed_purpose_codes);
   const allowedSelectors = new Set(policy.allowed_selectors);
   const deniedSelectors = new Set(policy.denied_selectors || []);
   const allowedActions = new Set(policy.allowed_actions);
+  const approvalPurposeCodes = new Set(policy.approval_required_purpose_codes || []);
+  const approvalActions = new Set(policy.approval_required_actions || []);
 
-  const purposeAllowed = allowedPurposes.has(request.purpose);
+  const purposeAllowed = allowedPurposeCodes.has(request.purpose_code);
   const grantedSelectors = request.selectors.filter(function selectorAllowed(selector) {
     return allowedSelectors.has(selector.predicate) && !deniedSelectors.has(selector.predicate);
   });
@@ -302,32 +756,44 @@ export function decideContextRequest(request, policy) {
   }
 
   const deny = reasons.length > 0;
-  const retentionSeconds = deny
+  const approvalRequired = !deny && (
+    approvalPurposeCodes.has(request.purpose_code)
+    || grantedActions.some(function actionRequiresApproval(action) {
+      return approvalActions.has(action);
+    })
+  );
+  const grantBlocked = deny || approvalRequired;
+  const retentionSeconds = grantBlocked
     ? 0
     : Math.min(request.retention.max_seconds, policy.max_retention_seconds);
   const onwardRequested = request.recipient.onward_disclosure === "allowed";
-  const onwardAllowed = Boolean(policy.allow_onward_disclosure) && onwardRequested;
+  const onwardAllowed = !grantBlocked
+    && Boolean(policy.allow_onward_disclosure)
+    && onwardRequested;
 
   if (!deny) {
     if (rejectedSelectors.length > 0) reasons.push("SCOPE_REDUCED");
     if (rejectedActions.length > 0) reasons.push("ACTION_REDUCED");
     if (retentionSeconds < request.retention.max_seconds) reasons.push("RETENTION_REDUCED");
     if (onwardRequested && !onwardAllowed) reasons.push("ONWARD_DISCLOSURE_DENIED");
+    if (approvalRequired) reasons.push("APPROVAL_REQUIRED");
     if (reasons.length === 0) reasons.push("REQUEST_ALLOWED");
   }
 
   const decision = deny
     ? "deny"
-    : reasons.length === 1 && reasons[0] === "REQUEST_ALLOWED"
-      ? "allow"
-      : "allow_with_reductions";
+    : approvalRequired
+      ? "needs_approval"
+      : reasons.length === 1 && reasons[0] === "REQUEST_ALLOWED"
+        ? "allow"
+        : "allow_with_reductions";
   const policyDigest = digestValue(policy);
   const decisionSeed = {
     request_id: request.id,
     policy_digest: policyDigest,
     decision,
-    granted_selectors: deny ? [] : grantedSelectors,
-    granted_actions: deny ? [] : grantedActions,
+    granted_selectors: grantBlocked ? [] : grantedSelectors,
+    granted_actions: grantBlocked ? [] : grantedActions,
     retention_seconds: retentionSeconds,
     onward_disclosure: onwardAllowed,
   };
@@ -344,18 +810,18 @@ export function decideContextRequest(request, policy) {
       version: policy.version,
       digest: policyDigest,
     },
-    granted_selectors: deny ? [] : clone(grantedSelectors),
+    granted_selectors: grantBlocked ? [] : clone(grantedSelectors),
     denied_selectors: clone(deny ? request.selectors : rejectedSelectors),
-    granted_actions: deny ? [] : grantedActions,
+    granted_actions: grantBlocked ? [] : grantedActions,
     denied_actions: deny ? clone(request.requested_actions) : rejectedActions,
-    transform_requirements: deny ? [] : clone(policy.transform_requirements || []),
+    transform_requirements: grantBlocked ? [] : clone(policy.transform_requirements || []),
     retention: {
       mode: request.retention.mode,
       max_seconds: retentionSeconds,
     },
     onward_disclosure: onwardAllowed ? "allowed" : "forbidden",
     receipt_requirement: clone(request.receipt_requirement),
-    valid_until: request.expires_at,
+    expires_at: request.expires_at,
     reason_codes: reasons,
   };
 }
@@ -380,8 +846,13 @@ export function issueScopedBundle(input) {
       validation.errors,
     );
   }
-  if (!isPlainObject(decision) || decision.type !== "policy_decision") {
-    throw new ContextLayerReferenceError("INVALID_POLICY_DECISION", "a policy decision is required");
+  const decisionValidation = validatePolicyDecision(decision);
+  if (!decisionValidation.valid) {
+    throw new ContextLayerReferenceError(
+      "INVALID_POLICY_DECISION",
+      "policy decision failed validation",
+      decisionValidation.errors,
+    );
   }
   if (decision.request_ref !== request.id) {
     throw new ContextLayerReferenceError(
@@ -392,7 +863,13 @@ export function issueScopedBundle(input) {
   if (!["allow", "allow_with_reductions"].includes(decision.decision)) {
     throw new ContextLayerReferenceError(
       "DECISION_DENIED",
-      "a denied request cannot produce a scoped bundle",
+      "a denied or pending-approval request cannot produce a scoped bundle",
+    );
+  }
+  if (Date.parse(decision.expires_at) > Date.parse(request.expires_at)) {
+    throw new ContextLayerReferenceError(
+      "DECISION_EXPIRY_INVALID",
+      "policy decision cannot outlive the supplied request",
     );
   }
   if (!Array.isArray(claims)) {
@@ -494,9 +971,10 @@ export function issueScopedBundle(input) {
     request_ref: request.id,
     decision_ref: decision.id,
     recipient: request.recipient.principal,
-    purpose: request.purpose,
+    purpose_code: request.purpose_code,
+    ...(request.purpose === undefined ? {} : { purpose: request.purpose }),
     issued_at: decision.created_at,
-    expires_at: decision.valid_until,
+    expires_at: decision.expires_at,
     context,
     provenance,
     instructions: [
@@ -633,10 +1111,12 @@ function validatePolicy(policy) {
     "id",
     "version",
     "issuer",
-    "allowed_purposes",
+    "allowed_purpose_codes",
     "allowed_selectors",
     "denied_selectors",
     "allowed_actions",
+    "approval_required_purpose_codes",
+    "approval_required_actions",
     "max_retention_seconds",
     "allow_onward_disclosure",
     "transform_requirements",
@@ -650,11 +1130,26 @@ function validatePolicy(policy) {
   if (typeof policy.issuer !== "string" || policy.issuer.length < 3) {
     errors.push("policy.issuer is required");
   }
-  for (const key of ["allowed_purposes", "allowed_selectors", "allowed_actions"]) {
-    if (!isUniqueStringArray(policy[key])) errors.push("policy." + key + " must be unique strings");
+  if (!isUniquePurposeCodeArray(policy.allowed_purpose_codes)) {
+    errors.push("policy.allowed_purpose_codes must contain unique registered or x. purpose codes");
   }
-  if (policy.denied_selectors !== undefined && !isUniqueStringArray(policy.denied_selectors)) {
-    errors.push("policy.denied_selectors must be unique strings");
+  for (const key of ["allowed_selectors", "allowed_actions"]) {
+    if (!isUniqueNameArray(policy[key])) errors.push("policy." + key + " must be unique names");
+  }
+  if (policy.denied_selectors !== undefined && !isUniqueNameArray(policy.denied_selectors)) {
+    errors.push("policy.denied_selectors must be unique names");
+  }
+  if (
+    policy.approval_required_purpose_codes !== undefined
+    && !isUniquePurposeCodeArray(policy.approval_required_purpose_codes)
+  ) {
+    errors.push("policy.approval_required_purpose_codes must contain unique purpose codes");
+  }
+  if (
+    policy.approval_required_actions !== undefined
+    && !isUniqueNameArray(policy.approval_required_actions)
+  ) {
+    errors.push("policy.approval_required_actions must be unique names");
   }
   if (
     !Number.isInteger(policy.max_retention_seconds)
@@ -668,12 +1163,80 @@ function validatePolicy(policy) {
   }
   if (
     policy.transform_requirements !== undefined
-    && !isUniqueStringArray(policy.transform_requirements)
+    && !isUniqueNameArray(policy.transform_requirements)
   ) {
-    errors.push("policy.transform_requirements must be unique strings");
+    errors.push("policy.transform_requirements must be unique names");
   }
   if (errors.length > 0) {
     throw new ContextLayerReferenceError("INVALID_POLICY", "policy failed validation", errors);
+  }
+}
+
+function validateCanonicalIntegrity(value, idPrefix, path, errors) {
+  const integrity = value.integrity;
+  if (!isPlainObject(integrity)) {
+    errors.push(path + ".integrity must be an object");
+    return;
+  }
+  rejectUnknownKeys(
+    integrity,
+    new Set(["algorithm", "digest"]),
+    path + ".integrity",
+    errors,
+  );
+  if (integrity.algorithm !== "sha-256") {
+    errors.push(path + ".integrity.algorithm must equal sha-256");
+  }
+  if (!isDigest(integrity.digest)) {
+    errors.push(path + ".integrity.digest must be a SHA-256 digest");
+    return;
+  }
+
+  const unsigned = {};
+  for (const [key, entry] of Object.entries(value)) {
+    if (key !== "id" && key !== "integrity") unsigned[key] = entry;
+  }
+  const expectedDigest = digestValue(unsigned);
+  if (integrity.digest !== expectedDigest) {
+    errors.push(path + ".integrity.digest does not match the canonical record");
+  }
+  if (value.id !== idPrefix + expectedDigest.slice("sha256:".length)) {
+    errors.push(path + ".id does not match the canonical record digest");
+  }
+}
+
+function validateSelectorArray(value, path, errors) {
+  if (!Array.isArray(value)) {
+    errors.push(path + " must be an array");
+    return;
+  }
+  const predicates = [];
+  value.forEach(function validateSelector(selector, index) {
+    const selectorPath = path + "[" + index + "]";
+    if (!isPlainObject(selector)) {
+      errors.push(selectorPath + " must be an object");
+      return;
+    }
+    rejectUnknownKeys(selector, new Set(["predicate"]), selectorPath, errors);
+    if (!isName(selector.predicate)) errors.push(selectorPath + ".predicate is invalid");
+    predicates.push(selector.predicate);
+  });
+  if (new Set(predicates).size !== predicates.length) {
+    errors.push(path + " must not contain duplicate predicates");
+  }
+}
+
+function validateReceiptRequirement(value, path, errors) {
+  if (!isPlainObject(value)) {
+    errors.push(path + " must be an object");
+    return;
+  }
+  rejectUnknownKeys(value, new Set(["level", "required"]), path, errors);
+  if (!["none", "decision", "operation"].includes(value.level)) {
+    errors.push(path + ".level is invalid");
+  }
+  if (typeof value.required !== "boolean") {
+    errors.push(path + ".required must be boolean");
   }
 }
 
@@ -722,6 +1285,23 @@ function isName(value) {
     && /^[a-z][a-z0-9]*(?:[._-][a-z0-9]+)*$/.test(value);
 }
 
+function isPurposeCode(value) {
+  return PURPOSE_CODE_SET.has(value)
+    || (
+      typeof value === "string"
+      && /^x\.[a-z0-9]+(?:[._-][a-z0-9]+)*(?:\.[a-z0-9]+(?:[._-][a-z0-9]+)*)+$/.test(value)
+    );
+}
+
+function isReasonCode(value) {
+  return typeof value === "string"
+    && /^[A-Z][A-Z0-9]*(?:_[A-Z0-9]+)*$/.test(value);
+}
+
+function isDigest(value) {
+  return typeof value === "string" && /^sha256:[0-9a-f]{64}$/.test(value);
+}
+
 function isPlainObject(value) {
   if (!value || typeof value !== "object" || Array.isArray(value)) return false;
   const prototype = Object.getPrototypeOf(value);
@@ -734,11 +1314,9 @@ function isUniqueNameArray(value) {
     && new Set(value).size === value.length;
 }
 
-function isUniqueStringArray(value) {
+function isUniquePurposeCodeArray(value) {
   return Array.isArray(value)
-    && value.every(function nonEmptyString(entry) {
-      return typeof entry === "string" && entry.length > 0;
-    })
+    && value.every(isPurposeCode)
     && new Set(value).size === value.length;
 }
 
@@ -854,4 +1432,4 @@ function sha256(text) {
   }).join("");
 }
 
-export { SPEC_VERSION };
+export { PURPOSE_CODES, SPEC_VERSION };
