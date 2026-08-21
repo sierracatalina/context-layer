@@ -261,13 +261,16 @@ The current project contains:
 
 - A public editorial explanation of the problem and proposed layer
 - A deterministic synthetic request-to-receipt walkthrough
-- A progressive architecture explorer that presents one layer at a time
+- A complete protocol architecture map
 - A machine-readable navigation manifest and AI-oriented index
-- An optional server-side guide restricted to same-page protocol navigation
+- Five v0.2 core schemas and a dependency-free reference runtime
+- An experimental encrypted local core with four policy states, authenticated bundle envelopes, and anchored receipts
+- One narrow UTF-8 files adapter, one local-agent consumer, a minimized demo, and executable test vectors
+- A redirect-only compatibility worker that keeps the Sierra site canonical
 
-These artifacts prove that the concepts can be explained and reviewed as one flow. They do not yet prove production security, interoperability, durable storage, cryptographic receipts, policy correctness, or real adapter behavior.
+These artifacts make the current contract and tested single-user profile reviewable as one flow. They do not prove production security, third-party interoperability, managed key custody, hostile-administrator resistance, or independent conformance.
 
-The next implementation milestone should be intentionally smaller than the diagram: define and validate the core objects (`ContextRequest`, `PolicyDecision`, `ScopedContextBundle`, and `Receipt`), implement one local vault, connect one real source adapter and one agent consumer, then prove that raw vault data cannot cross the boundary in conformance tests.
+The next implementation milestone should harden this narrow profile rather than widen the architecture map: stabilize the v0.2 contracts, move key and rollback-anchor custody onto deployment-defined protected boundaries, connect an authenticated real-world source and consumer, and run an independent security review.
 
 ## The practical test
 

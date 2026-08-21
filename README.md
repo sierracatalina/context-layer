@@ -4,7 +4,7 @@
 
 Context Layer is a working protocol proposal for giving applications and agents the minimum context required for a declared purpose without exposing a user's entire private memory. It models the path from a purpose-bound request through policy, scoped disclosure, action, and receipt.
 
-This repository is the canonical public source for the draft specification, reference artifacts, local-first implementation work, tests, and the hosted demonstrator.
+This repository is the canonical public source for the draft specification, reference artifacts, local-first implementation work, tests, and reviewed public-site source.
 
 ## Status
 
@@ -42,7 +42,7 @@ npm run lint
 npm test
 ```
 
-`npm test` builds the Cloudflare-compatible worker and then runs the rendered-route, reference-contract, local-core, receipt-hardening, demo, and proof-vector suites.
+`npm test` builds the Cloudflare-compatible redirect worker and then runs the redirect-route, reference-contract, local-core, receipt-hardening, demo, and proof-vector suites.
 
 Start the local development server with:
 
@@ -58,7 +58,7 @@ npm run demo:local-core
 
 The demo uses temporary files and test-only keys, then prints one payload-free JSON summary.
 
-The static demonstrator and tests do not require an API key. The optional hosted protocol guide reads `OPENAI_API_KEY` only from server-side environment configuration; never place credentials in client code, fixtures, or committed environment files.
+The archived demonstrator, redirect worker, and tests do not require an API key. This repository does not execute the native Sierra guide or hold its deployment credentials; never place credentials in client code, fixtures, or committed environment files.
 
 ## Artifact map
 
@@ -67,11 +67,12 @@ The static demonstrator and tests do not require an API key. The optional hosted
 | `public/reference/` | Draft specification, implementation guidance, architecture, and the readable technical essay |
 | `public/implementation/` | Portable schemas, synthetic fixtures, and the dependency-free reference module |
 | `packages/local-core/` | Local-first vault, policy, bundle, and receipt boundary work for the v0.2 implementation line |
-| `worker/` | Sites redirect allowlist plus retained native document-rendering and guide source |
+| `worker/` | Redirect-only Sites compatibility boundary with a reviewed path allowlist |
 | `public/` | Reviewed Sierra publication sources, archive assets, metadata, downloads, and machine-readable navigation |
-| `tests/` | Rendered-route, reference-contract, and local-core verification |
+| `tests/` | Redirect-route, reference-contract, and local-core verification |
 | `examples/` | Runnable synthetic local-core demonstration |
 | `test-vectors/v0.2/` | SHA-bound deterministic protocol and security vectors |
+| `docs/context-layer-threat-model.md` | Provisional repository-grounded threat model for the tested single-user profile |
 | `docs/nostr/` | Unsubmitted Nostr interoperability discussion draft |
 | `.openai/hosting.json` | Non-secret binding to the existing OpenAI Sites project |
 
@@ -111,7 +112,7 @@ The local receipt sidecar detects rollback only while its authenticated anchor r
 - A change that weakens a security invariant or changes a required field is breaking, even when a serializer still accepts the object.
 - The public site and repository may advance independently during review; the artifact's own identifier is authoritative.
 
-See [RELEASE.md](RELEASE.md) for the public prerelease checklist, [CHANGELOG.md](CHANGELOG.md) for release notes, [SECURITY.md](SECURITY.md) for the disclosure process and security boundary, and [CONTRIBUTING.md](CONTRIBUTING.md) before proposing changes.
+See [RELEASE.md](RELEASE.md) for the public prerelease checklist, [CHANGELOG.md](CHANGELOG.md) for release notes, [SECURITY.md](SECURITY.md) for the disclosure process and security boundary, [docs/context-layer-threat-model.md](docs/context-layer-threat-model.md) for the current repository threat model, and [CONTRIBUTING.md](CONTRIBUTING.md) before proposing changes.
 
 ## Public source and reuse
 

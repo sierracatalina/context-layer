@@ -5,14 +5,14 @@ This file records material changes to the Context Layer working draft and its pu
 ## Unreleased
 
 - Select and add a repository license before inviting reuse or accepting external contributions; the first proof-of-work prerelease remains clearly unlicensed.
-- Create the canonical public GitHub repository and enable private vulnerability reporting.
+- Populate the existing canonical public GitHub repository from the reviewed release commit.
 - Publish the reviewed `v0.2-draft` prerelease only after the full release suite passes.
 
-## 0.2-draft - 2026-08-17
+## 0.2-draft - 2026-08-21
 
 ### Added
 
-- A canonical public release boundary for the specification, implementation guide, hosted demonstrator, schemas, fixtures, reference module, and local-first core work.
+- A canonical public release boundary for the specification, implementation guide, reviewed Sierra publication sources, redirect-only Sites worker, schemas, fixtures, reference module, and local-first core work.
 - Explicit contracts for purpose-bound requests, policy decisions, scoped bundles, proposal-only memory updates, and minimized receipts.
 - Deterministic validation, policy reduction, bundle issuance, secret-field rejection, and receipt-chain test coverage for the reference profile.
 - A phased implementation path from contract fixtures through a local vault, one narrow source adapter, and one agent consumer.
@@ -25,6 +25,7 @@ This file records material changes to the Context Layer working draft and its pu
 - Elevated raw-vault isolation, minimum disclosure, recipient binding, expiry, fail-closed behavior, and native-protocol preservation to release invariants.
 - Kept fixtures synthetic and separated the public demonstrator from claims of production security or standards adoption.
 - Defined private vulnerability reporting and the experimental security boundary in `SECURITY.md`.
+- Enabled GitHub private vulnerability reporting for the canonical public repository.
 - Added regressions for forged capabilities, approval expiry escape, non-monotonic transforms, malformed revocation/preflight responses, receipt rollback, replay races, and raw-vault write fields.
 - Documented the first prerelease as public source and proof of work without implying an open-source license or reuse grant.
 

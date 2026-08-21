@@ -17,7 +17,7 @@ It uses **adapter compatibility** as a precise term:
 
 Adapter compatibility does not imply that an adapter exists in this repository, that two vendors have tested interoperability, or that the Context Layer is part of the external protocol's official specification.
 
-The current repository is a static interactive demonstrator with synthetic data and a local presentation voice server. The profiles below define a target for implementation.
+The current repository contains reviewed publication sources, a dependency-free reference runtime, and an experimental single-user local core with synthetic data. Its OpenAI Sites worker is a redirect-only compatibility boundary; the profiles below define the broader implementation target.
 
 ## 2. Where the Context Layer fits
 
@@ -116,18 +116,18 @@ This is the recommended first implementation profile because it keeps the trust 
 | --- | --- | --- | --- | --- |
 | HTTP + TLS | Network binding | Carry requests, bundles, receipts, and adapter traffic over authenticated HTTPS | Linked as official references; no complete Context Layer API | HTTP transports data but does not supply purpose policy |
 | Email | Source adapter and action target | Message becomes `source_event`; draft/send are separate capabilities | Synthetic email flow only | Mailbox access is broader than permission to disclose every message |
-| Files and browser clips | Source adapters | File metadata and content references become source events | Synthetic examples only | Preserve origin, MIME type, path privacy, and integrity |
-| Audio and voice notes | Source adapter | Media reference plus transcript and confidence | Synthetic examples; separate Realtime voice presentation demo | Transcript is derived data and must retain media provenance |
+| Files and browser clips | Source adapters | File metadata and content references become source events | Narrow local UTF-8 files adapter with synthetic fixtures | Preserve origin, MIME type, path privacy, and integrity |
+| Audio and voice notes | Source adapter | Media reference plus transcript and confidence | Synthetic examples only | Transcript is derived data and must retain media provenance |
 | ActivityPub | Social source and outbound adapter | ActivityStreams object and delivery metadata map to source/provenance; outbound posts require action policy | Reference link only | Federated content is untrusted input and HTML must be sanitized |
 | AT Protocol | Social source and outbound adapter | DID, repo record, CID, Lexicon type, and verification map to source/provenance | Reference link only | Public repositories are not a private vault |
-| Nostr | Signed-event source and discovery channel | Event ID, pubkey, kind, tags, signature, and relay sightings map to source/provenance | Reference link and discovery illustration only | Relay visibility and key custody require separate policy |
+| Nostr | Signed-event source and discovery channel | Event ID, pubkey, kind, tags, signature, and relay sightings map to source/provenance | Reference links plus an unsubmitted interoperability discussion draft | Relay visibility and key custody require separate policy |
 | Matrix | Messaging source and action adapter | Event ID, room, sender, origin timestamp, state relation, and auth context map to source/provenance | Reference link only | Room history and encryption state must not be flattened away |
 | IPFS | Content-addressed reference and artifact transport | CID may identify encrypted/public bundle artifacts or receipt batches | Reference link only | Public IPFS does not make unencrypted content private |
-| MCP | Agent-to-tool/resource bridge | Approved bundles exposed as resources; context requests and actions exposed as tools | Bundle mentions MCP manifests; no production server | MCP authorization does not replace Context Layer purpose policy |
+| MCP | Agent-to-tool/resource bridge | Approved bundles exposed as resources; context requests and actions exposed as tools | One local-agent consumer; no production MCP server | MCP authorization does not replace Context Layer purpose policy |
 | A2A | Agent-to-agent task transport | Bundle carried as structured task data or artifact; remote agent bound as recipient | Reference link only | Remote agent retention and onward disclosure must be explicit |
 | Local/cloud models | Context consumers | Prompt or model input assembled only from a scoped bundle | Illustrative runtime references | Provider retention and logging remain part of recipient policy |
-| OpenAI Realtime | Voice or multimodal consumer | WebRTC session receives scoped instructions and context through a backend | Public site uses browser speech controls; no vault access | Standard API keys must remain server-side and the demo is not hardened production infrastructure |
-| Web UI | Approval and consumption surface | Show bundle provenance, permissions, expiry, actions, and receipts | Multiple static interactive demos exist | Static demos do not enforce policy |
+| OpenAI Realtime | Voice or multimodal consumer | WebRTC session receives scoped instructions and context through a backend | Informative profile only; no conforming implementation | Standard API keys must remain server-side and a demo is not hardened production infrastructure |
+| Web UI | Approval and consumption surface | Show bundle provenance, permissions, expiry, actions, and receipts | Reviewed static Sierra publication sources | Static pages do not enforce policy |
 | iOS/mobile | Approval and consumption surface | Native app consumes bundles and short-lived sessions; credentials use platform storage | Not implemented | Never embed provider API keys in an app binary |
 | x402 | Optional payment condition | Request or action can reference a payment requirement and payment receipt | Reference link only | Payment does not grant context permission |
 
@@ -403,7 +403,7 @@ Recommended Context Layer flow:
 7. Session creation, model calls, tools, and any writeback proposals create receipts.
 8. The session and bundle expire together or the earlier expiry wins.
 
-The public demonstrator uses browser speech controls and an optional server-side protocol guide. It does not connect to a production vault or provide evidence of a conforming Realtime voice profile. Any future Realtime implementation must add public-user authentication, durable abuse controls, policy-aware tool handlers, explicit consent, and receipt behavior before deployment.
+The public Sierra experience is documentation and demonstration, not evidence of a conforming Realtime voice profile. The redirect-only Sites worker neither creates Realtime sessions nor executes a protocol guide. Any future Realtime implementation must add public-user authentication, durable abuse controls, policy-aware tool handlers, explicit consent, and receipt behavior before deployment.
 
 ## 8. User interface profiles
 
@@ -426,10 +426,12 @@ Interfaces must not rely on color alone for policy state.
 
 ### 8.2 Self-assembling UI
 
-A bundle may include surface hints:
+Core `0.2-draft` bundles do not contain `surface_hints`. A separately negotiated UI profile may associate hints with a bundle reference or publish a derived schema:
 
 ```json
 {
+  "profile": "https://example.com/context-layer/ui-hints-v1",
+  "bundle_ref": "urn:cl:bundle:ctxb_209",
   "surface_hints": {
     "data_shapes": ["deadline", "people", "timeline"],
     "preferred_surfaces": ["summary_card", "timeline", "draft_editor"],
@@ -439,7 +441,7 @@ A bundle may include surface hints:
 }
 ```
 
-Surface hints are not executable code. A renderer must map them to trusted components from an allowlisted design system. Generated markup, scripts, and remote component URLs should not be accepted from untrusted bundles.
+Surface hints are not executable code and do not expand the core bundle's authority. A renderer must map them to trusted components from an allowlisted design system. Generated markup, scripts, and remote component URLs should not be accepted from untrusted profiles.
 
 ### 8.3 Web profile
 

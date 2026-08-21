@@ -12,7 +12,7 @@ async function loadWorker() {
   return (await import(workerUrl.href)).default;
 }
 
-test("deployment output contains only the worker entrypoint and hosting metadata", async () => {
+test("deployment output excludes the archived public dossier and keeps worker metadata", async () => {
   const dist = new URL("../dist/", import.meta.url);
   await access(new URL("server/index.js", dist));
   await access(new URL(".openai/hosting.json", dist));
@@ -79,7 +79,7 @@ test("guide requests preserve POST while moving to the native Sierra API", async
   assert.equal(response.headers.get("location"), "https://sierracatalina.com/api/context-layer/guide");
 });
 
-test("the redirect host refuses unsafe page methods and unknown paths", async () => {
+test("the redirect host refuses unsafe page methods and paths outside the reviewed allowlist", async () => {
   const worker = await loadWorker();
   const unsafe = await worker.fetch(new Request("https://context.example/context-layer", {
     method: "POST",
@@ -87,10 +87,23 @@ test("the redirect host refuses unsafe page methods and unknown paths", async ()
   assert.equal(unsafe.status, 405);
   assert.equal(unsafe.headers.get("allow"), "GET, HEAD");
 
-  const unknown = await worker.fetch(new Request("https://context.example/private-notes.txt"), {});
-  assert.equal(unknown.status, 404);
-  assert.equal(unknown.headers.get("cache-control"), "no-store");
-  assert.equal(unknown.headers.get("x-robots-tag"), "noindex, nofollow");
+  const unknownPaths = [
+    "/private-notes.txt",
+    "/context-layer/private-notes.txt",
+    "/context-layer/implementation/unreviewed.json",
+    "/implementation/unreviewed.json",
+    "/context-layer/source/private.md",
+    "/source/private.md",
+    "/context-layer/assets/rogue.js",
+    "/context-layer/demo/assets/rogue.js",
+    "/assets/rogue.js",
+  ];
+  for (const path of unknownPaths) {
+    const unknown = await worker.fetch(new Request(`https://context.example${path}`), {});
+    assert.equal(unknown.status, 404, path);
+    assert.equal(unknown.headers.get("cache-control"), "no-store", path);
+    assert.equal(unknown.headers.get("x-robots-tag"), "noindex, nofollow", path);
+  }
 });
 
 test("source remains a protocol archive while hosting no longer serves a duplicate dossier", async () => {

@@ -41,6 +41,50 @@ const NATIVE_ASSETS = new Set([
   "context-layer-reference.js",
 ]);
 
+const DEMO_ASSETS = new Set([
+  "context-layer-og.svg",
+  "context-layer-responsive.css",
+  "context-layer.css",
+  "context-layer.js",
+]);
+
+const IMPLEMENTATION_FILES = new Set([
+  "context-layer-reference.mjs",
+  "context-request.schema.json",
+  "invalid-memory-update-proposal.json",
+  "invalid-policy-decision.json",
+  "invalid-secret-receipt.json",
+  "memory-update-proposal.schema.json",
+  "policy-decision.schema.json",
+  "receipt.schema.json",
+  "scoped-context-bundle.schema.json",
+  "valid-exchange.json",
+  "valid-memory-update-proposal.json",
+  "valid-policy-decision.json",
+]);
+
+const SOURCE_FILES = new Set([
+  "agent-navigation-manifest.json",
+  "context-layer-blog-post.md",
+  "context-layer-implementation-and-interoperability.md",
+  "context-layer-technical-specification.md",
+]);
+
+const CANONICAL_PATHS = new Set([
+  "/context-layer",
+  "/context-layer/architecture",
+  "/context-layer/code",
+  "/context-layer/demo",
+  "/context-layer/demo/manifest.webmanifest",
+  "/context-layer/downloads/context-layer-architecture.svg",
+  "/context-layer/implementation",
+  "/context-layer/llms.txt",
+  "/context-layer/og.png",
+  "/context-layer/reference/context-layer-architecture-diagram.svg",
+  "/context-layer/specification",
+  "/signal/the-context-layer",
+]);
+
 const SECURITY_HEADERS = {
   "Content-Security-Policy": "default-src 'none'; frame-ancestors 'none'; base-uri 'none'; form-action 'none'",
   "Cross-Origin-Opener-Policy": "same-origin",
@@ -97,22 +141,55 @@ function canonicalPath(pathname: string): string | null {
   const direct = DIRECT_REDIRECTS.get(pathname);
   if (direct) return direct;
 
-  if (pathname.startsWith("/context-layer/")) return pathname;
+  if (CANONICAL_PATHS.has(pathname)) return pathname;
 
-  if (pathname.startsWith("/implementation/")) {
-    return `/context-layer${pathname}`;
+  const implementationPrefix = pathname.startsWith("/context-layer/implementation/")
+    ? "/context-layer/implementation/"
+    : pathname.startsWith("/implementation/")
+      ? "/implementation/"
+      : null;
+  if (implementationPrefix) {
+    const filename = pathname.slice(implementationPrefix.length);
+    return IMPLEMENTATION_FILES.has(filename)
+      ? `/context-layer/implementation/${filename}`
+      : null;
   }
-  if (pathname.startsWith("/downloads/")) {
-    return `/context-layer${pathname}`;
+
+  if (pathname === "/downloads/context-layer-architecture.svg") {
+    return "/context-layer/downloads/context-layer-architecture.svg";
   }
-  if (pathname.startsWith("/source/")) {
-    return `/context-layer${pathname}`;
+
+  const sourcePrefix = pathname.startsWith("/context-layer/source/")
+    ? "/context-layer/source/"
+    : pathname.startsWith("/source/")
+      ? "/source/"
+      : null;
+  if (sourcePrefix) {
+    const filename = pathname.slice(sourcePrefix.length);
+    return SOURCE_FILES.has(filename)
+      ? `/context-layer/source/${filename}`
+      : null;
   }
-  if (pathname.startsWith("/assets/")) {
-    const filename = pathname.slice("/assets/".length);
+
+  const nativeAssetPrefix = pathname.startsWith("/context-layer/assets/")
+    ? "/context-layer/assets/"
+    : pathname.startsWith("/assets/")
+      ? "/assets/"
+      : null;
+  if (nativeAssetPrefix) {
+    const filename = pathname.slice(nativeAssetPrefix.length);
     return NATIVE_ASSETS.has(filename)
       ? `/context-layer/assets/${filename}`
-      : `/context-layer/demo/assets/${filename}`;
+      : DEMO_ASSETS.has(filename)
+        ? `/context-layer/demo/assets/${filename}`
+        : null;
+  }
+
+  if (pathname.startsWith("/context-layer/demo/assets/")) {
+    const filename = pathname.slice("/context-layer/demo/assets/".length);
+    return DEMO_ASSETS.has(filename)
+      ? `/context-layer/demo/assets/${filename}`
+      : null;
   }
 
   return null;
