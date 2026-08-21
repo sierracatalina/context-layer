@@ -1,6 +1,6 @@
 # Contributing
 
-Context Layer is an experimental protocol draft. Focused review of invariants, object contracts, fixtures, threat boundaries, and failure behavior is welcome. Until license and contribution terms are selected, participate through review and issue discussion rather than submitting substantive code or specification patches.
+Context Layer is an experimental protocol draft. Focused review of invariants, object contracts, fixtures, threat boundaries, and failure behavior is welcome. Contributions must follow the software and documentation license boundary in `LICENSING.md`.
 
 ## Before contributing
 
@@ -29,4 +29,4 @@ npm test
 
 ## License status
 
-The first public prerelease is inspectable source and proof of work, not an open-source release or a grant of reuse rights. Substantive external contributions must not be submitted or merged until license and contribution terms are explicit; design review and issue discussion may proceed in the meantime.
+Software contributions are submitted under Apache License 2.0. Specification, prose-documentation, and diagram contributions are submitted under Creative Commons Attribution 4.0 International. By submitting a contribution, the contributor represents that they have the right to provide it under the applicable project license. See `LICENSING.md` before opening a pull request.

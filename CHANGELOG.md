@@ -4,7 +4,7 @@ This file records material changes to the Context Layer working draft and its pu
 
 ## Unreleased
 
-- Select and add a repository license before inviting reuse or accepting external contributions; the first proof-of-work prerelease remains clearly unlicensed.
+- Confirm the dual-license boundary and contribution terms before publishing the first proof-of-work prerelease.
 - Populate the existing canonical public GitHub repository from the reviewed release commit.
 - Publish the reviewed `v0.2-draft` prerelease only after the full release suite passes.
 
@@ -27,7 +27,7 @@ This file records material changes to the Context Layer working draft and its pu
 - Defined private vulnerability reporting and the experimental security boundary in `SECURITY.md`.
 - Enabled GitHub private vulnerability reporting for the canonical public repository.
 - Added regressions for forged capabilities, approval expiry escape, non-monotonic transforms, malformed revocation/preflight responses, receipt rollback, replay races, and raw-vault write fields.
-- Documented the first prerelease as public source and proof of work without implying an open-source license or reuse grant.
+- Licensed software artifacts under Apache-2.0 and specifications, prose documentation, and diagrams under CC BY 4.0 with an explicit file map.
 
 ### Known limitations
 

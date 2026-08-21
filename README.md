@@ -116,6 +116,6 @@ See [RELEASE.md](RELEASE.md) for the public prerelease checklist, [CHANGELOG.md]
 
 ## Public source and reuse
 
-The `v0.2-draft` tag is intended to publish inspectable source and proof of work. No open-source license has been selected or granted, so this repository does not provide permission to copy, modify, redistribute, or create derivative works.
+The `v0.2-draft` tag publishes experimental proof of work under free and open licenses. Software, schemas, fixtures, tests, and executable examples are available under Apache License 2.0. Specifications, prose documentation, and diagrams are available under Creative Commons Attribution 4.0 International.
 
-License selection is a follow-up decision before inviting reuse or accepting external contributions. It does not block publishing the clearly labeled, unlicensed `v0.2-draft` prerelease for review and citation, and the prerelease must not be described as open source.
+See [LICENSING.md](LICENSING.md) for the exact file boundary, attribution guidance, and the controlling license texts. Licensing permits reuse; it does not turn this draft into an adopted standard, production security implementation, or conformance certification.

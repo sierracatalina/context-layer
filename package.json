@@ -1,6 +1,7 @@
 {
   "name": "context-layer",
   "version": "0.2.0-draft.1",
+  "license": "Apache-2.0",
   "private": true,
   "description": "Draft Context Layer protocol, reference artifacts, and local-first core.",
   "repository": {

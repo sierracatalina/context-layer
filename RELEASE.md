@@ -11,7 +11,7 @@ This document defines the release boundary for the first public Context Layer pr
 - A reproducible set of synthetic schemas, fixtures, and tests
 - A prerelease whose contracts may change incompatibly
 
-It is not an adopted standard, a production security implementation, a conformance certification, or an open-source release.
+It is not an adopted standard, a production security implementation, or a conformance certification.
 
 ## Included surface
 
@@ -44,14 +44,14 @@ Before tagging:
 1. Publish only the reviewed clean snapshot to `sierracatalina/context-layer`; do not push unrelated local history.
 2. Confirm GitHub private vulnerability reporting remains enabled.
 3. Require the repository CI check on the candidate commit.
-4. Create the exact `v0.2-draft` tag from that commit and a matching GitHub prerelease that repeats the experimental and unlicensed status.
+4. Create the exact `v0.2-draft` tag from that commit and a matching GitHub prerelease that repeats the experimental status and licensing boundary.
 5. Treat deployment of a saved OpenAI Sites version as a separate public-release decision. A repository tag does not implicitly deploy the site.
 
 ## Source-use status
 
-No open-source license has been selected or granted. Publication makes the source inspectable for proof-of-work review and citation but does not grant permission to copy, modify, redistribute, or create derivative works.
+Software, schemas, fixtures, tests, and executable examples are licensed under Apache License 2.0. Specifications, prose documentation, and diagrams are licensed under Creative Commons Attribution 4.0 International.
 
-License selection is a follow-up before inviting reuse or accepting external contributions. Its absence does not prevent a clearly labeled unlicensed proof-of-work tag, and this prerelease must not be presented as open source.
+The exact file boundary and attribution guidance are defined in `LICENSING.md`; the full controlling terms are in `LICENSE` and `LICENSE-DOCS`. Open licensing permits review and reuse but does not imply protocol adoption, production readiness, certification, or warranty.
 
 ## Known gaps
 
