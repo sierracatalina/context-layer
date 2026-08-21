@@ -174,6 +174,44 @@ test("rendered prose follows the Signal editorial formatting contract", async ()
   }
 });
 
+test("published pages exclude design and rendering instructions", async () => {
+  const worker = await loadWorker();
+  const leakedMetaCopy = /no canvas required|current viewport|page scroll|palette, background|typography without|signal editorial contract|rendered page follows|responsive system map|responsive flows|design legible|download dark SVG|secondary artifact|full-resolution system plate|source (?:&|&amp;) implementation|technical casing/i;
+
+  for (const path of [
+    "/context-layer",
+    "/signal/the-context-layer",
+    "/context-layer/architecture",
+    "/context-layer/specification",
+    "/context-layer/implementation",
+    "/context-layer/code",
+    "/context-layer/legacy/index.html",
+    "/context-layer/ouroboros-architecture-v4-legible.html",
+  ]) {
+    const response = await worker.fetch(new Request("https://context.example" + path), testEnv());
+    assert.equal(response.status, 200, path);
+    const html = await response.text();
+    assert.doesNotMatch(html, leakedMetaCopy, path + " contains leaked metadata or copy");
+    assert.doesNotMatch(visibleText(html), leakedMetaCopy, path + " contains leaked visible copy");
+  }
+});
+
+test("API and APIs retain technical capitalization in published prose", async () => {
+  const worker = await loadWorker();
+  for (const path of [
+    "/signal/the-context-layer",
+    "/context-layer/specification",
+    "/context-layer/implementation",
+  ]) {
+    const response = await worker.fetch(new Request("https://context.example" + path), testEnv());
+    const visible = visibleText(await response.text());
+    assert.doesNotMatch(visible, /\bapis?\b/, path + " lowercases API");
+  }
+
+  const implementation = await worker.fetch(new Request("https://context.example/context-layer/implementation"), testEnv());
+  assert.match(visibleText(await implementation.text()), /HTTP APIs & webhooks/);
+});
+
 test("worker limits the hosted surface to reviewed paths", async () => {
   const worker = await loadWorker();
   const asset = await worker.fetch(new Request("https://context.example/assets/context-layer.js"), testEnv());
