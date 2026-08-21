@@ -123,24 +123,43 @@
       }
     },
     "receipt_requirement": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "level",
-        "required"
-      ],
-      "properties": {
-        "level": {
-          "enum": [
-            "none",
-            "decision",
-            "operation"
-          ]
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "level",
+            "required"
+          ],
+          "properties": {
+            "level": {
+              "const": "none"
+            },
+            "required": {
+              "const": false
+            }
+          }
         },
-        "required": {
-          "type": "boolean"
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "level",
+            "required"
+          ],
+          "properties": {
+            "level": {
+              "enum": [
+                "decision",
+                "operation"
+              ]
+            },
+            "required": {
+              "const": true
+            }
+          }
         }
-      }
+      ]
     },
     "expires_at": {
       "type": "string",

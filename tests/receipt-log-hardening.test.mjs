@@ -16,6 +16,7 @@ import {
   canonicalStringify,
   digestJson,
   finalizeCanonicalRecord,
+  verifyCanonicalRecord,
 } from "../packages/local-core/canonical.mjs";
 import {
   createOperationReceipt,
@@ -94,6 +95,14 @@ function receipt(operation, overrides = {}) {
     clock: () => new Date(BASE_TIME),
     ...overrides,
   });
+}
+
+function refinalizeReceipt(source, mutate) {
+  const unsigned = structuredClone(source);
+  delete unsigned.id;
+  delete unsigned.integrity;
+  mutate(unsigned);
+  return finalizeCanonicalRecord(unsigned, "urn:cl:receipt:");
 }
 
 function logEntry(sequence, previousEntryDigest, operation) {
@@ -216,6 +225,182 @@ test("local receipts declare and enforce payload exclusion", () => {
     () => validateReceipt(forged),
     (error) => error.code === "RECEIPT_PAYLOAD_FORBIDDEN",
   );
+});
+
+test("receipt corrections use optional exact references covered by canonical integrity", () => {
+  const original = receipt("correction.original");
+  assert.equal(Object.hasOwn(original, "supersedes_ref"), false);
+
+  const corrected = receipt("correction.replacement", {
+    supersedesRef: original.id,
+  });
+  assert.equal(corrected.supersedes_ref, original.id);
+  assert.equal(validateReceipt(corrected), true);
+  const { id, integrity, ...unsigned } = corrected;
+  const expectedDigest = digestJson(unsigned);
+  assert.equal(integrity.digest, expectedDigest);
+  assert.equal(id, "urn:cl:receipt:" + expectedDigest.slice("sha256:".length));
+
+  const nullable = receipt("correction.nullable", { supersedesRef: null });
+  assert.equal(Object.hasOwn(nullable, "supersedes_ref"), true);
+  assert.equal(nullable.supersedes_ref, null);
+  assert.equal(validateReceipt(nullable), true);
+
+  const undefinedReference = receipt("correction.undefined", { supersedesRef: undefined });
+  assert.equal(Object.hasOwn(undefinedReference, "supersedes_ref"), false);
+
+  for (const invalidReference of [
+    "urn:cl:decision:not-a-receipt",
+    "urn:cl:receipt:",
+    "urn:cl:receipt:invalid/path",
+    42,
+  ]) {
+    assert.throws(
+      () => receipt("correction.invalid", { supersedesRef: invalidReference }),
+      (error) => error.code === "INVALID_RECEIPT",
+      String(invalidReference),
+    );
+  }
+
+  const canonicalButInvalid = refinalizeReceipt(corrected, (unsignedReceipt) => {
+    unsignedReceipt.supersedes_ref = "urn:cl:decision:not-a-receipt";
+  });
+  assert.equal(verifyCanonicalRecord(canonicalButInvalid, "urn:cl:receipt:"), true);
+  assert.throws(
+    () => validateReceipt(canonicalButInvalid),
+    (error) => error.code === "INVALID_RECEIPT",
+  );
+
+  const tampered = structuredClone(corrected);
+  tampered.supersedes_ref = receipt("correction.other").id;
+  assert.throws(
+    () => validateReceipt(tampered),
+    (error) => error.code === "RECORD_INTEGRITY_MISMATCH",
+  );
+});
+
+test("receipt validation rejects nested metadata and non-string sentinel values", () => {
+  const sentinel = "NESTED_RECEIPT_SENTINEL_MUST_NOT_PERSIST";
+  const forged = refinalizeReceipt(receipt("metadata.nested"), (unsigned) => {
+    unsigned.metadata = {
+      audit: {
+        sentinel,
+      },
+    };
+  });
+  assert.match(canonicalStringify(forged), new RegExp(sentinel));
+  assert.throws(
+    () => validateReceipt(forged),
+    (error) => error.code === "INVALID_RECEIPT",
+  );
+});
+
+test("receipt metadata enforces key, count, string, and length bounds", () => {
+  const maximumMetadata = Object.fromEntries(
+    Array.from({ length: 16 }, (_, index) => ["entry_" + index, "x".repeat(512)]),
+  );
+  const maximum = refinalizeReceipt(receipt("metadata.maximum"), (unsigned) => {
+    unsigned.metadata = maximumMetadata;
+  });
+  assert.equal(validateReceipt(maximum), true);
+
+  const omitted = refinalizeReceipt(receipt("metadata.omitted"), (unsigned) => {
+    delete unsigned.metadata;
+  });
+  assert.equal(validateReceipt(omitted), true);
+
+  const invalidMetadata = [
+    { "Bad Key": "invalid property name" },
+    Object.fromEntries(Array.from({ length: 17 }, (_, index) => ["entry_" + index, "value"])),
+    { empty: "" },
+    { oversized: "x".repeat(513) },
+    { numeric: 42 },
+  ];
+  for (const metadata of invalidMetadata) {
+    const forged = refinalizeReceipt(receipt("metadata.invalid"), (unsigned) => {
+      unsigned.metadata = metadata;
+    });
+    assert.throws(
+      () => validateReceipt(forged),
+      (error) => error.code === "INVALID_RECEIPT",
+      JSON.stringify(metadata),
+    );
+  }
+});
+
+test("receipt validation rejects invalid outcomes, names, lengths, and object references", () => {
+  const mutations = [
+    (unsigned) => { unsigned.outcome = "revoked"; },
+    (unsigned) => { unsigned.operation = "Invalid Operation"; },
+    (unsigned) => { unsigned.actor = "x"; },
+    (unsigned) => { unsigned.issuer.id = "x"; },
+    (unsigned) => { unsigned.user_summary = "x".repeat(501); },
+    (unsigned) => { unsigned.subject_ref = "urn:cl:bundle:not-an-alias"; },
+    (unsigned) => { unsigned.request_ref = "urn:cl:decision:not-a-request"; },
+    (unsigned) => { unsigned.decision_ref = "urn:cl:request:not-a-decision"; },
+    (unsigned) => { unsigned.bundle_ref = "urn:cl:request:not-a-bundle"; },
+    (unsigned) => { delete unsigned.request_ref; },
+  ];
+  for (const mutate of mutations) {
+    const forged = refinalizeReceipt(receipt("schema.invalid"), mutate);
+    assert.throws(
+      () => validateReceipt(forged),
+      (error) => error.code === "INVALID_RECEIPT",
+    );
+  }
+});
+
+test("receipt timestamps require calendar-valid RFC 3339 date-times", () => {
+  const invalidTimestamps = [
+    "2026-08-20T12:00:00",
+    "2026-08-20 12:00:00Z",
+    "2026-08-20T12:00:00+0000",
+    "2026-02-30T12:00:00Z",
+    "2026-08-20T24:00:00Z",
+  ];
+  for (const timestamp of invalidTimestamps) {
+    const forged = refinalizeReceipt(receipt("timestamp.invalid"), (unsigned) => {
+      unsigned.completed_at = timestamp;
+    });
+    assert.throws(
+      () => validateReceipt(forged),
+      (error) => error.code === "INVALID_DATE_TIME",
+      timestamp,
+    );
+  }
+
+  const validOffset = refinalizeReceipt(receipt("timestamp.offset"), (unsigned) => {
+    unsigned.started_at = "2026-08-20T07:00:00-05:00";
+    unsigned.completed_at = "2026-08-20T07:00:00.500-05:00";
+  });
+  assert.equal(validateReceipt(validOffset), true);
+});
+
+test("receipt validation rejects extra top-level, issuer, and integrity keys after canonical finalization", () => {
+  const base = receipt("keys.exact");
+  const forgedRecords = [
+    refinalizeReceipt(base, (unsigned) => {
+      unsigned.debug = "must not be accepted";
+    }),
+    refinalizeReceipt(base, (unsigned) => {
+      unsigned.issuer.key_id = "must-not-be-accepted";
+    }),
+  ];
+  const extraIntegrity = refinalizeReceipt(base, () => undefined);
+  extraIntegrity.integrity.key_id = "must-not-be-accepted";
+  forgedRecords.push(extraIntegrity);
+
+  for (const forged of forgedRecords) {
+    assert.equal(
+      verifyCanonicalRecord(forged, "urn:cl:receipt:"),
+      true,
+      "the forgery must have otherwise-valid canonical identity and integrity",
+    );
+    assert.throws(
+      () => validateReceipt(forged),
+      (error) => error.code === "INVALID_RECEIPT",
+    );
+  }
 });
 
 test("authenticated anchor survives reopen and contains no receipt material", async (t) => {

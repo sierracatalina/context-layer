@@ -66,7 +66,7 @@ A conforming implementation MUST preserve these invariants:
 2. **Purpose-bound requests.** Every disclosure MUST be tied to an authenticated requester, declared purpose, recipient, requested scope, and validity window.
 3. **Reducible scope.** A policy engine MUST be able to grant a strict subset of a request.
 4. **Provenance continuity.** Every disclosed derived claim MUST contain or reference enough provenance to identify its supporting source records within the authority boundary.
-5. **Expiry.** Every scoped bundle MUST have an explicit expiration time or a single-use constraint.
+5. **Expiry.** Every scoped bundle MUST have an explicit expiration time or a single-use constraint. The `CL-Core-Lite` profile requires both a finite `expires_at` and `single_use: true`.
 6. **Non-escalation.** A consumer MUST NOT infer permission for fields, tools, actions, retention, or onward disclosure that are absent from a bundle.
 7. **Proposed writeback.** Agent-generated memory MUST enter as a proposal unless an explicit policy grants automatic commit for that exact proposal class.
 8. **Receipted sensitive operations.** A required receipt path MUST be available before a sensitive operation begins. An implementation MUST NOT report success until its completion receipt is durable.
@@ -182,19 +182,9 @@ This draft uses `application/vnd.context-layer+json` as an experimental media-ty
 
 ### 6.3 Extension fields
 
-Experimental fields MUST use a collision-resistant namespace, for example:
+The five CL-Core-Lite object schemas in this draft are closed: implementations MUST reject unknown top-level fields. Version `0.2-draft` does not define portable `extensions` or `required_extensions` members.
 
-```json
-{
-  "extensions": {
-    "https://example.com/context-layer/calendar-v1": {
-      "timezone": "America/New_York"
-    }
-  }
-}
-```
-
-Consumers MUST ignore unknown optional extensions. They MUST reject an object when an unknown extension is listed in `required_extensions`.
+An experimental profile MAY publish a derived schema with a collision-resistant namespace, but an object using that profile is not a core `0.2-draft` object unless the profile is explicitly negotiated. A future specification revision may define optional and required extension negotiation; implementations MUST NOT silently treat unknown fields as authorized extensions before then.
 
 ### 6.4 Integrity
 
@@ -328,6 +318,8 @@ Required fields:
 }
 ```
 
+In request and decision receipt requirements, `level` and `required` MUST agree: `none` requires `required: false`, while `decision` and `operation` require `required: true`. All other pairings are invalid.
+
 `purpose_code` is the normative policy input. Optional `purpose` text is informative and MUST NOT broaden authorization beyond the registered code. A request MUST NOT use wildcards for selectors or actions unless a separate policy explicitly permits that wildcard for the requester and subject.
 
 #### 7.3.1 Purpose code registry
@@ -384,17 +376,18 @@ Valid decisions are:
   "decision": "allow_with_reductions",
   "policy_snapshot": {
     "version": "personal-policy/42",
-    "digest": "sha256:EXAMPLE"
+    "digest": "sha256:d12c2f24d4cb6a6b45014e3d355ad50a2e1492670635c9c2783e81e3684283bb"
   },
   "granted_selectors": [
     { "predicate": "requested_delivery_date" },
     { "predicate": "requesting_stakeholder" }
   ],
-  "denied_selectors": [{ "classification": "confidential-budget" }],
+  "denied_selectors": [{ "predicate": "confidential-budget" }],
   "granted_actions": ["model.generate_text", "email.create_draft"],
   "denied_actions": ["email.send"],
   "transform_requirements": ["redact:confidential-budget", "compress:task-facts"],
   "retention": { "mode": "ephemeral", "max_seconds": 86400 },
+  "onward_disclosure": "forbidden",
   "receipt_requirement": { "level": "operation", "required": true },
   "expires_at": "2026-08-12T14:38:00Z",
   "reason_codes": ["PURPOSE_ALLOWED", "SCOPE_REDUCED", "SEND_NOT_APPROVED"]
@@ -415,7 +408,8 @@ Required fields:
 - `recipient`
 - `purpose_code`
 - `issued_at`
-- `expires_at` or `single_use`
+- `expires_at`
+- `single_use` with the exact value `true` for `CL-Core-Lite`
 - `context`
 - `provenance`
 - `instructions`
@@ -437,7 +431,8 @@ Required fields:
   "purpose_code": "draft.response",
   "purpose": "draft a response to the launch-timeline request",
   "issued_at": "2026-08-12T14:33:02Z",
-  "expires_at": "2026-08-13T14:33:02Z",
+  "expires_at": "2026-08-12T14:38:00Z",
+  "single_use": true,
   "context": [
     {
       "claim": "The launch timeline was requested by Friday.",
@@ -458,9 +453,11 @@ Required fields:
   "restrictions": {
     "onward_disclosure": "forbidden",
     "memory_write": "proposal_only",
-    "raw_vault_resolution": "forbidden"
+    "raw_vault_resolution": "forbidden",
+    "retention_seconds": 300
   },
   "receipt_contract": {
+    "required": true,
     "required_operations": ["bundle.consume", "model.call", "email.create_draft"]
   }
 }
@@ -582,14 +579,15 @@ Required fields:
   "started_at": "2026-08-12T15:13:01Z",
   "completed_at": "2026-08-12T15:13:02Z",
   "outcome": "success",
-  "policy_snapshot": "sha256:EXAMPLE",
-  "input_digest": "sha256:EXAMPLE_INPUT",
-  "output_digest": "sha256:EXAMPLE_OUTPUT",
-  "user_summary": "Removed confidential budget context before creating the drafting bundle."
+  "policy_snapshot": "sha256:d12c2f24d4cb6a6b45014e3d355ad50a2e1492670635c9c2783e81e3684283bb",
+  "input_digest": "sha256:9236d81bdff6b52fd2a51b455332f2454feff22544471d57bd1e928498cb56b7",
+  "output_digest": "sha256:64983d082c66338e0231cca68110160043e79ef13f792c1ff6c043846fedea09",
+  "user_summary": "Removed confidential budget context before creating the drafting bundle.",
+  "payload_included": false
 }
 ```
 
-Receipts MUST NOT contain secrets, raw authorization headers, model API keys, full private prompts, or raw source payloads. A correction MUST be represented by a new receipt that references and supersedes the prior record.
+Receipts MUST NOT contain secrets, raw authorization headers, model API keys, full private prompts, or raw source payloads. The receipt contract exposes an optional nullable `supersedes_ref` field. A correction MUST be represented by a new receipt with `supersedes_ref` set to the exact receipt URN of the prior record. A non-correction receipt MAY omit `supersedes_ref` or set it to `null`.
 
 ## 8. Protocol lifecycles
 
@@ -808,7 +806,7 @@ Error bodies MUST use a stable machine code and a safe user message. They MUST N
 - Validate the v0.2 `context_request`, `policy_decision`, `scoped_context_bundle`, `memory_update_proposal`, and `receipt` contracts
 - Support `allow`, `allow_with_reductions`, `deny`, and `needs_approval`
 - Authorize the exact registered or explicitly extended `purpose_code`; optional purpose text is never an authorization input
-- Use `expires_at` for every expiring protocol object and reject expired objects
+- Require every scoped bundle to carry a finite `expires_at` and `single_use: true`, and reject expired or replayed bundles
 - Bind every decision to the exact policy snapshot and every bundle to its request, decision, and recipient
 - Keep raw vault objects and resolvable vault credentials outside consumer bundles
 - Accept consumer memory writeback only as a proposal
@@ -1021,27 +1019,27 @@ Schema evolution rules:
 
 ## 16. Implementation status of this repository
 
-As of 2026-08-17, the public project provides:
+As of 2026-08-21, the public project provides:
 
-- A public editorial site with a deterministic request-to-receipt scenario
-- A progressive architecture explorer with current-world examples
-- A machine navigation manifest and AI-oriented index
-- An optional server-side protocol guide restricted to same-page navigation actions
-- Five Phase 0 v0.2 JSON schemas for requests, decisions, bundles, memory proposals, and receipts
-- A dependency-free reference module with deterministic reduction and validation
-- Synthetic positive and negative fixtures plus basic contract and boundary tests
+- Five v0.2 JSON schemas for requests, decisions, bundles, memory proposals, and receipts
+- A dependency-free reference module with deterministic reduction, validation, transforms, and minimized receipts
+- An experimental single-user local core with an AES-256-GCM vault, four-state policy evaluation, HMAC-authenticated bundle envelopes, and an authenticated append-only receipt log
+- One narrow UTF-8 files adapter and one local-agent consumer as conformance evidence
+- Synthetic positive and negative fixtures, a minimized demo, and SHA-bound test vectors
+- Reviewed Sierra publication sources plus a redirect-only OpenAI Sites compatibility worker
+- An unsubmitted Nostr interoperability discussion draft
 
 It does **not** currently provide:
 
 - A production context vault
 - A production policy engine or approval service
-- Cryptographic bundle or receipt verification
-- Real source adapters for the listed external protocols
+- A portable third-party signature suite, managed key custody, or hostile-administrator protection
+- Production source adapters or consumer integrations for the listed external protocols
 - An independent conformance program or security certification
 - A hardened multi-user network service
 - A completed iOS client
 
-The HTML demo JSON is illustrative and MUST NOT be treated as protocol-conformant production data.
+The local HMAC envelope and receipt anchor demonstrate integrity inside the tested single-user profile; they are not portable signatures or a hardware-rooted audit system. The files adapter, local consumer, and HTML demo use synthetic data and MUST NOT be treated as production integrations.
 
 ## 17. Open design questions
 

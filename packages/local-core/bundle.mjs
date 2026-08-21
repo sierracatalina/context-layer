@@ -121,7 +121,7 @@ export async function issueScopedBundle({
     recipient,
     purpose_code: requiredString(request.purpose_code, "request.purpose_code"),
     ...(Object.hasOwn(request, "purpose") ? { purpose: cloneJson(request.purpose) } : {}),
-    task: cloneJson(request.task),
+    task: normalizeTask(request.task),
     issued_at: issuedAt,
     expires_at: new Date(expiry).toISOString(),
     single_use: true,
@@ -219,6 +219,7 @@ export function validateScopedBundle(bundle, {
   ) {
     fail("INVALID_BUNDLE_PURPOSE", "bundle purpose must be an informative string when present");
   }
+  normalizeTask(bundle.task);
   if (bundle.single_use !== true) fail("INVALID_BUNDLE", "local-core bundles must be single use");
   if (
     bundle.restrictions?.raw_vault_resolution !== "forbidden"
@@ -309,16 +310,23 @@ async function requireReceiptPreflight(receiptStore) {
 }
 
 function parseTransforms(values) {
+  if (
+    !Array.isArray(values)
+    || values.length > 64
+    || new Set(values).size !== values.length
+  ) {
+    fail("UNSUPPORTED_TRANSFORM", "decision transform requirements must be a unique array of at most 64 entries");
+  }
   const transforms = {
     redacted: new Set(),
     truncation: new Map(),
     compressTaskFacts: false,
   };
-  for (const value of uniqueStrings(values, "decision.transform_requirements")) {
+  for (const value of values) {
     let match;
-    if ((match = /^redact:([a-zA-Z0-9_.-]+)$/.exec(value))) {
+    if ((match = /^redact:([a-z][a-z0-9]*(?:[._-][a-z0-9]+)*)$/.exec(value))) {
       transforms.redacted.add(match[1]);
-    } else if ((match = /^truncate:([a-zA-Z0-9_.-]+):([1-9][0-9]*)$/.exec(value))) {
+    } else if ((match = /^truncate:([a-z][a-z0-9]*(?:[._-][a-z0-9]+)*):([1-9][0-9]*)$/.exec(value))) {
       const requestedLimit = Number(match[2]);
       const currentLimit = transforms.truncation.get(match[1]);
       transforms.truncation.set(
@@ -360,6 +368,27 @@ function normalizeRecipient(recipient) {
   requirePlainObject(recipient, "request.recipient");
   requiredString(recipient.onward_disclosure, "request.recipient.onward_disclosure");
   return requiredString(recipient.principal, "request.recipient.principal");
+}
+
+function normalizeTask(task) {
+  requirePlainObject(task, "task");
+  const keys = Object.keys(task);
+  if (
+    keys.length !== 2
+    || !keys.includes("kind")
+    || !keys.includes("user_visible")
+    || !/^[a-z][a-z0-9]*(?:[._-][a-z0-9]+)*$/.test(task.kind)
+    || typeof task.user_visible !== "boolean"
+  ) {
+    fail(
+      "INVALID_TASK",
+      "task must contain only a valid kind and boolean user_visible field",
+    );
+  }
+  return {
+    kind: task.kind,
+    user_visible: task.user_visible,
+  };
 }
 
 function requireSigningAuthority(authority) {

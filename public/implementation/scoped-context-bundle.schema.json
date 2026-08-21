@@ -18,6 +18,7 @@
     "purpose_code",
     "issued_at",
     "expires_at",
+    "single_use",
     "context",
     "provenance",
     "instructions",

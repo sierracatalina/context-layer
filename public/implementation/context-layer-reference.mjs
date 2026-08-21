@@ -255,14 +255,18 @@ export function validateContextRequest(request) {
   if (
     isDateTime(request.created_at)
     && isDateTime(request.expires_at)
-    && Date.parse(request.expires_at) <= Date.parse(request.created_at)
+    && dateTimeToMilliseconds(request.expires_at) <= dateTimeToMilliseconds(request.created_at)
   ) {
     errors.push("request.expires_at must be later than request.created_at");
   }
 
   validateIdentity(request.issuer, "request.issuer", ["id"], errors);
-  if (typeof request.subject_ref !== "string" || request.subject_ref.length < 3) {
-    errors.push("request.subject_ref must be a non-empty reference");
+  if (
+    typeof request.subject_ref !== "string"
+    || request.subject_ref.length < 3
+    || request.subject_ref.length > 512
+  ) {
+    errors.push("request.subject_ref must contain from 3 through 512 characters");
   }
   validateIdentity(
     request.requester,
@@ -288,17 +292,21 @@ export function validateContextRequest(request) {
   }
   if (
     request.purpose !== undefined
-    && (typeof request.purpose !== "string" || request.purpose.trim().length < 3)
+    && (
+      typeof request.purpose !== "string"
+      || request.purpose.length < 3
+      || request.purpose.length > 240
+    )
   ) {
-    errors.push("request.purpose must contain at least three characters when present");
+    errors.push("request.purpose must contain from 3 through 240 characters when present");
   }
 
   if (!isPlainObject(request.task)) {
     errors.push("request.task must be an object");
   } else {
     rejectUnknownKeys(request.task, new Set(["kind", "user_visible"]), "request.task", errors);
-    if (typeof request.task.kind !== "string" || request.task.kind.length === 0) {
-      errors.push("request.task.kind is required");
+    if (!isName(request.task.kind)) {
+      errors.push("request.task.kind must be a stable name");
     }
     if (typeof request.task.user_visible !== "boolean") {
       errors.push("request.task.user_visible must be boolean");
@@ -308,6 +316,9 @@ export function validateContextRequest(request) {
   if (!Array.isArray(request.selectors) || request.selectors.length === 0) {
     errors.push("request.selectors must contain at least one selector");
   } else {
+    if (request.selectors.length > 64) {
+      errors.push("request.selectors must contain no more than 64 selectors");
+    }
     const predicates = [];
     request.selectors.forEach(function validateSelector(selector, index) {
       const path = "request.selectors[" + index + "]";
@@ -324,8 +335,8 @@ export function validateContextRequest(request) {
     }
   }
 
-  if (!isUniqueNameArray(request.requested_actions)) {
-    errors.push("request.requested_actions must be an array of unique action names");
+  if (!isUniqueNameArray(request.requested_actions) || request.requested_actions.length > 64) {
+    errors.push("request.requested_actions must contain no more than 64 unique action names");
   }
 
   if (!isPlainObject(request.retention)) {
@@ -358,6 +369,18 @@ export function validateContextRequest(request) {
     }
     if (typeof request.receipt_requirement.required !== "boolean") {
       errors.push("request.receipt_requirement.required must be boolean");
+    }
+    if (
+      typeof request.receipt_requirement.required === "boolean"
+      && ["none", "decision", "operation"].includes(request.receipt_requirement.level)
+      && (
+        (request.receipt_requirement.level === "none"
+          && request.receipt_requirement.required !== false)
+        || (request.receipt_requirement.level !== "none"
+          && request.receipt_requirement.required !== true)
+      )
+    ) {
+      errors.push("request.receipt_requirement level and required must form a coherent pair");
     }
   }
 
@@ -400,7 +423,7 @@ export function validatePolicyDecision(decision) {
   if (
     isDateTime(decision.created_at)
     && isDateTime(decision.expires_at)
-    && Date.parse(decision.expires_at) <= Date.parse(decision.created_at)
+    && dateTimeToMilliseconds(decision.expires_at) <= dateTimeToMilliseconds(decision.created_at)
   ) {
     errors.push("decision.expires_at must be later than decision.created_at");
   }
@@ -428,8 +451,9 @@ export function validatePolicyDecision(decision) {
     if (
       typeof decision.policy_snapshot.version !== "string"
       || decision.policy_snapshot.version.length === 0
+      || decision.policy_snapshot.version.length > 240
     ) {
-      errors.push("decision.policy_snapshot.version is required");
+      errors.push("decision.policy_snapshot.version must contain from 1 through 240 characters");
     }
     if (!isDigest(decision.policy_snapshot.digest)) {
       errors.push("decision.policy_snapshot.digest must be a SHA-256 digest");
@@ -438,10 +462,16 @@ export function validatePolicyDecision(decision) {
 
   validateSelectorArray(decision.granted_selectors, "decision.granted_selectors", errors);
   validateSelectorArray(decision.denied_selectors, "decision.denied_selectors", errors);
-  for (const key of ["granted_actions", "denied_actions", "transform_requirements"]) {
-    if (!isUniqueNameArray(decision[key])) {
+  for (const key of ["granted_actions", "denied_actions"]) {
+    if (!isUniqueNameArray(decision[key]) || decision[key].length > 64) {
       errors.push("decision." + key + " must be an array of unique names");
     }
+  }
+  if (
+    !isUniqueTransformArray(decision.transform_requirements)
+    || decision.transform_requirements.length > 64
+  ) {
+    errors.push("decision.transform_requirements must contain unique supported transforms");
   }
   if (
     decision.bundle_instructions !== undefined
@@ -537,8 +567,9 @@ export function validatePolicyDecision(decision) {
       if (
         typeof decision.approval_binding.approval_ref !== "string"
         || decision.approval_binding.approval_ref.length < 3
+        || decision.approval_binding.approval_ref.length > 512
       ) {
-        errors.push("decision.approval_binding.approval_ref is required");
+        errors.push("decision.approval_binding.approval_ref must contain from 3 through 512 characters");
       }
       for (const key of ["request_digest", "policy_digest"]) {
         if (!isDigest(decision.approval_binding[key])) {
@@ -557,6 +588,7 @@ export function validatePolicyDecision(decision) {
   if (
     !Array.isArray(decision.reason_codes)
     || decision.reason_codes.length === 0
+    || decision.reason_codes.length > 32
     || !decision.reason_codes.every(isReasonCode)
     || new Set(decision.reason_codes).size !== decision.reason_codes.length
   ) {
@@ -623,7 +655,7 @@ export function validateMemoryUpdateProposal(proposal) {
   if (
     isDateTime(proposal.created_at)
     && isDateTime(proposal.expires_at)
-    && Date.parse(proposal.expires_at) <= Date.parse(proposal.created_at)
+    && dateTimeToMilliseconds(proposal.expires_at) <= dateTimeToMilliseconds(proposal.created_at)
   ) {
     errors.push("proposal.expires_at must be later than proposal.created_at");
   }
@@ -866,12 +898,13 @@ export function issueScopedBundle(input) {
       "a denied or pending-approval request cannot produce a scoped bundle",
     );
   }
-  if (Date.parse(decision.expires_at) > Date.parse(request.expires_at)) {
+  if (dateTimeToMilliseconds(decision.expires_at) > dateTimeToMilliseconds(request.expires_at)) {
     throw new ContextLayerReferenceError(
       "DECISION_EXPIRY_INVALID",
       "policy decision cannot outlive the supplied request",
     );
   }
+  const bundleExpiresAt = validateIssuanceControls(request, decision);
   if (!Array.isArray(claims)) {
     throw new ContextLayerReferenceError("INVALID_CLAIMS", "claims must be an array");
   }
@@ -884,9 +917,12 @@ export function issueScopedBundle(input) {
       return selector.predicate;
     }),
   );
+  const transforms = parseTransforms(decision.transform_requirements);
   const context = claims
     .filter(function claimWasGranted(claim) {
-      return isPlainObject(claim) && grantedPredicates.has(claim.predicate);
+      return isPlainObject(claim)
+        && grantedPredicates.has(claim.predicate)
+        && !transforms.redacted.has(claim.predicate);
     })
     .map(function sanitizeClaim(claim, index) {
       const path = "claims[" + index + "]";
@@ -903,14 +939,31 @@ export function issueScopedBundle(input) {
       if (!isName(claim.predicate)) {
         throw new ContextLayerReferenceError("INVALID_CLAIM", path + ".predicate is invalid");
       }
-      if (!Array.isArray(claim.provenance_handles) || claim.provenance_handles.length === 0) {
+      if (
+        typeof claim.claim !== "string"
+        || claim.claim.length === 0
+        || claim.claim.length > 2000
+        || !("value" in claim)
+      ) {
+        throw new ContextLayerReferenceError(
+          "INVALID_CLAIM",
+          path + " must contain a bounded claim string and value",
+        );
+      }
+      if (
+        !Array.isArray(claim.provenance_handles)
+        || claim.provenance_handles.length === 0
+        || claim.provenance_handles.length > 32
+        || new Set(claim.provenance_handles).size !== claim.provenance_handles.length
+      ) {
         throw new ContextLayerReferenceError(
           "MISSING_PROVENANCE",
-          path + ".provenance_handles must contain at least one opaque handle",
+          path + ".provenance_handles must contain from 1 through 32 unique opaque handles",
         );
       }
       if (
         typeof claim.confidence !== "number"
+        || !Number.isFinite(claim.confidence)
         || claim.confidence < 0
         || claim.confidence > 1
       ) {
@@ -919,16 +972,37 @@ export function issueScopedBundle(input) {
           path + ".confidence must be between zero and one",
         );
       }
-      return clone(claim);
+      const sanitized = clone(claim);
+      const truncationLimit = transforms.truncation.get(claim.predicate);
+      sanitized.claim = transformClaimText(
+        sanitized.claim,
+        truncationLimit,
+        transforms.compressTaskFacts,
+      );
+      sanitized.value = transformClaimValue(sanitized.value, truncationLimit);
+      return sanitized;
     });
 
   for (const predicate of grantedPredicates) {
+    if (transforms.redacted.has(predicate)) continue;
     if (!context.some(function hasPredicate(claim) { return claim.predicate === predicate; })) {
       throw new ContextLayerReferenceError(
         "MISSING_GRANTED_CLAIM",
         "no claim was supplied for granted predicate " + predicate,
       );
     }
+  }
+  if (context.length === 0) {
+    throw new ContextLayerReferenceError(
+      "NO_CONTEXT_GRANTED",
+      "no approved claims remained after required transformations",
+    );
+  }
+  if (context.length > 64) {
+    throw new ContextLayerReferenceError(
+      "TOO_MANY_CLAIMS",
+      "a scoped bundle cannot contain more than 64 claims",
+    );
   }
 
   const provenance = {};
@@ -974,7 +1048,8 @@ export function issueScopedBundle(input) {
     purpose_code: request.purpose_code,
     ...(request.purpose === undefined ? {} : { purpose: request.purpose }),
     issued_at: decision.created_at,
-    expires_at: decision.expires_at,
+    expires_at: bundleExpiresAt,
+    single_use: true,
     context,
     provenance,
     instructions: [
@@ -998,6 +1073,134 @@ export function issueScopedBundle(input) {
   };
 }
 
+function validateIssuanceControls(request, decision) {
+  const requestDigest = digestValue(request);
+  if (decision.request_digest !== undefined && decision.request_digest !== requestDigest) {
+    throw new ContextLayerReferenceError(
+      "DECISION_REQUEST_DIGEST_MISMATCH",
+      "policy decision request digest does not match the supplied request",
+    );
+  }
+
+  if (decision.receipt_preflight !== undefined) {
+    const preflight = decision.receipt_preflight;
+    if (preflight.required !== decision.receipt_requirement.required) {
+      throw new ContextLayerReferenceError(
+        "RECEIPT_PREFLIGHT_MISMATCH",
+        "receipt preflight does not match the decision receipt requirement",
+      );
+    }
+    const expectedStatus = preflight.required ? "available" : "not_required";
+    if (preflight.status !== expectedStatus) {
+      throw new ContextLayerReferenceError(
+        "RECEIPT_PREFLIGHT_FAILED",
+        "the required receipt path did not pass preflight",
+      );
+    }
+  }
+
+  const verification = decision.approval_verification;
+  const binding = decision.approval_binding;
+  if (verification === undefined) {
+    if (binding !== undefined && binding !== null) {
+      throw new ContextLayerReferenceError(
+        "APPROVAL_BINDING_INVALID",
+        "an approval binding requires an explicit verified approval state",
+      );
+    }
+    return decision.expires_at;
+  }
+  if (verification === "not_required") {
+    if (binding !== undefined && binding !== null) {
+      throw new ContextLayerReferenceError(
+        "APPROVAL_BINDING_INVALID",
+        "a not-required approval state cannot carry an approval binding",
+      );
+    }
+    return decision.expires_at;
+  }
+  if (verification !== "verified") {
+    throw new ContextLayerReferenceError(
+      "APPROVAL_NOT_VERIFIED",
+      "bundle issuance requires a verified or explicitly not-required approval state",
+    );
+  }
+  if (!isPlainObject(binding)) {
+    throw new ContextLayerReferenceError(
+      "APPROVAL_BINDING_INVALID",
+      "a verified approval state requires an approval binding",
+    );
+  }
+  if (
+    binding.request_digest !== requestDigest
+    || binding.policy_digest !== decision.policy_snapshot.digest
+  ) {
+    throw new ContextLayerReferenceError(
+      "APPROVAL_BINDING_INVALID",
+      "approval binding digests do not match the request and policy snapshot",
+    );
+  }
+  if (binding.expires_at === undefined) return decision.expires_at;
+
+  const bindingExpiry = dateTimeToMilliseconds(binding.expires_at);
+  if (bindingExpiry <= dateTimeToMilliseconds(decision.created_at)) {
+    throw new ContextLayerReferenceError(
+      "APPROVAL_EXPIRED",
+      "approval binding expired before bundle issuance",
+    );
+  }
+  return bindingExpiry < dateTimeToMilliseconds(decision.expires_at)
+    ? binding.expires_at
+    : decision.expires_at;
+}
+
+function parseTransforms(values) {
+  const transforms = {
+    redacted: new Set(),
+    truncation: new Map(),
+    compressTaskFacts: false,
+  };
+  for (const value of values) {
+    let match;
+    if ((match = /^redact:([a-z][a-z0-9]*(?:[._-][a-z0-9]+)*)$/.exec(value))) {
+      transforms.redacted.add(match[1]);
+    } else if (
+      (match = /^truncate:([a-z][a-z0-9]*(?:[._-][a-z0-9]+)*):([1-9][0-9]*)$/.exec(value))
+    ) {
+      const requestedLimit = Math.min(Number(match[2]), 2000);
+      const currentLimit = transforms.truncation.get(match[1]);
+      transforms.truncation.set(
+        match[1],
+        currentLimit === undefined ? requestedLimit : Math.min(currentLimit, requestedLimit),
+      );
+    } else if (value === "compress:task-facts") {
+      transforms.compressTaskFacts = true;
+    } else {
+      throw new ContextLayerReferenceError(
+        "UNSUPPORTED_TRANSFORM",
+        "bundle issuer does not implement transform " + value,
+      );
+    }
+  }
+  return transforms;
+}
+
+function transformClaimText(value, limit, compress) {
+  let transformed = compress ? value.replace(/\s+/g, " ").trim() : value;
+  if (limit !== undefined) transformed = transformed.slice(0, limit);
+  if (transformed.length === 0) {
+    throw new ContextLayerReferenceError(
+      "TRANSFORM_FAILED",
+      "a required claim transform produced an empty claim",
+    );
+  }
+  return transformed;
+}
+
+function transformClaimValue(value, limit) {
+  return typeof value === "string" && limit !== undefined ? value.slice(0, limit) : value;
+}
+
 export function writeReceipt(input) {
   assertNoSecretFields(input, "receipt input");
   rejectInputKeys(
@@ -1007,6 +1210,7 @@ export function writeReceipt(input) {
       "request",
       "decision",
       "bundle",
+      "supersedes_ref",
       "actor",
       "issuer",
       "outcome",
@@ -1047,6 +1251,40 @@ export function writeReceipt(input) {
   const outcome = input.outcome || "success";
   const startedAt = input.started_at || bundle.issued_at;
   const completedAt = input.completed_at || startedAt;
+  const hasSupersedesRef = Object.hasOwn(input, "supersedes_ref");
+  const supersedesRef = hasSupersedesRef
+    ? validateReceiptReference(input.supersedes_ref, "supersedes_ref")
+    : undefined;
+  const userSummary = input.user_summary
+    ?? "recorded " + input.operation + " with payload omitted.";
+  if (typeof actor !== "string" || actor.length < 3 || actor.length > 512) {
+    throw new ContextLayerReferenceError(
+      "INVALID_ACTOR",
+      "receipt actor must contain from 3 through 512 characters",
+    );
+  }
+  if (typeof issuer !== "string" || issuer.length < 3 || issuer.length > 512) {
+    throw new ContextLayerReferenceError(
+      "INVALID_ISSUER",
+      "receipt issuer must contain from 3 through 512 characters",
+    );
+  }
+  if (
+    typeof userSummary !== "string"
+    || userSummary.length < 1
+    || userSummary.length > 500
+  ) {
+    throw new ContextLayerReferenceError(
+      "INVALID_USER_SUMMARY",
+      "receipt user_summary must contain from 1 through 500 characters",
+    );
+  }
+  if (containsCredentialShapedContent(userSummary)) {
+    throw new ContextLayerReferenceError(
+      "SECRET_CONTENT_REJECTED",
+      "receipt user_summary contains credential-shaped content",
+    );
+  }
   if (!["success", "failure", "indeterminate"].includes(outcome)) {
     throw new ContextLayerReferenceError("INVALID_OUTCOME", "receipt outcome is invalid");
   }
@@ -1056,27 +1294,16 @@ export function writeReceipt(input) {
       "receipt timestamps must be RFC 3339 date-times",
     );
   }
-  if (Date.parse(completedAt) < Date.parse(startedAt)) {
+  if (dateTimeToMilliseconds(completedAt) < dateTimeToMilliseconds(startedAt)) {
     throw new ContextLayerReferenceError(
       "INVALID_RECEIPT_TIME",
       "receipt completion cannot precede its start",
     );
   }
 
-  const receiptSeed = {
-    operation: input.operation,
-    request_ref: request.id,
-    decision_ref: decision.id,
-    bundle_ref: bundle.id,
-    actor,
-    outcome,
-    completed_at: completedAt,
-  };
-
-  return {
+  const unsignedReceipt = {
     spec_version: SPEC_VERSION,
     type: "receipt",
-    id: "urn:cl:receipt:" + digestValue(receiptSeed).slice(7, 31),
     created_at: completedAt,
     issuer: { id: issuer },
     operation: input.operation,
@@ -1085,6 +1312,7 @@ export function writeReceipt(input) {
     request_ref: request.id,
     decision_ref: decision.id,
     bundle_ref: bundle.id,
+    ...(hasSupersedesRef ? { supersedes_ref: supersedesRef } : {}),
     started_at: startedAt,
     completed_at: completedAt,
     outcome,
@@ -1094,8 +1322,12 @@ export function writeReceipt(input) {
       decision_ref: decision.id,
     }),
     output_digest: digestValue(bundle),
-    user_summary: input.user_summary || "recorded " + input.operation + " with payload omitted.",
+    user_summary: userSummary,
     payload_included: false,
+  };
+  return {
+    ...unsignedReceipt,
+    id: "urn:cl:receipt:" + digestValue(unsignedReceipt).slice("sha256:".length),
   };
 }
 
@@ -1163,9 +1395,9 @@ function validatePolicy(policy) {
   }
   if (
     policy.transform_requirements !== undefined
-    && !isUniqueNameArray(policy.transform_requirements)
+    && !isUniqueTransformArray(policy.transform_requirements)
   ) {
-    errors.push("policy.transform_requirements must be unique names");
+    errors.push("policy.transform_requirements must contain unique supported transforms");
   }
   if (errors.length > 0) {
     throw new ContextLayerReferenceError("INVALID_POLICY", "policy failed validation", errors);
@@ -1210,6 +1442,7 @@ function validateSelectorArray(value, path, errors) {
     errors.push(path + " must be an array");
     return;
   }
+  if (value.length > 64) errors.push(path + " must contain no more than 64 selectors");
   const predicates = [];
   value.forEach(function validateSelector(selector, index) {
     const selectorPath = path + "[" + index + "]";
@@ -1238,6 +1471,16 @@ function validateReceiptRequirement(value, path, errors) {
   if (typeof value.required !== "boolean") {
     errors.push(path + ".required must be boolean");
   }
+  if (
+    typeof value.required === "boolean"
+    && ["none", "decision", "operation"].includes(value.level)
+    && (
+      (value.level === "none" && value.required !== false)
+      || (value.level !== "none" && value.required !== true)
+    )
+  ) {
+    errors.push(path + " level and required must form a coherent pair");
+  }
 }
 
 function validateIdentity(value, path, allowedKeys, errors) {
@@ -1247,8 +1490,16 @@ function validateIdentity(value, path, allowedKeys, errors) {
   }
   rejectUnknownKeys(value, new Set(allowedKeys), path, errors);
   for (const key of allowedKeys) {
-    if (typeof value[key] !== "string" || value[key].length < 1) {
-      errors.push(path + "." + key + " is required");
+    const minimum = ["id", "principal", "client_instance"].includes(key) ? 3 : 1;
+    const maximum = key === "authenticated_by" ? 120 : 512;
+    if (
+      typeof value[key] !== "string"
+      || value[key].length < minimum
+      || value[key].length > maximum
+    ) {
+      errors.push(
+        path + "." + key + " must contain from " + minimum + " through " + maximum + " characters",
+      );
     }
   }
 }
@@ -1271,13 +1522,86 @@ function rejectInputKeys(value, allowedKeys, path) {
 function isIdentifier(value, prefix) {
   return typeof value === "string"
     && value.startsWith(prefix)
-    && /^[A-Za-z0-9._~:-]+$/.test(value);
+    && /^[A-Za-z0-9._~-]+$/.test(value.slice(prefix.length));
+}
+
+function validateReceiptReference(value, label) {
+  if (
+    value !== null
+    && (
+      typeof value !== "string"
+      || !/^urn:cl:receipt:[A-Za-z0-9._~-]+$/.test(value)
+    )
+  ) {
+    throw new ContextLayerReferenceError(
+      "INVALID_SUPERSEDES_REF",
+      label + " must be null or an exact Context Layer receipt URN",
+    );
+  }
+  return value;
+}
+
+const DATE_TIME_SEPARATOR = /t|\s/i;
+const FULL_DATE = /^(\d{4})-(\d{2})-(\d{2})$/;
+const FULL_TIME = /^(\d{2}):(\d{2}):(\d{2})(\.\d+)?(z|[+-]\d{2}(?::?\d{2})?)?$/i;
+const DAYS_IN_MONTH = [0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+
+function parseDateTime(value) {
+  if (typeof value !== "string") return null;
+  const parts = value.split(DATE_TIME_SEPARATOR);
+  if (parts.length !== 2) return null;
+  const date = FULL_DATE.exec(parts[0]);
+  const time = FULL_TIME.exec(parts[1]);
+  if (!date || !time) return null;
+
+  const year = Number(date[1]);
+  const month = Number(date[2]);
+  const day = Number(date[3]);
+  const leapYear = year % 4 === 0 && (year % 100 !== 0 || year % 400 === 0);
+  const maximumDay = month === 2 && leapYear ? 29 : DAYS_IN_MONTH[month];
+  if (month < 1 || month > 12 || day < 1 || day > maximumDay) return null;
+
+  const hour = Number(time[1]);
+  const minute = Number(time[2]);
+  const second = Number(time[3]);
+  const regularTime = hour <= 23 && minute <= 59 && second <= 59;
+  const leapSecond = hour === 23 && minute === 59 && second === 60;
+  if (!regularTime && !leapSecond) return null;
+
+  return {
+    year,
+    month,
+    day,
+    hour,
+    minute,
+    second,
+    fraction: time[4],
+    timezone: time[5],
+  };
 }
 
 function isDateTime(value) {
-  return typeof value === "string"
-    && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?Z$/.test(value)
-    && Number.isFinite(Date.parse(value));
+  return parseDateTime(value) !== null;
+}
+
+function dateTimeToMilliseconds(value) {
+  const parsed = parseDateTime(value);
+  if (!parsed) return Number.NaN;
+  const milliseconds = parsed.fraction
+    ? Math.floor(Number(parsed.fraction) * 1000)
+    : 0;
+  const date = new Date(0);
+  date.setUTCFullYear(parsed.year, parsed.month - 1, parsed.day);
+  date.setUTCHours(parsed.hour, parsed.minute, Math.min(parsed.second, 59), milliseconds);
+  let timestamp = date.getTime() + (parsed.second === 60 ? 1000 : 0);
+  if (parsed.timezone && parsed.timezone.toLowerCase() !== "z") {
+    const compactOffset = parsed.timezone.slice(1).replace(":", "");
+    const offsetHours = Number(compactOffset.slice(0, 2));
+    const offsetMinutes = compactOffset.length > 2 ? Number(compactOffset.slice(2, 4)) : 0;
+    const direction = parsed.timezone[0] === "+" ? 1 : -1;
+    timestamp -= direction * (offsetHours * 60 + offsetMinutes) * 60 * 1000;
+  }
+  return timestamp;
 }
 
 function isName(value) {
@@ -1312,6 +1636,21 @@ function isUniqueNameArray(value) {
   return Array.isArray(value)
     && value.every(isName)
     && new Set(value).size === value.length;
+}
+
+function isTransformIdentifier(value) {
+  return typeof value === "string"
+    && /^(?:redact:[a-z][a-z0-9]*(?:[._-][a-z0-9]+)*|truncate:[a-z][a-z0-9]*(?:[._-][a-z0-9]+)*:[1-9][0-9]*|compress:task-facts)$/.test(value);
+}
+
+function isUniqueTransformArray(value) {
+  return Array.isArray(value)
+    && value.every(isTransformIdentifier)
+    && new Set(value).size === value.length;
+}
+
+function containsCredentialShapedContent(value) {
+  return /(?:\b(?:authorization|api[_ -]?key|access[_ -]?token|refresh[_ -]?token|client[_ -]?secret|password|private[_ -]?key|session[_ -]?token|cookie)\b["']?\s*[:=]\s*\S+|\bbearer\s+[a-z0-9._~+/=-]{8,}|-----BEGIN [A-Z ]*PRIVATE KEY-----)/i.test(value);
 }
 
 function isUniquePurposeCodeArray(value) {

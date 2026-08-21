@@ -1,6 +1,6 @@
 import { constants } from "node:fs";
 import { createHmac, randomBytes } from "node:crypto";
-import { mkdir, open, readFile, unlink } from "node:fs/promises";
+import { mkdir, open, readFile, stat, unlink } from "node:fs/promises";
 import { dirname, resolve } from "node:path";
 import { setTimeout as delay } from "node:timers/promises";
 
@@ -401,7 +401,7 @@ async function acquireLock({ lockPath, timeoutMs, retryMs }) {
           await unlink(lockPath).catch(() => undefined);
         }
       }
-      if (!error || error.code !== "EEXIST") {
+      if (!await isLockContention(error, lockPath)) {
         fail("RECEIPT_ANCHOR_LOCK_FAILED", "exclusive receipt-log lock could not be acquired");
       }
       if (Date.now() >= deadline) {
@@ -409,6 +409,17 @@ async function acquireLock({ lockPath, timeoutMs, retryMs }) {
       }
       await delay(Math.min(retryMs, Math.max(1, deadline - Date.now())));
     }
+  }
+}
+
+async function isLockContention(error, lockPath) {
+  if (error?.code === "EEXIST") return true;
+  if (error?.code !== "EACCES" && error?.code !== "EPERM") return false;
+  try {
+    await stat(lockPath);
+    return true;
+  } catch {
+    return false;
   }
 }
 

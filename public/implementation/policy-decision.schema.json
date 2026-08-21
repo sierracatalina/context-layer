@@ -74,7 +74,12 @@
       "$ref": "#/$defs/names"
     },
     "transform_requirements": {
-      "$ref": "#/$defs/names"
+      "type": "array",
+      "maxItems": 64,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/transform_identifier"
+      }
     },
     "bundle_instructions": {
       "type": "array",
@@ -257,6 +262,10 @@
       "type": "string",
       "pattern": "^[a-z][a-z0-9]*(?:[._-][a-z0-9]+)*$"
     },
+    "transform_identifier": {
+      "type": "string",
+      "pattern": "^(?:redact:[a-z][a-z0-9]*(?:[._-][a-z0-9]+)*|truncate:[a-z][a-z0-9]*(?:[._-][a-z0-9]+)*:[1-9][0-9]*|compress:task-facts)$"
+    },
     "issuer": {
       "type": "object",
       "additionalProperties": false,
@@ -339,24 +348,43 @@
       }
     },
     "receipt_requirement": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "level",
-        "required"
-      ],
-      "properties": {
-        "level": {
-          "enum": [
-            "none",
-            "decision",
-            "operation"
-          ]
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "level",
+            "required"
+          ],
+          "properties": {
+            "level": {
+              "const": "none"
+            },
+            "required": {
+              "const": false
+            }
+          }
         },
-        "required": {
-          "type": "boolean"
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "level",
+            "required"
+          ],
+          "properties": {
+            "level": {
+              "enum": [
+                "decision",
+                "operation"
+              ]
+            },
+            "required": {
+              "const": true
+            }
+          }
         }
-      }
+      ]
     }
   }
 }

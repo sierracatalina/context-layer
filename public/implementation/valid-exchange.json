@@ -70,8 +70,8 @@
     "max_retention_seconds": 3600,
     "allow_onward_disclosure": false,
     "transform_requirements": [
-      "redact.confidential_budget",
-      "compress.task_facts"
+      "redact:budget_delta",
+      "compress:task-facts"
     ]
   },
   "claims": [

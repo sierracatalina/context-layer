@@ -28,6 +28,7 @@ import {
   serializeScopedBundle,
   validateAuthenticatedBundleEnvelope,
   validateScopedBundle,
+  verifyPolicyDecision,
   verifyReceiptLog,
 } from "../packages/local-core/index.mjs";
 
@@ -90,7 +91,10 @@ function makeRequest({
     selectors: selectors.map((predicate) => ({ predicate })),
     requested_actions: actions,
     retention: { mode: "ephemeral", max_seconds: retentionSeconds },
-    receipt_requirement: { level: "operation", required: receiptRequired },
+    receipt_requirement: {
+      level: receiptRequired ? "operation" : "none",
+      required: receiptRequired,
+    },
     expires_at: expiresAt,
   };
 }
@@ -507,6 +511,61 @@ test("purpose text is optional while purpose_code is required and allowlisted", 
   assert.ok(malformed.reason_codes.includes("PURPOSE_CODE_INVALID"));
 });
 
+test("schema-invalid task fields cannot cross the policy or authenticated bundle boundary", async () => {
+  const request = makeRequest({ receiptRequired: false });
+  request.task.notes = "SYNTHETIC_PRIVATE_TASK_SENTINEL";
+  await assert.rejects(
+    evaluatePolicy({
+      request,
+      policy: makePolicy({ requireReceipts: false }),
+      clock: clockAt(),
+    }),
+    (error) => error.code === "INVALID_REQUEST_TASK",
+  );
+
+  const issued = await makeBundle({
+    request: makeRequest({ receiptRequired: false }),
+    policy: makePolicy({ requireReceipts: false }),
+  });
+  const unsigned = structuredClone(issued.bundle.bundle);
+  delete unsigned.id;
+  delete unsigned.integrity;
+  unsigned.task.notes = "SYNTHETIC_PRIVATE_TASK_SENTINEL";
+  const forged = finalizeCanonicalRecord(unsigned, "urn:cl:bundle:");
+  assert.throws(
+    () => validateScopedBundle(forged, { clock: clockAt() }),
+    (error) => error.code === "INVALID_TASK",
+  );
+});
+
+test("receipt requirement pairs are coherent and policy escalation is explicit", async () => {
+  const policy = makePolicy({ requireReceipts: false });
+  for (const receiptRequirement of [
+    { level: "none", required: true },
+    { level: "decision", required: false },
+    { level: "operation", required: false },
+  ]) {
+    const request = makeRequest({ receiptRequired: false });
+    request.receipt_requirement = receiptRequirement;
+    await assert.rejects(
+      evaluatePolicy({ request, policy, clock: clockAt() }),
+      (error) => error.code === "INVALID_RECEIPT_REQUIREMENT",
+    );
+  }
+
+  const escalated = await evaluatePolicy({
+    request: makeRequest({ receiptRequired: false }),
+    policy: makePolicy({ requireReceipts: true }),
+    receiptStore: HEALTHY_PREFLIGHT,
+    clock: clockAt(),
+  });
+  assert.deepEqual(escalated.receipt_requirement, {
+    level: "operation",
+    required: true,
+  });
+  assert.equal(escalated.receipt_preflight.status, "available");
+});
+
 test("policy rejects wildcard scope and fails closed on receipt preflight", async () => {
   const policy = makePolicy();
   const wildcard = await evaluatePolicy({
@@ -679,6 +738,53 @@ test("conflicting truncate transforms deterministically choose the most restrict
   });
   assert.equal(first.bundle.bundle.context[0].value, "abc");
   assert.equal(second.bundle.bundle.context[0].value, "abc");
+});
+
+test("transform identifiers use the public lowercase stable-name grammar", async () => {
+  const request = makeRequest({ receiptRequired: false });
+  const invalidPolicy = makePolicy({
+    requireReceipts: false,
+    transforms: { "file.text": ["redact:File.Text"] },
+  });
+  await assert.rejects(
+    evaluatePolicy({ request, policy: invalidPolicy, clock: clockAt() }),
+    (error) => error.code === "UNSUPPORTED_TRANSFORM",
+  );
+
+  const validPolicy = makePolicy({
+    requireReceipts: false,
+    transforms: { "file.text": ["truncate:file.text:3"] },
+  });
+  const decision = await evaluatePolicy({
+    request,
+    policy: validPolicy,
+    clock: clockAt(),
+  });
+  const unsigned = structuredClone(decision);
+  delete unsigned.id;
+  delete unsigned.integrity;
+  unsigned.transform_requirements = ["truncate:File.Text:3"];
+  const malformed = finalizeCanonicalRecord(unsigned, "urn:cl:decision:");
+  assert.throws(
+    () => verifyPolicyDecision(malformed, { request, policy: validPolicy }),
+    (error) => error.code === "UNSUPPORTED_TRANSFORM",
+  );
+
+  const authority = await createTestBundleAuthority();
+  try {
+    await assert.rejects(
+      issueScopedBundle({
+        request,
+        decision: malformed,
+        claims: [claim("file.text", "approved context")],
+        bundleAuthority: authority,
+        clock: clockAt(),
+      }),
+      (error) => error.code === "UNSUPPORTED_TRANSFORM",
+    );
+  } finally {
+    authority.close();
+  }
 });
 
 test("bundle validation detects canonical tampering and forged raw-vault material", async () => {

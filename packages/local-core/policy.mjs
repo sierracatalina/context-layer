@@ -32,6 +32,8 @@ const REGISTERED_PURPOSE_CODES = new Set([
   "propose.memory_update",
 ]);
 const EXTENSION_PURPOSE_CODE = /^x\.[a-z0-9]+(?:[._-][a-z0-9]+)*(?:\.[a-z0-9]+(?:[._-][a-z0-9]+)*)+$/;
+const TRANSFORM_IDENTIFIER = /^(?:redact:[a-z][a-z0-9]*(?:[._-][a-z0-9]+)*|truncate:[a-z][a-z0-9]*(?:[._-][a-z0-9]+)*:[1-9][0-9]*|compress:task-facts)$/;
+const MAX_TRANSFORM_REQUIREMENTS = 64;
 
 export async function evaluatePolicy({
   request,
@@ -120,7 +122,7 @@ export async function evaluatePolicy({
     hardReasons.push("PURPOSE_INVALID");
   }
 
-  const taskKind = request.task && request.task.kind;
+  const taskKind = validateRequestTask(request.task);
   requireAllowed(taskKind, policyStringSet(policy, "allowed_tasks"), "TASK_NOT_ALLOWED", hardReasons);
 
   let requestExpiry = NaN;
@@ -291,6 +293,10 @@ export function verifyPolicyDecision(decision, { request, policy } = {}) {
   if (!POLICY_STATES.includes(decision.decision)) {
     fail("INVALID_POLICY_DECISION", "policy decision state is unsupported");
   }
+  validateTransformRequirements(
+    decision.transform_requirements,
+    "decision.transform_requirements",
+  );
   requireDate(decision.expires_at, "decision.expires_at");
   if (request && !secureEqualText(decision.request_digest, digestJson(request))) {
     fail("DECISION_REQUEST_MISMATCH", "policy decision is not bound to this request");
@@ -311,6 +317,24 @@ function readSelectors(value) {
     }
     return cloneJson(selector);
   });
+}
+
+function validateRequestTask(value) {
+  requirePlainObject(value, "request.task");
+  const keys = Object.keys(value);
+  if (
+    keys.length !== 2
+    || !keys.includes("kind")
+    || !keys.includes("user_visible")
+    || !/^[a-z][a-z0-9]*(?:[._-][a-z0-9]+)*$/.test(value.kind)
+    || typeof value.user_visible !== "boolean"
+  ) {
+    fail(
+      "INVALID_REQUEST_TASK",
+      "request.task must contain only a valid kind and boolean user_visible field",
+    );
+  }
+  return value.kind;
 }
 
 function policyStringSet(policy, key, fallback) {
@@ -349,9 +373,38 @@ function normalizeRetention(value, label) {
 
 function normalizeReceiptRequirement(value, policyRequiresReceipt) {
   requirePlainObject(value, "request.receipt_requirement");
+  if (
+    Object.keys(value).length !== 2
+    || !Object.hasOwn(value, "level")
+    || !Object.hasOwn(value, "required")
+  ) {
+    fail(
+      "INVALID_RECEIPT_REQUIREMENT",
+      "request.receipt_requirement must contain only level and required",
+    );
+  }
+  const level = requiredString(value.level, "request.receipt_requirement.level");
+  if (!["none", "decision", "operation"].includes(level)) {
+    fail("INVALID_RECEIPT_REQUIREMENT", "request receipt level is unsupported");
+  }
+  if (typeof value.required !== "boolean") {
+    fail("INVALID_RECEIPT_REQUIREMENT", "request receipt required flag must be boolean");
+  }
+  if (
+    (level === "none" && value.required !== false)
+    || (level !== "none" && value.required !== true)
+  ) {
+    fail(
+      "INVALID_RECEIPT_REQUIREMENT",
+      "request receipt level and required must form a coherent pair",
+    );
+  }
+  if (policyRequiresReceipt && level === "none") {
+    return { level: "operation", required: true };
+  }
   return {
-    level: requiredString(value.level, "request.receipt_requirement.level"),
-    required: value.required === true || policyRequiresReceipt,
+    level,
+    required: value.required,
   };
 }
 
@@ -439,7 +492,25 @@ function transformRequirements(policy, selectors) {
     if (!Array.isArray(entries)) fail("INVALID_POLICY", "policy transform entries must be arrays");
     transforms.push(...uniqueStrings(entries, "policy.transforms." + selector.predicate));
   }
-  return [...new Set(transforms)].sort();
+  return validateTransformRequirements(
+    [...new Set(transforms)].sort(),
+    "decision.transform_requirements",
+  );
+}
+
+function validateTransformRequirements(values, label) {
+  if (
+    !Array.isArray(values)
+    || values.length > MAX_TRANSFORM_REQUIREMENTS
+    || new Set(values).size !== values.length
+    || values.some((value) => typeof value !== "string" || !TRANSFORM_IDENTIFIER.test(value))
+  ) {
+    fail(
+      "UNSUPPORTED_TRANSFORM",
+      label + " must contain no more than 64 unique supported transform identifiers",
+    );
+  }
+  return values;
 }
 
 function policyInstructions(policy) {

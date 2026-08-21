@@ -33,8 +33,8 @@
     "email.send"
   ],
   "transform_requirements": [
-    "redact.confidential_budget",
-    "compress.task_facts"
+    "redact:budget_delta",
+    "compress:task-facts"
   ],
   "retention": {
     "mode": "ephemeral",

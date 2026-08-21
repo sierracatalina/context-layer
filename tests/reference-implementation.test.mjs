@@ -59,6 +59,25 @@ test("valid fixture request passes runtime and JSON Schema validation", () => {
   assert.equal(validateRequestSchema(fixture.request), true, formatAjvErrors(validateRequestSchema));
 });
 
+test("request date-time validation matches schema offsets and calendar rules", () => {
+  const offsetRequest = structuredClone(fixture.request);
+  offsetRequest.created_at = offsetRequest.created_at.replace("Z", "+00:00");
+  offsetRequest.expires_at = offsetRequest.expires_at.replace("Z", "+00:00");
+  assert.deepEqual(validateContextRequest(offsetRequest), { valid: true, errors: [] });
+  assert.equal(
+    validateRequestSchema(offsetRequest),
+    true,
+    formatAjvErrors(validateRequestSchema),
+  );
+
+  const impossibleDate = {
+    ...fixture.request,
+    created_at: "2026-02-30T00:00:00Z",
+  };
+  assert.equal(validateContextRequest(impossibleDate).valid, false);
+  assert.equal(validateRequestSchema(impossibleDate), false);
+});
+
 test("request validation rejects unknown and secret-bearing fields", () => {
   const unknown = {
     ...fixture.request,
@@ -79,6 +98,68 @@ test("request validation rejects unknown and secret-bearing fields", () => {
   assert.equal(secretResult.valid, false);
   assert.match(secretResult.errors.join("\n"), /forbidden secret-bearing fields/);
   assert.deepEqual(findSecretFields(secretBearing), ["$.requester.api_key"]);
+});
+
+test("receipt levels and required flags remain semantically coherent", () => {
+  const invalidPairs = [
+    { level: "none", required: true },
+    { level: "decision", required: false },
+    { level: "operation", required: false },
+  ];
+  for (const receiptRequirement of invalidPairs) {
+    const request = {
+      ...fixture.request,
+      receipt_requirement: receiptRequirement,
+    };
+    assert.equal(validateContextRequest(request).valid, false);
+    assert.equal(validateRequestSchema(request), false);
+  }
+
+  const decision = decideContextRequest(fixture.request, fixture.policy);
+  decision.receipt_requirement = { level: "none", required: true };
+  assert.equal(validatePolicyDecision(decision).valid, false);
+  assert.equal(validatePolicyDecisionSchema(decision), false);
+});
+
+test("request runtime enforces schema-stable task names and declared bounds", () => {
+  const cases = [
+    {
+      label: "task kind",
+      request: {
+        ...fixture.request,
+        task: { ...fixture.request.task, kind: "not valid!" },
+      },
+    },
+    {
+      label: "purpose length",
+      request: { ...fixture.request, purpose: "p".repeat(241) },
+    },
+    {
+      label: "subject reference length",
+      request: { ...fixture.request, subject_ref: "s".repeat(513) },
+    },
+    {
+      label: "selector count",
+      request: {
+        ...fixture.request,
+        selectors: Array.from({ length: 65 }, (_, index) => ({
+          predicate: "selector." + index,
+        })),
+      },
+    },
+    {
+      label: "action count",
+      request: {
+        ...fixture.request,
+        requested_actions: Array.from({ length: 65 }, (_, index) => "action." + index),
+      },
+    },
+  ];
+
+  for (const entry of cases) {
+    assert.equal(validateContextRequest(entry.request).valid, false, entry.label);
+    assert.equal(validateRequestSchema(entry.request), false, entry.label);
+  }
 });
 
 test("purpose codes are required, extensible, and authorized by exact policy match", () => {
@@ -217,6 +298,7 @@ test("bundle issuance includes only granted claims and opaque provenance", () =>
 
   assert.deepEqual(bundleAgain, bundle);
   assert.equal(validateBundleSchema(bundle), true, formatAjvErrors(validateBundleSchema));
+  assert.equal(bundle.single_use, true);
   assert.deepEqual(
     bundle.context.map((claim) => claim.predicate),
     fixture.expected.granted_selectors,
@@ -228,6 +310,151 @@ test("bundle issuance includes only granted claims and opaque provenance", () =>
   assert.equal(bundle.purpose_code, fixture.request.purpose_code);
   assert.equal(bundle.purpose, fixture.request.purpose);
   assert.equal(bundle.expires_at, decision.expires_at);
+});
+
+test("bundle issuance fails closed on receipt and approval control states", () => {
+  const decision = decideContextRequest(fixture.request, fixture.policy);
+  const issue = (candidate) => issueScopedBundle({
+    request: fixture.request,
+    decision: candidate,
+    claims: fixture.claims,
+    issuer: fixture.issuer,
+  });
+
+  const unavailableReceipt = {
+    ...decision,
+    receipt_preflight: { required: true, status: "unavailable" },
+  };
+  assert.deepEqual(validatePolicyDecision(unavailableReceipt), { valid: true, errors: [] });
+  assert.throws(
+    () => issue(unavailableReceipt),
+    (error) => error instanceof ContextLayerReferenceError
+      && error.code === "RECEIPT_PREFLIGHT_FAILED",
+  );
+
+  const mismatchedReceipt = {
+    ...decision,
+    receipt_preflight: { required: false, status: "not_required" },
+  };
+  assert.throws(
+    () => issue(mismatchedReceipt),
+    (error) => error instanceof ContextLayerReferenceError
+      && error.code === "RECEIPT_PREFLIGHT_MISMATCH",
+  );
+
+  const rejectedApproval = {
+    ...decision,
+    approval_verification: "rejected",
+    approval_binding: null,
+  };
+  assert.deepEqual(validatePolicyDecision(rejectedApproval), { valid: true, errors: [] });
+  assert.throws(
+    () => issue(rejectedApproval),
+    (error) => error instanceof ContextLayerReferenceError
+      && error.code === "APPROVAL_NOT_VERIFIED",
+  );
+
+  const approvalBinding = {
+    approval_ref: "urn:cl:approval:synthetic-reference",
+    request_digest: digestValue(fixture.request),
+    policy_digest: decision.policy_snapshot.digest,
+    expires_at: "2026-08-12T15:00:00Z",
+  };
+  const verifiedApproval = {
+    ...decision,
+    approval_verification: "verified",
+    approval_binding: approvalBinding,
+  };
+  assert.deepEqual(validatePolicyDecision(verifiedApproval), { valid: true, errors: [] });
+  assert.equal(issue(verifiedApproval).expires_at, approvalBinding.expires_at);
+
+  const mismatchedApproval = {
+    ...verifiedApproval,
+    approval_binding: {
+      ...approvalBinding,
+      request_digest: "sha256:" + "0".repeat(64),
+    },
+  };
+  assert.throws(
+    () => issue(mismatchedApproval),
+    (error) => error instanceof ContextLayerReferenceError
+      && error.code === "APPROVAL_BINDING_INVALID",
+  );
+
+  const expiredApproval = {
+    ...verifiedApproval,
+    approval_binding: {
+      ...approvalBinding,
+      expires_at: decision.created_at,
+    },
+  };
+  assert.throws(
+    () => issue(expiredApproval),
+    (error) => error instanceof ContextLayerReferenceError
+      && error.code === "APPROVAL_EXPIRED",
+  );
+});
+
+test("bundle issuance applies every supported transform and rejects unusable output", () => {
+  const decision = {
+    ...decideContextRequest(fixture.request, fixture.policy),
+    transform_requirements: [
+      "redact:requesting_stakeholder",
+      "truncate:requested_delivery_date:24",
+      "compress:task-facts",
+    ],
+  };
+  const claims = structuredClone(fixture.claims);
+  claims[0].claim = "  the   launch\n timeline was requested by Friday. ";
+  claims[0].value = "2026-08-14 with additional scheduling detail";
+  const bundle = issueScopedBundle({
+    request: fixture.request,
+    decision,
+    claims,
+    issuer: fixture.issuer,
+  });
+  const normalizedClaim = claims[0].claim.replace(/\s+/g, " ").trim();
+
+  assert.equal(validatePolicyDecisionSchema(decision), true, formatAjvErrors(validatePolicyDecisionSchema));
+  assert.equal(validateBundleSchema(bundle), true, formatAjvErrors(validateBundleSchema));
+  assert.deepEqual(bundle.context.map((claim) => claim.predicate), ["requested_delivery_date"]);
+  assert.equal(bundle.context[0].claim, normalizedClaim.slice(0, 24));
+  assert.equal(bundle.context[0].value, claims[0].value.slice(0, 24));
+
+  const fullyRedacted = {
+    ...decision,
+    transform_requirements: [
+      "redact:requested_delivery_date",
+      "redact:requesting_stakeholder",
+    ],
+  };
+  assert.throws(
+    () => issueScopedBundle({
+      request: fixture.request,
+      decision: fullyRedacted,
+      claims,
+      issuer: fixture.issuer,
+    }),
+    (error) => error instanceof ContextLayerReferenceError
+      && error.code === "NO_CONTEXT_GRANTED",
+  );
+
+  const unsupported = {
+    ...decision,
+    transform_requirements: ["summarize:task-facts"],
+  };
+  assert.equal(validatePolicyDecisionSchema(unsupported), false);
+  assert.equal(validatePolicyDecision(unsupported).valid, false);
+  assert.throws(
+    () => issueScopedBundle({
+      request: fixture.request,
+      decision: unsupported,
+      claims,
+      issuer: fixture.issuer,
+    }),
+    (error) => error instanceof ContextLayerReferenceError
+      && error.code === "INVALID_POLICY_DECISION",
+  );
 });
 
 test("bundle issuance rejects secret fields before disclosure filtering", () => {
@@ -271,6 +498,96 @@ test("receipts are deterministic, schema-valid, and payload-minimized", () => {
   assert.doesNotMatch(serialized, /requested_delivery_date|budget_delta|2026-08-14|launch lead/);
   assert.match(receipt.input_digest, /^sha256:[0-9a-f]{64}$/);
   assert.match(receipt.output_digest, /^sha256:[0-9a-f]{64}$/);
+
+  const unsignedReceipt = structuredClone(receipt);
+  delete unsignedReceipt.id;
+  delete unsignedReceipt.integrity;
+  assert.equal(
+    receipt.id,
+    "urn:cl:receipt:" + digestValue(unsignedReceipt).slice("sha256:".length),
+  );
+
+  const differentSummary = writeReceipt({
+    ...args,
+    user_summary: "recorded a distinct synthetic test outcome with payload omitted.",
+  });
+  assert.notEqual(differentSummary.id, receipt.id);
+});
+
+test("receipt corrections bind exact nullable supersedes references into identity", () => {
+  const decision = decideContextRequest(fixture.request, fixture.policy);
+  const bundle = issueScopedBundle({
+    request: fixture.request,
+    decision,
+    claims: fixture.claims,
+    issuer: fixture.issuer,
+  });
+  const args = {
+    operation: "bundle.issue",
+    request: fixture.request,
+    decision,
+    bundle,
+    user_summary: "Synthetic receipt correction identity test.",
+  };
+  const ordinary = writeReceipt(args);
+  assert.equal(Object.hasOwn(ordinary, "supersedes_ref"), false);
+
+  const corrected = writeReceipt({
+    ...args,
+    supersedes_ref: ordinary.id,
+  });
+  assert.equal(corrected.supersedes_ref, ordinary.id);
+  assert.equal(validateReceiptSchema(corrected), true, formatAjvErrors(validateReceiptSchema));
+  assert.notEqual(corrected.id, ordinary.id);
+  const unsignedCorrection = structuredClone(corrected);
+  delete unsignedCorrection.id;
+  assert.equal(
+    corrected.id,
+    "urn:cl:receipt:" + digestValue(unsignedCorrection).slice("sha256:".length),
+  );
+
+  const nullable = writeReceipt({ ...args, supersedes_ref: null });
+  assert.equal(Object.hasOwn(nullable, "supersedes_ref"), true);
+  assert.equal(nullable.supersedes_ref, null);
+  assert.equal(validateReceiptSchema(nullable), true, formatAjvErrors(validateReceiptSchema));
+  assert.notEqual(nullable.id, ordinary.id);
+
+  for (const invalidReference of [
+    "urn:cl:decision:not-a-receipt",
+    "urn:cl:receipt:",
+    "urn:cl:receipt:invalid/path",
+    42,
+    undefined,
+  ]) {
+    assert.throws(
+      () => writeReceipt({ ...args, supersedes_ref: invalidReference }),
+      (error) => error instanceof ContextLayerReferenceError
+        && error.code === "INVALID_SUPERSEDES_REF",
+      String(invalidReference),
+    );
+  }
+});
+
+test("receipt summaries reject credential-shaped content", () => {
+  const decision = decideContextRequest(fixture.request, fixture.policy);
+  const bundle = issueScopedBundle({
+    request: fixture.request,
+    decision,
+    claims: fixture.claims,
+    issuer: fixture.issuer,
+  });
+
+  assert.throws(
+    () => writeReceipt({
+      operation: "bundle.issue",
+      request: fixture.request,
+      decision,
+      bundle,
+      user_summary: "authorization: Bearer synthetic-secret-placeholder",
+    }),
+    (error) => error instanceof ContextLayerReferenceError
+      && error.code === "SECRET_CONTENT_REJECTED",
+  );
 });
 
 test("invalid receipt fixture fails schema and secret-field checks", () => {
