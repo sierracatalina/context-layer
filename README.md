@@ -10,6 +10,7 @@ This repository is the canonical public source for the draft specification, refe
 
 - `v0.2-draft` is the first public prerelease line and an inspectable proof-of-work snapshot. Draft objects and interfaces may change incompatibly.
 - The reference code demonstrates contract validation and deterministic policy reduction. The local core adds an encrypted vault, authenticated bundle envelopes, anchored receipts, one files adapter, and one local-agent consumer. It is not a production security implementation.
+- `sierracatalina.com` is the canonical public host. The OpenAI Sites worker is a redirect-only compatibility boundary and is deployed only after Sierra's same-origin routes are verified.
 - The hosted site is a synthetic demonstrator and may trail the repository draft while a release is being reviewed.
 - Conformance requires evidence against the declared profile. Passing the repository tests alone is not a security certification.
 
@@ -66,8 +67,8 @@ The static demonstrator and tests do not require an API key. The optional hosted
 | `public/reference/` | Draft specification, implementation guidance, architecture, and the readable technical essay |
 | `public/implementation/` | Portable schemas, synthetic fixtures, and the dependency-free reference module |
 | `packages/local-core/` | Local-first vault, policy, bundle, and receipt boundary work for the v0.2 implementation line |
-| `worker/` | Hosted route allowlist, document rendering, security headers, and optional guide boundary |
-| `public/` | Reviewed public interface, assets, metadata, downloads, and machine-readable navigation |
+| `worker/` | Sites redirect allowlist plus retained native document-rendering and guide source |
+| `public/` | Reviewed Sierra publication sources, archive assets, metadata, downloads, and machine-readable navigation |
 | `tests/` | Rendered-route, reference-contract, and local-core verification |
 | `examples/` | Runnable synthetic local-core demonstration |
 | `test-vectors/v0.2/` | SHA-bound deterministic protocol and security vectors |
