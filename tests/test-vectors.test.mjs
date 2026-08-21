@@ -10,7 +10,7 @@ import { tmpdir } from "node:os";
 import { isAbsolute, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import test from "node:test";
-import Ajv2020 from "ajv-formats/node_modules/ajv/dist/2020.js";
+import Ajv2020 from "ajv/dist/2020.js";
 import addFormats from "ajv-formats";
 
 import {
@@ -35,11 +35,11 @@ import {
   validateContextRequest,
   validateMemoryUpdateProposal as validatePublicMemoryUpdateProposal,
   validatePolicyDecision,
-} from "../public/implementation/context-layer-reference.mjs";
+} from "../protocol/reference/context-layer-reference.mjs";
 
 const projectRoot = fileURLToPath(new URL("../", import.meta.url));
 const vectorRoot = join(projectRoot, "test-vectors", "v0.2");
-const implementationRoot = join(projectRoot, "public", "implementation");
+const schemaRoot = join(projectRoot, "protocol", "schemas");
 
 const manifest = await readVector("manifest.json");
 const canonicalization = await readVector("canonicalization.json");
@@ -455,5 +455,5 @@ async function readVector(filename) {
 }
 
 async function readImplementation(filename) {
-  return JSON.parse(await readFile(join(implementationRoot, filename), "utf8"));
+  return JSON.parse(await readFile(join(schemaRoot, filename), "utf8"));
 }

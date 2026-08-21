@@ -4,7 +4,7 @@ import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import test from "node:test";
-import Ajv2020 from "ajv-formats/node_modules/ajv/dist/2020.js";
+import Ajv2020 from "ajv/dist/2020.js";
 import addFormats from "ajv-formats";
 import {
   createHmacBundleAuthority,
@@ -26,22 +26,23 @@ import {
   validateMemoryUpdateProposal,
   validatePolicyDecision,
   writeReceipt,
-} from "../public/implementation/context-layer-reference.mjs";
+} from "../protocol/reference/context-layer-reference.mjs";
 
 const projectRoot = fileURLToPath(new URL("../", import.meta.url));
-const implementationRoot = join(projectRoot, "public", "implementation");
+const fixtureRoot = join(projectRoot, "protocol", "fixtures");
+const schemaRoot = join(projectRoot, "protocol", "schemas");
 
-const fixture = await readJson("valid-exchange.json");
-const invalidMemoryUpdateProposal = await readJson("invalid-memory-update-proposal.json");
-const invalidPolicyDecision = await readJson("invalid-policy-decision.json");
-const invalidSecretReceipt = await readJson("invalid-secret-receipt.json");
-const validMemoryUpdateProposal = await readJson("valid-memory-update-proposal.json");
-const validPolicyDecision = await readJson("valid-policy-decision.json");
-const requestSchema = await readJson("context-request.schema.json");
-const bundleSchema = await readJson("scoped-context-bundle.schema.json");
-const memoryUpdateProposalSchema = await readJson("memory-update-proposal.schema.json");
-const policyDecisionSchema = await readJson("policy-decision.schema.json");
-const receiptSchema = await readJson("receipt.schema.json");
+const fixture = await readFixture("valid-exchange.json");
+const invalidMemoryUpdateProposal = await readFixture("invalid-memory-update-proposal.json");
+const invalidPolicyDecision = await readFixture("invalid-policy-decision.json");
+const invalidSecretReceipt = await readFixture("invalid-secret-receipt.json");
+const validMemoryUpdateProposal = await readFixture("valid-memory-update-proposal.json");
+const validPolicyDecision = await readFixture("valid-policy-decision.json");
+const requestSchema = await readSchema("context-request.schema.json");
+const bundleSchema = await readSchema("scoped-context-bundle.schema.json");
+const memoryUpdateProposalSchema = await readSchema("memory-update-proposal.schema.json");
+const policyDecisionSchema = await readSchema("policy-decision.schema.json");
+const receiptSchema = await readSchema("receipt.schema.json");
 
 const ajv = new Ajv2020({ allErrors: true, strict: true });
 addFormats(ajv);
@@ -906,8 +907,12 @@ test("dependency-free digest implementation matches Node SHA-256", () => {
   assert.equal(digestValue("abc"), "sha256:" + expected);
 });
 
-async function readJson(filename) {
-  return JSON.parse(await readFile(join(implementationRoot, filename), "utf8"));
+async function readFixture(filename) {
+  return JSON.parse(await readFile(join(fixtureRoot, filename), "utf8"));
+}
+
+async function readSchema(filename) {
+  return JSON.parse(await readFile(join(schemaRoot, filename), "utf8"));
 }
 
 function formatAjvErrors(validate) {

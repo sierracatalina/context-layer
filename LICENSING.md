@@ -6,11 +6,10 @@ Context Layer uses separate licenses for software and documentation.
 
 The following material is licensed under the Apache License, Version 2.0. The controlling text is in [LICENSE](LICENSE).
 
-- Application, build, worker, package, and configuration source
+- Executable protocol, package, and configuration source
 - `packages/`, `scripts/`, `tests/`, and executable files under `examples/`
-- `public/implementation/` schemas, fixtures, and reference runtime
+- `protocol/reference/`, `protocol/schemas/`, and `protocol/fixtures/`
 - `test-vectors/` machine-readable vectors and manifests
-- Executable HTML, CSS, JavaScript, TypeScript, JSON, and hosting configuration not listed below as documentation
 
 The `private: true` package setting prevents accidental registry publication; it does not change the Apache-2.0 grant.
 
@@ -19,10 +18,12 @@ The `private: true` package setting prevents accidental registry publication; it
 The following material is licensed under Creative Commons Attribution 4.0 International. The controlling text is in [LICENSE-DOCS](LICENSE-DOCS).
 
 - Root Markdown documentation, including `README.md`, `CHANGELOG.md`, `CONTRIBUTING.md`, `RELEASE.md`, and `SECURITY.md`
-- Prose and diagrams under `docs/` and `public/reference/`
-- `examples/README.md`, `test-vectors/**/README.md`, `public/llms.txt`, and non-executable project diagrams and publication images
+- Prose and diagrams under `docs/` and `protocol/spec/`
+- `examples/README.md`, `test-vectors/**/README.md`, and other non-executable project diagrams
 
 Suggested attribution: “Context Layer, Sierra Catalina, Context Layer v0.2 draft,” with a link to the source repository and an indication of modifications.
+
+Website application, hosting, and deployment source are intentionally outside this repository. This file does not assign licenses to material maintained in that separate source location.
 
 ## Mixed files and exceptions
 

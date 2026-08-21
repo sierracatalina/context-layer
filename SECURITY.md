@@ -4,6 +4,8 @@
 
 Context Layer is an experimental protocol proposal and reference implementation. It is not an adopted standard, a production context vault, or a security certification. Draft interfaces may change, and the repository must not be used with real secrets or sensitive personal data without a separate production threat model and security review.
 
+Website application, hosting, and deployment source are intentionally maintained outside this protocol repository. Security reports about those surfaces should be filed with the project that owns their source and deployment.
+
 Security fixes for the current `v0.2-draft` line are handled on a best-effort basis. Earlier drafts are documentation and migration references only.
 
 ## Report a vulnerability privately
@@ -18,7 +20,7 @@ Private vulnerability reporting is enabled for the public repository. If the pri
 
 Include only synthetic evidence and provide:
 
-- The affected commit, version, route, or artifact
+- The affected commit, version, protocol artifact, or runtime surface
 - The violated invariant or trust boundary
 - Reproduction steps or a minimal proof of concept
 - Expected and observed behavior
@@ -34,14 +36,14 @@ Reports are especially useful when they demonstrate:
 - Raw vault data crossing the disclosure boundary
 - Policy allow, reduce, deny, or approval behavior being bypassed
 - Recipient binding, expiry, or revocation being ignored
-- Secret-bearing fields entering bundles, receipts, logs, or client assets
+- Secret-bearing fields entering bundles, receipts, logs, or published protocol artifacts
 - A receipt claiming an operation or decision that did not occur
 - Prompt injection expanding tool or data capabilities
-- Route allowlists, response headers, or server-only configuration being bypassed
+- A closed schema or reference validator accepting forbidden or unknown fields
 - An adapter discarding security-relevant native identifiers or semantics
-- A dependency or build compromise with a concrete path into this project
+- A dependency, CI, or release compromise with a concrete path into this project
 
-General product requests, draft-design disagreements, and findings without a plausible impact path may be handled through normal project discussion after the repository opens.
+General product requests, draft-design disagreements, and findings without a plausible impact path may be handled through normal project discussion.
 
 ## Experimental security boundary
 

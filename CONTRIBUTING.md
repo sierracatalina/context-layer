@@ -2,11 +2,14 @@
 
 Context Layer is an experimental protocol draft. Focused review of invariants, object contracts, fixtures, threat boundaries, and failure behavior is welcome. Contributions must follow the software and documentation license boundary in `LICENSING.md`.
 
+This repository accepts protocol, reference-runtime, local-core, and proof artifacts. Website application, hosting, and deployment source are intentionally maintained elsewhere and should not be added to this repository.
+
 ## Before contributing
 
 - Read the status and limits in `README.md` and the private disclosure process in `SECURITY.md`.
 - Never include real secrets, credentials, private conversations, or sensitive personal data. Use synthetic fixtures only.
 - Keep a protocol claim, implementation behavior, schema, fixture, and test aligned in the same proposed change.
+- Keep specification material in `protocol/spec/`, the runtime in `protocol/reference/`, schemas in `protocol/schemas/`, and fixtures in `protocol/fixtures/`.
 - State which invariant and draft identifier the change affects.
 
 ## Local checks
@@ -17,7 +20,7 @@ npm run lint
 npm test
 ```
 
-`npm test` performs the production build before running the Node test suites.
+`npm test` runs the repository-boundary, reference-contract, local-core, receipt-hardening, demo, and proof-vector suites.
 
 ## Pull requests
 
