@@ -16,7 +16,13 @@ concurrency:
 
 jobs:
   build-and-test:
-    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - ubuntu-latest
+          - windows-latest
+    runs-on: ${{ matrix.os }}
     timeout-minutes: 15
 
     steps:
@@ -35,5 +41,14 @@ jobs:
       - name: Lint
         run: npm run lint
 
+      - name: Release hygiene
+        run: npm run release:hygiene
+
+      - name: Dependency audit
+        run: npm audit --audit-level=high
+
       - name: Build and test
         run: npm test
+
+      - name: Reject whitespace errors
+        run: git diff --check

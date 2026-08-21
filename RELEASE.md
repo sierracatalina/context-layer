@@ -21,7 +21,7 @@ The release snapshot may include only reviewed repository content:
 - Protocol schemas, synthetic fixtures, and reference module
 - Local-first core modules and their tests
 - Synthetic demo, deterministic test vectors, and unsubmitted interoperability drafts
-- Hosted demonstrator source and route tests
+- Reviewed Sierra publication sources and redirect-boundary route tests
 - Public release, security, contribution, and CI metadata
 
 Generated builds, dependency directories, environment files, browser profiles, screenshots, logs, private drafts, local vault data, credentials, and unrelated project history are excluded.
@@ -32,7 +32,7 @@ Before tagging:
 
 1. Install exactly the locked dependencies with `npm ci`.
 2. Run `npm run lint`.
-3. Run `npm test`, which builds the hosted worker and runs the route, reference-contract, local-core, receipt-hardening, demo, and proof-vector suites.
+3. Run `npm test`, which builds the redirect-only Sites worker and runs the route, reference-contract, local-core, receipt-hardening, demo, and proof-vector suites.
 4. Confirm the local-core suite is also directly runnable through `npm run test:local-core`.
 5. Run `git diff --check`.
 6. Confirm the candidate tree contains no credential values, private filesystem paths, real personal data, local vault artifacts, or generated output.
@@ -42,11 +42,10 @@ Before tagging:
 ## Publication sequence
 
 1. Publish only the reviewed clean snapshot to `sierracatalina/context-layer`; do not push unrelated local history.
-2. Enable GitHub private vulnerability reporting.
+2. Confirm GitHub private vulnerability reporting remains enabled.
 3. Require the repository CI check on the candidate commit.
-4. Create the exact `v0.2-draft` tag from that commit and a matching GitHub prerelease.
-5. Create a GitHub prerelease that repeats the experimental and unlicensed status.
-6. Treat deployment of a saved OpenAI Sites version as a separate public-release decision. A repository tag does not implicitly deploy the site.
+4. Create the exact `v0.2-draft` tag from that commit and a matching GitHub prerelease that repeats the experimental and unlicensed status.
+5. Treat deployment of a saved OpenAI Sites version as a separate public-release decision. A repository tag does not implicitly deploy the site.
 
 ## Source-use status
 
