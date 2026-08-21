@@ -1,318 +1,109 @@
 import assert from "node:assert/strict";
 import { access, readFile, readdir } from "node:fs/promises";
-import { extname, join } from "node:path";
+import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import test from "node:test";
 
-const projectRoot = fileURLToPath(new URL("../", import.meta.url));
-const publicRoot = join(projectRoot, "public");
-const expectedFiles = [
-  "_headers",
-  "agent-navigation-manifest.json",
-  "assets/context-layer-diagram.css",
-  "assets/context-layer-docs.css",
-  "assets/context-layer-native.css",
-  "assets/context-layer-native.js",
-  "assets/context-layer-og.svg",
-  "assets/context-layer-reference.js",
-  "assets/context-layer-responsive.css",
-  "assets/context-layer.css",
-  "assets/context-layer.js",
-  "implementation/context-layer-reference.mjs",
-  "implementation/context-request.schema.json",
-  "implementation/invalid-secret-receipt.json",
-  "implementation/receipt.schema.json",
-  "implementation/scoped-context-bundle.schema.json",
-  "implementation/valid-exchange.json",
-  "index.html",
-  "llms.txt",
-  "manifest.webmanifest",
-  "og.png",
-  "ouroboros-architecture-v4-legible.html",
-  "reference/context-layer-architecture-diagram.svg",
-  "reference/context-layer-blog-post.md",
-  "reference/context-layer-implementation-and-interoperability.md",
-  "reference/context-layer-technical-specification.md",
-  "robots.txt",
-].sort();
+const projectRoot = fileURLToPath(new URL("..", import.meta.url));
 
 async function loadWorker() {
   const workerUrl = new URL("../dist/server/index.js", import.meta.url);
-  workerUrl.searchParams.set("test", `${process.pid}-${Date.now()}`);
+  workerUrl.searchParams.set("test", `${process.pid}-${Date.now()}-${Math.random()}`);
   return (await import(workerUrl.href)).default;
 }
 
-function testEnv(extra = {}) {
-  return {
-    ASSETS: { fetch: fetchPublicAsset },
-    ...extra,
-  };
-}
-
-async function fetchPublicAsset(request) {
-  const pathname = new URL(request.url).pathname.replace(/^\//, "");
-  try {
-    const body = await readFile(join(publicRoot, pathname));
-    return new Response(request.method === "HEAD" ? null : body, {
-      status: 200,
-      headers: { "Content-Type": contentType(pathname) },
-    });
-  } catch {
-    return new Response("Not found", { status: 404 });
-  }
-}
-
-test("isolated public source is the exact allowlisted release surface", async () => {
-  assert.deepEqual((await walk(publicRoot)).sort(), expectedFiles);
+test("deployment output contains only the worker entrypoint and hosting metadata", async () => {
+  const dist = new URL("../dist/", import.meta.url);
+  await access(new URL("server/index.js", dist));
+  await access(new URL(".openai/hosting.json", dist));
+  const entries = await readdir(dist);
+  assert(!entries.includes("public"), "static dossier files must not bypass the redirect worker");
 });
 
-test("deployment output cannot bypass the worker with direct public-file copies", async () => {
-  for (const pathname of ["index.html", "assets/context-layer.js", "llms.txt"]) {
-    await assert.rejects(access(join(projectRoot, "dist", "client", pathname)));
-  }
-});
-
-test("worker serves the verified public document with security headers", async () => {
+test("all public entrypoints redirect permanently to Sierra", async () => {
   const worker = await loadWorker();
-  const response = await worker.fetch(new Request("https://context.example/"), testEnv());
-  assert.equal(response.status, 200);
-  assert.match(response.headers.get("content-type") ?? "", /^text\/html\b/i);
-  const html = await response.text();
-  assert.match(html, /<title>the Context Layer \| sierra catalina<\/title>/i);
-  assert.match(html, /minimum useful context/i);
-  assert.match(html, /one boundary\. six recorded steps\./i);
-  assert.match(html, /href="\/context-layer\/architecture"/);
-  assert.match(html, /href="\/context-layer\/code"/);
-  assert.match(html, /property="og:image" content="https:\/\/sierracatalina\.com\/context-layer\/og\.png"/);
-  assert.match(response.headers.get("content-security-policy") ?? "", /default-src 'self'/);
-  assert.equal(response.headers.get("x-frame-options"), "DENY");
-  assert.equal(response.headers.get("cross-origin-opener-policy"), "same-origin");
-});
+  const cases = new Map([
+    ["/", "/context-layer"],
+    ["/context-layer", "/context-layer"],
+    ["/essay", "/signal/the-context-layer"],
+    ["/signal/the-context-layer", "/signal/the-context-layer"],
+    ["/architecture", "/context-layer/architecture"],
+    ["/specification", "/context-layer/specification"],
+    ["/implementation", "/context-layer/implementation"],
+    ["/code", "/context-layer/code"],
+    ["/ouroboros-architecture-v4-legible.html", "/context-layer/demo"],
+    ["/context-layer/legacy/index.html", "/context-layer/demo"],
+    ["/context-layer/demo", "/context-layer/demo"],
+  ]);
 
-test("worker serves the validated social preview as PNG", async () => {
-  const worker = await loadWorker();
-  const response = await worker.fetch(
-    new Request("https://context.example/context-layer/og.png"),
-    testEnv(),
-  );
-  assert.equal(response.status, 200);
-  assert.equal(response.headers.get("content-type"), "image/png");
-  assert.ok((await response.arrayBuffer()).byteLength > 100_000);
-});
-
-test("worker publishes canonical essay and technical reference pages", async () => {
-  const worker = await loadWorker();
-  const essay = await worker.fetch(new Request("https://context.example/signal/the-context-layer"), testEnv());
-  assert.equal(essay.status, 200);
-  assert.match(essay.headers.get("content-type") ?? "", /^text\/html\b/i);
-  const essayHtml = await essay.text();
-  assert.match(essayHtml, /the Context Layer: give AI the context it needs without giving it everything/);
-  assert.match(essayHtml, /signal editorial \/ dossier 001/);
-  assert.match(essayHtml, /<article class="document-body">/);
-  assert.match(essayHtml, /href="\/context-layer"/);
-  assert.match(essayHtml, /href="\/context-layer\/architecture"/);
-  assert.match(essayHtml, /href="\/context-layer\/specification"/);
-  assert.match(essayHtml, /href="\/context-layer\/implementation"/);
-  assert.doesNotMatch(essayHtml, /href="\/(?:#demo|reference\/)/);
-  assert.doesNotMatch(essayHtml, /Publication draft/);
-
-  const specification = await worker.fetch(new Request("https://context.example/context-layer/specification"), testEnv());
-  assert.equal(specification.status, 200);
-  assert.match(await specification.text(), /working draft/i);
-
-  const implementation = await worker.fetch(new Request("https://context.example/context-layer/implementation"), testEnv());
-  assert.equal(implementation.status, 200);
-  assert.match(await implementation.text(), /implementation &amp; interoperability profiles/i);
-
-  const code = await worker.fetch(new Request("https://context.example/context-layer/code"), testEnv());
-  assert.equal(code.status, 200);
-  const codeHtml = await code.text();
-  assert.match(codeHtml, /href="\/context-layer\/implementation\/context-layer-reference\.mjs" download/);
-  assert.doesNotMatch(codeHtml, /github\.com\/sierracatalina\/ship-goblin/);
-});
-
-test("architecture page is responsive without a pan or zoom canvas", async () => {
-  const worker = await loadWorker();
-  const viewer = await worker.fetch(new Request("https://context.example/context-layer/architecture"), testEnv());
-  assert.equal(viewer.status, 200);
-  const viewerHtml = await viewer.text();
-  assert.match(viewerHtml, /class="protocol-flow"/);
-  assert.match(viewerHtml, /class="trust-grid"/);
-  assert.match(viewerHtml, /class="lifecycle-list"/);
-  assert.match(viewerHtml, /\/context-layer\/downloads\/context-layer-architecture\.svg/);
-  assert.doesNotMatch(viewerHtml, /data-diagram-action|data-diagram-scroll|wheel to zoom|drag to pan/i);
-
-  const diagram = await worker.fetch(new Request("https://context.example/context-layer/downloads/context-layer-architecture.svg"), testEnv());
-  assert.equal(diagram.status, 200);
-  assert.equal(diagram.headers.get("cache-control"), "no-cache");
-  assert.equal(diagram.headers.get("x-robots-tag"), "noindex, nofollow");
-  assert.match(diagram.headers.get("content-disposition") ?? "", /attachment; filename="context-layer-architecture\.svg"/);
-  const svg = await diagram.text();
-  assert.doesNotMatch(svg, /xml-stylesheet|(?:href|src)="https?:\/\//);
-  assert.match(svg, /<rect[^>]+width="2200"[^>]+height="1960"[^>]+fill="#0[aA]0[aA]0[aA]"/);
-  assert.doesNotMatch(svg, /ouro\.chat|linearGradient|radialGradient|url\(#glow\)/i);
-  assert.doesNotMatch(svg, /<style>/);
-  assert.doesNotMatch(svg, /<a\b|href=|role="link"|tabindex=/);
-});
-
-test("native prefix routes keep the Sierra URL surface intact", async () => {
-  const worker = await loadWorker();
-  for (const path of ["/context-layer", "/context-layer/code", "/context-layer/assets/context-layer-native.css"]) {
-    const response = await worker.fetch(new Request("https://context.example" + path), testEnv());
-    assert.equal(response.status, 200, path);
+  for (const [source, target] of cases) {
+    const response = await worker.fetch(new Request(`https://context.example${source}?from=gpt`), {});
+    assert.equal(response.status, 308, source);
+    assert.equal(response.headers.get("location"), `https://sierracatalina.com${target}?from=gpt`, source);
+    assert.equal(response.headers.get("x-robots-tag"), "noindex, nofollow", source);
+    assert.equal(response.headers.get("x-frame-options"), "DENY", source);
+    assert.match(response.headers.get("link") || "", /rel="canonical"/, source);
+    assert.equal(await response.text(), "", source);
   }
 });
 
-test("rendered prose follows the Signal editorial formatting contract", async () => {
+test("legacy assets and implementation artifacts redirect to native Sierra paths", async () => {
   const worker = await loadWorker();
-  for (const path of ["/context-layer", "/signal/the-context-layer", "/context-layer/specification", "/context-layer/implementation"]) {
-    const response = await worker.fetch(new Request("https://context.example" + path), testEnv());
-    const visible = visibleText(await response.text());
-    assert.doesNotMatch(visible, /\band\b/i, path + " contains 'and'");
-    assert.doesNotMatch(visible, /—|[“”"]/u, path + " contains forbidden punctuation");
-    assert.doesNotMatch(visible, /\b(?:leverage|unlock|harness|robust|seamless)\b/i, path + " contains forbidden filler");
+  const cases = new Map([
+    ["/assets/context-layer-native.css", "/context-layer/assets/context-layer-native.css"],
+    ["/assets/context-layer.js", "/context-layer/demo/assets/context-layer.js"],
+    ["/manifest.webmanifest", "/context-layer/demo/manifest.webmanifest"],
+    ["/og.png", "/context-layer/og.png"],
+    ["/llms.txt", "/context-layer/llms.txt"],
+    ["/implementation/policy-decision.schema.json", "/context-layer/implementation/policy-decision.schema.json"],
+    ["/reference/context-layer-technical-specification.md", "/context-layer/source/context-layer-technical-specification.md"],
+    ["/reference/context-layer-architecture-diagram.svg", "/context-layer/reference/context-layer-architecture-diagram.svg"],
+  ]);
+
+  for (const [source, target] of cases) {
+    const response = await worker.fetch(new Request(`https://context.example${source}`), {});
+    assert.equal(response.status, 308, source);
+    assert.equal(response.headers.get("location"), `https://sierracatalina.com${target}`, source);
   }
 });
 
-test("published pages exclude design and rendering instructions", async () => {
+test("guide requests preserve POST while moving to the native Sierra API", async () => {
   const worker = await loadWorker();
-  const leakedMetaCopy = /no canvas required|current viewport|page scroll|palette, background|typography without|signal editorial contract|rendered page follows|responsive system map|responsive flows|design legible|download dark SVG|secondary artifact|full-resolution system plate|source (?:&|&amp;) implementation|technical casing/i;
+  const response = await worker.fetch(new Request("https://context.example/api/guide", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ question: "What is a receipt?" }),
+  }), {});
 
-  for (const path of [
-    "/context-layer",
-    "/signal/the-context-layer",
-    "/context-layer/architecture",
-    "/context-layer/specification",
-    "/context-layer/implementation",
-    "/context-layer/code",
-    "/context-layer/legacy/index.html",
-    "/context-layer/ouroboros-architecture-v4-legible.html",
-  ]) {
-    const response = await worker.fetch(new Request("https://context.example" + path), testEnv());
-    assert.equal(response.status, 200, path);
-    const html = await response.text();
-    assert.doesNotMatch(html, leakedMetaCopy, path + " contains leaked metadata or copy");
-    assert.doesNotMatch(visibleText(html), leakedMetaCopy, path + " contains leaked visible copy");
-  }
+  assert.equal(response.status, 308);
+  assert.equal(response.headers.get("location"), "https://sierracatalina.com/api/context-layer/guide");
 });
 
-test("API and APIs retain technical capitalization in published prose", async () => {
+test("the redirect host refuses unsafe page methods and unknown paths", async () => {
   const worker = await loadWorker();
-  for (const path of [
-    "/signal/the-context-layer",
-    "/context-layer/specification",
-    "/context-layer/implementation",
-  ]) {
-    const response = await worker.fetch(new Request("https://context.example" + path), testEnv());
-    const visible = visibleText(await response.text());
-    assert.doesNotMatch(visible, /\bapis?\b/, path + " lowercases API");
-  }
+  const unsafe = await worker.fetch(new Request("https://context.example/context-layer", {
+    method: "POST",
+  }), {});
+  assert.equal(unsafe.status, 405);
+  assert.equal(unsafe.headers.get("allow"), "GET, HEAD");
 
-  const implementation = await worker.fetch(new Request("https://context.example/context-layer/implementation"), testEnv());
-  assert.match(visibleText(await implementation.text()), /HTTP APIs & webhooks/);
-});
-
-test("worker limits the hosted surface to reviewed paths", async () => {
-  const worker = await loadWorker();
-  const asset = await worker.fetch(new Request("https://context.example/assets/context-layer.js"), testEnv());
-  assert.equal(asset.status, 200);
-  assert.match(await asset.text(), /const demoStages/);
-
-  const reference = await worker.fetch(new Request("https://context.example/context-layer/source/context-layer-technical-specification.md"), testEnv());
-  assert.equal(reference.status, 200);
-  assert.equal(reference.headers.get("x-robots-tag"), "noindex, nofollow");
-
-  const unknown = await worker.fetch(new Request("https://context.example/private-notes.txt"), testEnv());
+  const unknown = await worker.fetch(new Request("https://context.example/private-notes.txt"), {});
   assert.equal(unknown.status, 404);
-  assert.equal(await unknown.text(), "Not found");
+  assert.equal(unknown.headers.get("cache-control"), "no-store");
+  assert.equal(unknown.headers.get("x-robots-tag"), "noindex, nofollow");
 });
 
-test("guide fails closed without a key and rejects cross-origin requests", async () => {
-  const worker = await loadWorker();
-  const request = () => new Request("https://context.example/api/guide", {
-    method: "POST",
-    headers: { "Content-Type": "application/json", Origin: "https://context.example", "CF-Connecting-IP": `${Math.random()}` },
-    body: JSON.stringify({ question: "What does policy do?" }),
-  });
-  const unavailable = await worker.fetch(request(), testEnv());
-  assert.equal(unavailable.status, 503);
-  assert.deepEqual(await unavailable.json(), { error: "guide_unavailable" });
-
-  const crossOrigin = new Request("https://context.example/api/guide", {
-    method: "POST",
-    headers: { "Content-Type": "application/json", Origin: "https://attacker.example", "CF-Connecting-IP": `${Math.random()}` },
-    body: JSON.stringify({ question: "What does policy do?" }),
-  });
-  assert.equal((await worker.fetch(crossOrigin, testEnv())).status, 403);
-});
-
-test("model guide sends a non-stored request and preserves only allowlisted navigation", async () => {
-  const worker = await loadWorker();
-  const originalFetch = globalThis.fetch;
-  let upstreamRequest;
-  globalThis.fetch = async (url, init) => {
-    upstreamRequest = { url, init, body: JSON.parse(init.body) };
-    return Response.json({
-      output: [
-        { type: "message", content: [{ type: "output_text", text: "Policy reduces disclosed fields." }] },
-        { type: "function_call", name: "navigate", arguments: JSON.stringify({ target_id: "demo-policy" }) },
-      ],
-    });
-  };
-
-  try {
-    const response = await worker.fetch(new Request("https://context.example/api/guide", {
-      method: "POST",
-      headers: { "Content-Type": "application/json", Origin: "https://context.example", "CF-Connecting-IP": `${Math.random()}` },
-      body: JSON.stringify({ question: "Show policy" }),
-    }), testEnv({ OPENAI_API_KEY: "test-placeholder" }));
-    assert.equal(response.status, 200);
-    assert.deepEqual(await response.json(), {
-      answer: "Policy reduces disclosed fields.",
-      action: { target_id: "demo-policy" },
-    });
-    assert.equal(upstreamRequest.url, "https://api.openai.com/v1/responses");
-    assert.equal(upstreamRequest.body.store, false);
-    assert.equal(upstreamRequest.body.tools[0].strict, true);
-    assert.equal(upstreamRequest.body.tools[0].parameters.additionalProperties, false);
-    assert.ok(upstreamRequest.body.tools[0].parameters.properties.target_id.enum.includes("demo-policy"));
-    assert.doesNotMatch(JSON.stringify(upstreamRequest.body.tools), /https?:|\bselector\b|\bscript\b/i);
-  } finally {
-    globalThis.fetch = originalFetch;
+test("source remains a protocol archive while hosting no longer serves a duplicate dossier", async () => {
+  const expectedArchiveFiles = [
+    "public/reference/context-layer-technical-specification.md",
+    "public/implementation/context-layer-reference.mjs",
+  ];
+  for (const path of expectedArchiveFiles) {
+    await access(new URL(`../${path}`, import.meta.url));
   }
+
+  const workerSource = await readFile(join(projectRoot, "worker/index.ts"), "utf8");
+  assert(!workerSource.includes("renderLandingPage"));
+  assert(!workerSource.includes("PUBLIC_ASSETS"));
+  assert(workerSource.includes("https://sierracatalina.com"));
 });
-
-async function walk(base, prefix = "") {
-  const files = [];
-  for (const entry of await readdir(join(base, prefix), { withFileTypes: true })) {
-    const name = join(prefix, entry.name);
-    if (entry.isDirectory()) files.push(...await walk(base, name));
-    if (entry.isFile()) files.push(name.replaceAll("\\", "/"));
-  }
-  return files;
-}
-
-function contentType(pathname) {
-  return {
-    ".css": "text/css; charset=utf-8",
-    ".html": "text/html; charset=utf-8",
-    ".js": "text/javascript; charset=utf-8",
-    ".json": "application/json; charset=utf-8",
-    ".md": "text/markdown; charset=utf-8",
-    ".svg": "image/svg+xml",
-    ".txt": "text/plain; charset=utf-8",
-    ".webmanifest": "application/manifest+json; charset=utf-8",
-  }[extname(pathname)] || "application/octet-stream";
-}
-
-function visibleText(html) {
-  return html
-    .replace(/<script\b[\s\S]*?<\/script>/gi, " ")
-    .replace(/<style\b[\s\S]*?<\/style>/gi, " ")
-    .replace(/<pre\b[\s\S]*?<\/pre>/gi, " ")
-    .replace(/<code\b[\s\S]*?<\/code>/gi, " ")
-    .replace(/<[^>]+>/g, " ")
-    .replace(/&amp;/g, "&")
-    .replace(/&#39;/g, "'")
-    .replace(/\s+/g, " ");
-}
