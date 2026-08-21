@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://sierracatalina.com/context-layer/implementation/context-request.schema.json",
   "title": "context request",
-  "description": "Phase 0 request envelope for purpose-bound context disclosure.",
+  "description": "Phase 0 v0.2 request envelope for purpose-code-bound context disclosure.",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -14,7 +14,7 @@
     "subject_ref",
     "requester",
     "recipient",
-    "purpose",
+    "purpose_code",
     "task",
     "selectors",
     "requested_actions",
@@ -24,7 +24,7 @@
   ],
   "properties": {
     "spec_version": {
-      "const": "context-layer/0.1-draft"
+      "const": "context-layer/0.2-draft"
     },
     "type": {
       "const": "context_request"
@@ -50,6 +50,9 @@
     },
     "recipient": {
       "$ref": "#/$defs/recipient"
+    },
+    "purpose_code": {
+      "$ref": "#/$defs/purpose_code"
     },
     "purpose": {
       "type": "string",
@@ -145,6 +148,25 @@
     }
   },
   "$defs": {
+    "purpose_code": {
+      "anyOf": [
+        {
+          "enum": [
+            "draft.response",
+            "summarize.material",
+            "retrieve.context",
+            "plan.task",
+            "execute.approved_action",
+            "discover.minimum_reveal",
+            "propose.memory_update"
+          ]
+        },
+        {
+          "type": "string",
+          "pattern": "^x\\.[a-z0-9]+(?:[._-][a-z0-9]+)*(?:\\.[a-z0-9]+(?:[._-][a-z0-9]+)*)+$"
+        }
+      ]
+    },
     "name": {
       "type": "string",
       "pattern": "^[a-z][a-z0-9]*(?:[._-][a-z0-9]+)*$"

@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://sierracatalina.com/context-layer/implementation/scoped-context-bundle.schema.json",
   "title": "scoped context bundle",
-  "description": "Phase 0 recipient-bound bundle containing only policy-approved claims.",
+  "description": "Phase 0 v0.2 recipient-bound bundle containing only policy-approved claims.",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -15,7 +15,7 @@
     "request_ref",
     "decision_ref",
     "recipient",
-    "purpose",
+    "purpose_code",
     "issued_at",
     "expires_at",
     "context",
@@ -27,7 +27,7 @@
   ],
   "properties": {
     "spec_version": {
-      "const": "context-layer/0.1-draft"
+      "const": "context-layer/0.2-draft"
     },
     "type": {
       "const": "scoped_context_bundle"
@@ -62,19 +62,34 @@
       "type": "string",
       "pattern": "^urn:cl:request:[A-Za-z0-9._~-]+$"
     },
+    "request_digest": {
+      "$ref": "#/$defs/digest"
+    },
     "decision_ref": {
       "type": "string",
       "pattern": "^urn:cl:decision:[A-Za-z0-9._~-]+$"
+    },
+    "decision_digest": {
+      "$ref": "#/$defs/digest"
+    },
+    "policy_snapshot": {
+      "$ref": "#/$defs/policy_snapshot"
     },
     "recipient": {
       "type": "string",
       "minLength": 3,
       "maxLength": 512
     },
+    "purpose_code": {
+      "$ref": "#/$defs/purpose_code"
+    },
     "purpose": {
       "type": "string",
       "minLength": 3,
       "maxLength": 240
+    },
+    "task": {
+      "$ref": "#/$defs/task"
     },
     "issued_at": {
       "type": "string",
@@ -83,6 +98,9 @@
     "expires_at": {
       "type": "string",
       "format": "date-time"
+    },
+    "single_use": {
+      "const": true
     },
     "context": {
       "type": "array",
@@ -192,6 +210,9 @@
         }
       }
     },
+    "retention": {
+      "$ref": "#/$defs/retention"
+    },
     "receipt_contract": {
       "type": "object",
       "additionalProperties": false,
@@ -211,9 +232,106 @@
           }
         }
       }
+    },
+    "integrity": {
+      "$ref": "#/$defs/integrity"
     }
   },
   "$defs": {
+    "digest": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "integrity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "algorithm",
+        "digest"
+      ],
+      "properties": {
+        "algorithm": {
+          "const": "sha-256"
+        },
+        "digest": {
+          "$ref": "#/$defs/digest"
+        }
+      }
+    },
+    "policy_snapshot": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "version",
+        "digest"
+      ],
+      "properties": {
+        "version": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 240
+        },
+        "digest": {
+          "$ref": "#/$defs/digest"
+        }
+      }
+    },
+    "retention": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "mode",
+        "max_seconds"
+      ],
+      "properties": {
+        "mode": {
+          "enum": [
+            "ephemeral",
+            "single_use"
+          ]
+        },
+        "max_seconds": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 86400
+        }
+      }
+    },
+    "task": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "user_visible"
+      ],
+      "properties": {
+        "kind": {
+          "$ref": "#/$defs/name"
+        },
+        "user_visible": {
+          "type": "boolean"
+        }
+      }
+    },
+    "purpose_code": {
+      "anyOf": [
+        {
+          "enum": [
+            "draft.response",
+            "summarize.material",
+            "retrieve.context",
+            "plan.task",
+            "execute.approved_action",
+            "discover.minimum_reveal",
+            "propose.memory_update"
+          ]
+        },
+        {
+          "type": "string",
+          "pattern": "^x\\.[a-z0-9]+(?:[._-][a-z0-9]+)*(?:\\.[a-z0-9]+(?:[._-][a-z0-9]+)*)+$"
+        }
+      ]
+    },
     "name": {
       "type": "string",
       "pattern": "^[a-z][a-z0-9]*(?:[._-][a-z0-9]+)*$"

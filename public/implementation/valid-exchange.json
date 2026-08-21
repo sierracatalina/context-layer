@@ -1,6 +1,6 @@
 {
   "request": {
-    "spec_version": "context-layer/0.1-draft",
+    "spec_version": "context-layer/0.2-draft",
     "type": "context_request",
     "id": "urn:cl:request:req_701",
     "created_at": "2026-08-12T14:33:00Z",
@@ -17,6 +17,7 @@
       "principal": "urn:model:configured-drafting-model",
       "onward_disclosure": "allowed"
     },
+    "purpose_code": "draft.response",
     "purpose": "draft a response to the launch timeline request",
     "task": {
       "kind": "draft_only",
@@ -52,8 +53,8 @@
     "id": "urn:cl:policy:personal-42",
     "version": "personal-policy/42",
     "issuer": "urn:cl:policy-engine:local",
-    "allowed_purposes": [
-      "draft a response to the launch timeline request"
+    "allowed_purpose_codes": [
+      "draft.response"
     ],
     "allowed_selectors": [
       "requested_delivery_date",
