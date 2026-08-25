@@ -1,0 +1,58 @@
+.svg-link {
+  color: #7ba5d4;
+  text-decoration: none;
+}
+
+.map-node,
+.legend-item,
+.map-edge {
+  cursor: help;
+  outline: none;
+}
+
+.map-node.is-linked,
+.legend-item {
+  cursor: pointer;
+}
+
+.map-node .node-link-mark {
+  color: #7ba5d4;
+  opacity: 0;
+  transition: opacity 160ms ease;
+}
+
+.map-node:hover .node-outline,
+.map-node:focus .node-outline,
+.legend-item:hover rect,
+.legend-item:focus rect {
+  stroke: #a8c8eb;
+  stroke-width: 5;
+}
+
+.map-node:hover .node-link-mark,
+.map-node:focus .node-link-mark {
+  opacity: 1;
+}
+
+.highlight-control .map-node:not(.category-control),
+.highlight-control .map-edge:not(.category-control),
+.highlight-control .legend-item:not(.category-control),
+.highlight-vault .map-node:not(.category-vault),
+.highlight-vault .map-edge:not(.category-vault),
+.highlight-vault .legend-item:not(.category-vault),
+.highlight-receipt .map-node:not(.category-receipt),
+.highlight-receipt .map-edge:not(.category-receipt),
+.highlight-receipt .legend-item:not(.category-receipt),
+.highlight-untrusted .map-node:not(.category-untrusted),
+.highlight-untrusted .map-edge:not(.category-untrusted),
+.highlight-untrusted .legend-item:not(.category-untrusted) {
+  opacity: 0.5;
+}
+
+.highlight-control .category-control,
+.highlight-vault .category-vault,
+.highlight-receipt .category-receipt,
+.highlight-untrusted .category-untrusted {
+  opacity: 1;
+  filter: url(#glow);
+}

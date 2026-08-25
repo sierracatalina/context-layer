@@ -4,7 +4,7 @@
 
 Context Layer is a protocol for moving the minimum useful context across applications, models, and agents while keeping authority with the user. Every exchange begins with a declared purpose, passes through policy, produces a recipient-bound scoped bundle, and leaves a minimized receipt.
 
-This is the canonical protocol repository. It contains the specification, schemas, reference runtime, local-core proof, threat model, test vectors, and executable tests. Website source and deployment configuration intentionally live outside this repository.
+This is the canonical public repository for both the protocol and its published documentation experience. It contains the specification, schemas, reference runtime, local-core proof, threat model, test vectors, executable tests, and the source served at [sierracatalina.com/context-layer](https://sierracatalina.com/context-layer).
 
 ## Start here
 
@@ -82,6 +82,8 @@ npm test runs the repository-boundary, public-contract, local-core, receipt-hard
 | docs/ | Threat model and interoperability drafts |
 | test-vectors/v0.2/ | SHA-bound deterministic protocol/security vectors |
 | examples/ | Minimized executable local-core demonstration |
+| site/context-layer/ | Canonical source for the published Context Layer dossier and its routes |
+| site/vercel.json | Standalone route map for previewing or deploying the public documentation experience |
 | tests/ | Contract, boundary, local-core, receipt, demo, and vector verification |
 
 ## Public documentation
@@ -93,7 +95,17 @@ npm test runs the repository-boundary, public-contract, local-core, receipt-hard
 - [Reference code](https://sierracatalina.com/context-layer/code)
 - [Interactive synthetic demo](https://sierracatalina.com/context-layer/demo)
 
-The website is a documentation surface. The protocol repository is authoritative for source and versioned proof artifacts.
+The website is a documentation surface, and its complete public source is versioned in `site/context-layer/`. The protocol objects under `protocol/` remain authoritative for technical behavior and versioned proof artifacts.
+
+## Preview the public site
+
+The `site/` directory is independently deployable and preserves the production URL structure, including `/context-layer`, `/context-layer/architecture`, and `/signal/the-context-layer`.
+
+~~~sh
+npx vercel dev site
+~~~
+
+The repository test suite verifies that all published routes and their required assets remain present. Changes to public copy or design should be made here first so the repository and live documentation cannot silently diverge.
 
 ## Security and licensing
 

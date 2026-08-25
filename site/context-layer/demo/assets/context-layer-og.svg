@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-labelledby="title description">
+  <title id="title">Context Layer</title>
+  <desc id="description">Useful context without total access, shown as a request moving through vault, policy, bundle, surface, and receipt stages.</desc>
+  <rect width="1200" height="630" fill="#0d1117"/>
+  <path d="M80 96H1120M80 520H1120" stroke="#252d37"/>
+  <text x="80" y="160" fill="#d4a574" font-family="monospace" font-size="20">CONTEXT LAYER / WORKING PROPOSAL</text>
+  <text x="80" y="260" fill="#f5f1e8" font-family="Georgia,serif" font-size="76">Useful context,</text>
+  <text x="80" y="338" fill="#e8b884" font-family="Georgia,serif" font-size="76" font-style="italic">without total access.</text>
+  <path d="M102 444H1098" stroke="#3b4653"/>
+  <g font-family="monospace" font-size="15" fill="#b8b4ac" text-anchor="middle">
+    <circle cx="102" cy="444" r="9" fill="#e8b884"/><text x="102" y="478">REQUEST</text>
+    <circle cx="301" cy="444" r="9" fill="#7ba5d4"/><text x="301" y="478">VAULT</text>
+    <circle cx="500" cy="444" r="9" fill="#d4a574"/><text x="500" y="478">POLICY</text>
+    <circle cx="699" cy="444" r="9" fill="#7ba5d4"/><text x="699" y="478">BUNDLE</text>
+    <circle cx="898" cy="444" r="9" fill="#7ba5d4"/><text x="898" y="478">SURFACE</text>
+    <circle cx="1098" cy="444" r="9" fill="#d4a574"/><text x="1098" y="478">RECEIPT</text>
+  </g>
+</svg>

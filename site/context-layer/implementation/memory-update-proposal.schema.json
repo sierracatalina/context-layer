@@ -1,0 +1,211 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sierracatalina.com/context-layer/implementation/memory-update-proposal.schema.json",
+  "title": "memory update proposal",
+  "description": "Phase 0 v0.2 proposal-only memory writeback contract.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "spec_version",
+    "type",
+    "id",
+    "created_at",
+    "issuer",
+    "subject_ref",
+    "operation",
+    "proposed_claims",
+    "provenance_refs",
+    "rationale",
+    "submitted_by",
+    "status",
+    "approval_requirement",
+    "expires_at"
+  ],
+  "properties": {
+    "spec_version": {
+      "const": "context-layer/0.2-draft"
+    },
+    "type": {
+      "const": "memory_update_proposal"
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^urn:cl:proposal:[A-Za-z0-9._~-]+$"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "issuer": {
+      "$ref": "#/$defs/issuer"
+    },
+    "subject_ref": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 512
+    },
+    "bundle_ref": {
+      "type": "string",
+      "pattern": "^urn:cl:bundle:[A-Za-z0-9._~-]+$"
+    },
+    "operation": {
+      "enum": [
+        "add",
+        "add_or_contradict",
+        "supersede",
+        "retract"
+      ]
+    },
+    "proposed_claims": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 64,
+      "items": {
+        "$ref": "#/$defs/proposed_claim"
+      }
+    },
+    "provenance_refs": {
+      "type": "array",
+      "maxItems": 64,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 3,
+        "maxLength": 512
+      }
+    },
+    "rationale": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 1000
+    },
+    "submitted_by": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 512
+    },
+    "status": {
+      "enum": [
+        "pending_validation",
+        "pending_approval",
+        "approved",
+        "rejected",
+        "committed",
+        "expired"
+      ]
+    },
+    "approval_requirement": {
+      "type": "array",
+      "maxItems": 32,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/name"
+      }
+    },
+    "expires_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "integrity": {
+      "$ref": "#/$defs/integrity"
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "enum": [
+              "approved",
+              "committed"
+            ]
+          }
+        },
+        "required": [
+          "status"
+        ]
+      },
+      "then": {
+        "properties": {
+          "provenance_refs": {
+            "type": "array",
+            "minItems": 1
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "digest": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "integrity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "algorithm",
+        "digest"
+      ],
+      "properties": {
+        "algorithm": {
+          "const": "sha-256"
+        },
+        "digest": {
+          "$ref": "#/$defs/digest"
+        }
+      }
+    },
+    "name": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9]*(?:[._-][a-z0-9]+)*$"
+    },
+    "issuer": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 3,
+          "maxLength": 512
+        }
+      }
+    },
+    "proposed_claim": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "predicate",
+        "object",
+        "confidence"
+      ],
+      "properties": {
+        "predicate": {
+          "$ref": "#/$defs/name"
+        },
+        "object": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "value",
+            "datatype"
+          ],
+          "properties": {
+            "value": true,
+            "datatype": {
+              "$ref": "#/$defs/name"
+            }
+          }
+        },
+        "confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        }
+      }
+    }
+  }
+}

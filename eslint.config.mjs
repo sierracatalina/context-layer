@@ -13,6 +13,9 @@ export default defineConfig([
     ".open-next/**",
     ".wrangler/**",
     "out/**",
+    "site/context-layer/assets/**",
+    "site/context-layer/demo/assets/**",
+    "site/context-layer/implementation/context-layer-reference.mjs",
   ]),
   eslint.configs.recommended,
   {

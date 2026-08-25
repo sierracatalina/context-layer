@@ -1,0 +1,390 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sierracatalina.com/context-layer/implementation/policy-decision.schema.json",
+  "title": "policy decision",
+  "description": "Phase 0 v0.2 outcome of evaluating a Context Layer request.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "spec_version",
+    "type",
+    "id",
+    "created_at",
+    "issuer",
+    "request_ref",
+    "decision",
+    "policy_snapshot",
+    "granted_selectors",
+    "denied_selectors",
+    "granted_actions",
+    "denied_actions",
+    "transform_requirements",
+    "retention",
+    "onward_disclosure",
+    "receipt_requirement",
+    "expires_at",
+    "reason_codes"
+  ],
+  "properties": {
+    "spec_version": {
+      "const": "context-layer/0.2-draft"
+    },
+    "type": {
+      "const": "policy_decision"
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^urn:cl:decision:[A-Za-z0-9._~-]+$"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "issuer": {
+      "$ref": "#/$defs/issuer"
+    },
+    "request_ref": {
+      "type": "string",
+      "pattern": "^urn:cl:request:[A-Za-z0-9._~-]+$"
+    },
+    "request_digest": {
+      "$ref": "#/$defs/digest"
+    },
+    "decision": {
+      "enum": [
+        "allow",
+        "allow_with_reductions",
+        "deny",
+        "needs_approval"
+      ]
+    },
+    "policy_snapshot": {
+      "$ref": "#/$defs/policy_snapshot"
+    },
+    "granted_selectors": {
+      "$ref": "#/$defs/selectors"
+    },
+    "denied_selectors": {
+      "$ref": "#/$defs/selectors"
+    },
+    "granted_actions": {
+      "$ref": "#/$defs/names"
+    },
+    "denied_actions": {
+      "$ref": "#/$defs/names"
+    },
+    "transform_requirements": {
+      "type": "array",
+      "maxItems": 64,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/transform_identifier"
+      }
+    },
+    "bundle_instructions": {
+      "type": "array",
+      "maxItems": 32,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 500
+      }
+    },
+    "retention": {
+      "$ref": "#/$defs/retention"
+    },
+    "onward_disclosure": {
+      "enum": [
+        "allowed",
+        "forbidden"
+      ]
+    },
+    "receipt_requirement": {
+      "$ref": "#/$defs/receipt_requirement"
+    },
+    "receipt_preflight": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "required",
+        "status"
+      ],
+      "properties": {
+        "required": {
+          "type": "boolean"
+        },
+        "status": {
+          "enum": [
+            "not_required",
+            "available",
+            "unavailable"
+          ]
+        }
+      }
+    },
+    "approval_verification": {
+      "enum": [
+        "not_required",
+        "not_provided",
+        "binding_invalid",
+        "expired",
+        "scope_incomplete",
+        "verifier_missing",
+        "rejected",
+        "verified"
+      ]
+    },
+    "approval_binding": {
+      "anyOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "approval_ref",
+            "request_digest",
+            "policy_digest"
+          ],
+          "properties": {
+            "approval_ref": {
+              "type": "string",
+              "minLength": 3,
+              "maxLength": 512
+            },
+            "request_digest": {
+              "$ref": "#/$defs/digest"
+            },
+            "policy_digest": {
+              "$ref": "#/$defs/digest"
+            },
+            "expires_at": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        }
+      ]
+    },
+    "expires_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "reason_codes": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 32,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^[A-Z][A-Z0-9]*(?:_[A-Z0-9]+)*$"
+      }
+    },
+    "integrity": {
+      "$ref": "#/$defs/integrity"
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "decision": {
+            "enum": [
+              "deny",
+              "needs_approval"
+            ]
+          }
+        },
+        "required": [
+          "decision"
+        ]
+      },
+      "then": {
+        "properties": {
+          "granted_selectors": {
+            "type": "array",
+            "maxItems": 0
+          },
+          "granted_actions": {
+            "type": "array",
+            "maxItems": 0
+          },
+          "retention": {
+            "type": "object",
+            "properties": {
+              "max_seconds": {
+                "type": "integer",
+                "const": 0
+              }
+            }
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "retention": {
+            "type": "object",
+            "properties": {
+              "max_seconds": {
+                "type": "integer",
+                "minimum": 1
+              }
+            }
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "digest": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "integrity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "algorithm",
+        "digest"
+      ],
+      "properties": {
+        "algorithm": {
+          "const": "sha-256"
+        },
+        "digest": {
+          "$ref": "#/$defs/digest"
+        }
+      }
+    },
+    "name": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9]*(?:[._-][a-z0-9]+)*$"
+    },
+    "transform_identifier": {
+      "type": "string",
+      "pattern": "^(?:redact:[a-z][a-z0-9]*(?:[._-][a-z0-9]+)*|truncate:[a-z][a-z0-9]*(?:[._-][a-z0-9]+)*:[1-9][0-9]*|compress:task-facts)$"
+    },
+    "issuer": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 3,
+          "maxLength": 512
+        }
+      }
+    },
+    "policy_snapshot": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "version",
+        "digest"
+      ],
+      "properties": {
+        "version": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 240
+        },
+        "digest": {
+          "$ref": "#/$defs/digest"
+        }
+      }
+    },
+    "selector": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "predicate"
+      ],
+      "properties": {
+        "predicate": {
+          "$ref": "#/$defs/name"
+        }
+      }
+    },
+    "selectors": {
+      "type": "array",
+      "maxItems": 64,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/selector"
+      }
+    },
+    "names": {
+      "type": "array",
+      "maxItems": 64,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/name"
+      }
+    },
+    "retention": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "mode",
+        "max_seconds"
+      ],
+      "properties": {
+        "mode": {
+          "enum": [
+            "ephemeral",
+            "single_use"
+          ]
+        },
+        "max_seconds": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 86400
+        }
+      }
+    },
+    "receipt_requirement": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "level",
+            "required"
+          ],
+          "properties": {
+            "level": {
+              "const": "none"
+            },
+            "required": {
+              "const": false
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "level",
+            "required"
+          ],
+          "properties": {
+            "level": {
+              "enum": [
+                "decision",
+                "operation"
+              ]
+            },
+            "required": {
+              "const": true
+            }
+          }
+        }
+      ]
+    }
+  }
+}

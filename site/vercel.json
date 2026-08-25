@@ -1,0 +1,52 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "rewrites": [
+    {
+      "source": "/",
+      "destination": "/context-layer/_pages/index.html"
+    },
+    {
+      "source": "/context-layer",
+      "destination": "/context-layer/_pages/index.html"
+    },
+    {
+      "source": "/context-layer/architecture",
+      "destination": "/context-layer/_pages/architecture.html"
+    },
+    {
+      "source": "/context-layer/demo",
+      "destination": "/context-layer/_pages/demo.html"
+    },
+    {
+      "source": "/context-layer/specification",
+      "destination": "/context-layer/_pages/specification.html"
+    },
+    {
+      "source": "/context-layer/implementation",
+      "destination": "/context-layer/_pages/implementation.html"
+    },
+    {
+      "source": "/context-layer/code",
+      "destination": "/context-layer/_pages/code.html"
+    },
+    {
+      "source": "/signal/the-context-layer",
+      "destination": "/context-layer/_pages/essay.html"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/context-layer/(.*)",
+      "headers": [
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        }
+      ]
+    }
+  ]
+}

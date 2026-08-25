@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en" data-sierra-theme="dark"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="/icon.svg" type="image/svg+xml">
+<meta name="theme-color" content="#0a0a0a">
+<meta name="description" content="A system map for the Context Layer protocol, trust zones and receipt lifecycle.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Context Layer architecture">
+<meta property="og:description" content="A system map for the Context Layer protocol, trust zones and receipt lifecycle.">
+<meta property="og:image" content="https://sierracatalina.com/context-layer/og.png">
+<meta property="og:image:width" content="1731">
+<meta property="og:image:height" content="909">
+<meta property="og:image:alt" content="the Context Layer">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://sierracatalina.com/context-layer/og.png">
+<link rel="canonical" href="https://sierracatalina.com/context-layer/architecture">
+<title>Context Layer architecture | sierra catalina</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&amp;family=DM+Mono:wght@400;500&amp;family=Lora:wght@400;500&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/context-layer/assets/context-layer-native.css?v=20260814a">
+<script src="/context-layer/assets/context-layer-native.js?v=20260814a" defer></script>
+</head><body>
+<a class="skip-link" href="#main">skip to content</a>
+<header class="context-header"><div class="context-header__inner">
+<a class="context-wordmark" href="https://sierracatalina.com/">sierra catalina</a>
+<nav aria-label="context layer navigation">
+<a href="/context-layer">context index</a>
+<a href="/signal/the-context-layer">essay</a>
+<a href="/context-layer/architecture">architecture</a>
+<a href="/context-layer/demo">demo</a>
+<a href="/context-layer/specification">specification</a>
+<a href="/context-layer/implementation">implementation</a>
+<a href="/context-layer/code">code</a>
+<button type="button" data-context-theme>light</button>
+</nav>
+</div></header>
+<main id="main" class="context-main architecture-main">
+<header class="architecture-hero shell">
+<div><p class="context-meta">architecture / protocol system map</p>
+<h1>the whole system.<br><em>one explicit boundary.</em></h1></div>
+<p>private sources remain inside the vault. approved context crosses through policy as an expiring, recipient-bound bundle; every operation leaves a receipt.</p>
+</header>
+<section class="architecture-overview shell" aria-labelledby="overview-heading">
+<header class="context-section-head">
+<p class="context-meta">00 / one-screen overview</p>
+<h2 id="overview-heading">the exchange at a glance.</h2>
+<p>the compact map keeps the six-step flow, explicit policy crossing, receipt rail & writeback loop visible in one frame.</p>
+</header>
+<figure class="architecture-overview__figure">
+<div class="architecture-overview__canvas">
+<img class="architecture-overview__art architecture-overview__art--dark" src="/context-layer/downloads/context-layer-architecture.svg#dark" width="900" height="1160" alt="context layer architecture: capture, normalize, vault, decide, bundle and act, followed by a receipt and policy-bound writeback">
+<img class="architecture-overview__art architecture-overview__art--light" src="/context-layer/downloads/context-layer-architecture.svg#light" width="900" height="1160" alt="context layer architecture: capture, normalize, vault, decide, bundle and act, followed by a receipt and policy-bound writeback">
+</div>
+<figcaption><span>the page theme selects the matching opaque canvas. the detailed sections continue below.</span><a href="/context-layer/downloads/context-layer-architecture.svg" target="_blank" rel="noopener">open the SVG ↗</a></figcaption>
+</figure>
+</section>
+<section class="architecture-section shell" aria-labelledby="flow-heading">
+<header class="context-section-head">
+<p class="context-meta">01 / primary exchange</p>
+<h2 id="flow-heading">purpose-bound context flow.</h2>
+<p>the vault remains authoritative. each consumer receives an expiring bundle with explicit capabilities & restrictions.</p>
+</header>
+<ol class="protocol-flow"><li><span>01</span><strong>capture</strong><p>native source events retain origin, time, visibility & integrity</p></li><li><span>02</span><strong>normalize</strong><p>claims remain linked to source evidence, confidence & validity</p></li><li><span>03</span><strong>vault</strong><p>private sources, policy, identity bindings & keys stay authoritative</p></li><li><span>04</span><strong>decide</strong><p>requester, purpose, scope, recipient, expiry & approval produce one decision</p></li><li><span>05</span><strong>bundle</strong><p>the consumer receives only approved facts, capabilities & restrictions</p></li><li><span>06</span><strong>act</strong><p>tools & writeback remain bounded by the bundle, then create receipts</p></li></ol>
+<div class="receipt-rail"><span>evidence</span><p>capture receipt → policy receipt → disclosure receipt → action receipt</p></div>
+</section>
+<section class="architecture-section shell" aria-labelledby="trust-heading">
+<header class="context-section-head">
+<p class="context-meta">02 / trust zones</p>
+<h2 id="trust-heading">three zones. one explicit crossing.</h2>
+</header>
+<div class="trust-grid">
+<article class="trust-zone"><p class="context-meta">user controlled</p><h3>vault zone</h3><ul><li>source events</li><li>claims & summaries</li><li>identity bindings</li><li>policies & keys</li></ul></article>
+<article class="trust-zone"><p class="context-meta">decision boundary</p><h3>controlled exchange</h3><ul><li>request validation</li><li>policy evaluation</li><li>semantic proxy</li><li>bundle issuer</li></ul></article>
+<article class="trust-zone"><p class="context-meta">separate authority</p><h3>consumer zone</h3><ul><li>apps & agents</li><li>models & tools</li><li>discovery systems</li><li>interface surfaces</li></ul></article>
+</div>
+<p class="architecture-note">local execution does not establish authorization. policy, recipient binding & expiry still apply.</p>
+</section>
+<section class="architecture-section shell" aria-labelledby="control-heading">
+<header class="context-section-head">
+<p class="context-meta">03 / control plane</p>
+<h2 id="control-heading">the decision is inspectable.</h2>
+</header>
+<div class="control-grid">
+<article><span>requester</span><p>authenticated client & delegated authority</p></article>
+<article><span>purpose</span><p>declared task class & intended outcome</p></article>
+<article><span>scope</span><p>requested selectors, actions & sensitivity</p></article>
+<article><span>recipient</span><p>model, agent, tool or application binding</p></article>
+<article><span>time</span><p>expiry, retention & revocation state</p></article>
+<article><span>approval</span><p>human review when policy requires it</p></article>
+<div class="control-decision" role="group" aria-label="policy decision result"><span>policy result</span><strong>allow / reduce / request approval / deny</strong><p>the receipt preserves inputs, the policy snapshot & reason codes.</p></div>
+</div>
+</section>
+<section class="architecture-section shell" aria-labelledby="lifecycle-heading">
+<header class="context-section-head">
+<p class="context-meta">04 / lifecycle</p>
+<h2 id="lifecycle-heading">each state has a receipt.</h2>
+</header>
+<ol class="lifecycle-list">
+<li><strong>request</strong><p>name the purpose, recipient, scope, actions & validity window</p></li>
+<li><strong>decision</strong><p>evaluate identity, policy, sensitivity, expiry & approval</p></li>
+<li><strong>bundle</strong><p>issue the minimum approved facts, capabilities & restrictions</p></li>
+<li><strong>action</strong><p>bind side effects to the granted capability set</p></li>
+<li><strong>receipt</strong><p>record the outcome without copying private payloads</p></li>
+<li><strong>writeback</strong><p>stage memory updates for review, supersession or rejection</p></li>
+</ol>
+</section>
+<section class="architecture-download shell" aria-labelledby="download-heading">
+<div><p class="context-meta">portable reference</p>
+<h2 id="download-heading">one-screen protocol map.</h2>
+<p>the SVG is an opaque, theme-aware overview sized to remain legible in one frame on desktop & mobile. the detailed system map remains preserved in the reference archive.</p></div>
+<div class="architecture-download__links">
+<a class="context-action context-action--primary" href="/context-layer/downloads/context-layer-architecture.svg" download>download one-screen SVG ↓</a>
+<a class="context-action" href="/context-layer/specification">read the specification</a>
+</div>
+</section>
+</main>
+<footer class="context-footer"><div class="shell">
+<p><strong>Context Layer</strong> / public working proposal</p>
+<p><a href="https://sierracatalina.com/">sierra catalina</a> / 2026</p>
+</div></footer>
+</body></html>

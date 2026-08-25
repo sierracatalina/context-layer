@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="1160" viewBox="0 0 900 1160" role="img" aria-labelledby="title desc" id="protocol-map">
+  <title id="title">context layer one-screen architecture</title>
+  <desc id="desc">Six recorded steps move context from capture through normalization, the user-owned vault, a policy decision, a minimum bundle, and a bounded action. A receipt rail records outcomes and returns proposed writeback through policy.</desc>
+  <style>
+    :root { color-scheme: light dark; }
+    .map {
+      --map-page: #0d1117;
+      --map-surface: #161c24;
+      --map-raised: #1e252e;
+      --map-ink: #f5f1e8;
+      --map-soft: #b8b4ac;
+      --map-muted: #6a6862;
+      --map-rule: #35404d;
+      --map-signal: #d4a574;
+      --map-link: #7ba5d4;
+    }
+    @media (prefers-color-scheme: light) {
+      .map {
+        --map-page: #ede5d0;
+        --map-surface: #ddd2b8;
+        --map-raised: #f5edda;
+        --map-ink: #1f2418;
+        --map-soft: #4a5a3e;
+        --map-muted: #8a8478;
+        --map-rule: #a9977b;
+        --map-signal: #b85c2f;
+        --map-link: #3a5a3e;
+      }
+    }
+    #dark:target ~ .map {
+      --map-page: #0d1117;
+      --map-surface: #161c24;
+      --map-raised: #1e252e;
+      --map-ink: #f5f1e8;
+      --map-soft: #b8b4ac;
+      --map-muted: #6a6862;
+      --map-rule: #35404d;
+      --map-signal: #d4a574;
+      --map-link: #7ba5d4;
+    }
+    #light:target ~ .map {
+      --map-page: #ede5d0;
+      --map-surface: #ddd2b8;
+      --map-raised: #f5edda;
+      --map-ink: #1f2418;
+      --map-soft: #4a5a3e;
+      --map-muted: #8a8478;
+      --map-rule: #a9977b;
+      --map-signal: #b85c2f;
+      --map-link: #3a5a3e;
+    }
+    .canvas { fill: var(--map-page); }
+    .frame { fill: none; stroke: var(--map-rule); }
+    .card { fill: var(--map-surface); stroke: var(--map-rule); }
+    .card.authority { stroke: var(--map-signal); }
+    .card.exchange { stroke: var(--map-link); }
+    .card.consumer { stroke: var(--map-muted); }
+    .receipt { fill: var(--map-raised); stroke: var(--map-signal); }
+    .ink { fill: var(--map-ink); }
+    .soft { fill: var(--map-soft); }
+    .muted { fill: var(--map-muted); }
+    .signal { fill: var(--map-signal); }
+    .link { fill: var(--map-link); }
+    .edge { fill: none; stroke: var(--map-link); }
+    .edge-return { fill: none; stroke: var(--map-signal); stroke-dasharray: 9 8; }
+    .edge, .edge-return, .card, .receipt, .frame { vector-effect: non-scaling-stroke; }
+    text { text-rendering: optimizeLegibility; }
+    .display { font-family: 'Cormorant Garamond', Georgia, serif; }
+    .body { font-family: Lora, Georgia, serif; }
+    .mono { font-family: 'DM Mono', 'JetBrains Mono', monospace; letter-spacing: 0.08em; }
+  </style>
+  <g id="dark"/>
+  <g id="light"/>
+  <g class="map">
+    <defs>
+      <marker id="arrow" viewBox="0 0 12 12" refX="10" refY="6" markerWidth="10" markerHeight="10" orient="auto"><path d="M2 2 10 6 2 10Z" class="link"/></marker>
+      <marker id="arrow-return" viewBox="0 0 12 12" refX="10" refY="6" markerWidth="10" markerHeight="10" orient="auto"><path d="M2 2 10 6 2 10Z" class="signal"/></marker>
+    </defs>
+    <rect class="canvas" width="900" height="1160"/>
+    <rect class="frame" x="24" y="24" width="852" height="1112" stroke-width="1.5"/>
+    <text class="mono muted" x="70" y="72" font-size="16">context layer / v0.2 draft</text>
+    <text class="display ink" x="70" y="132" font-size="50">one boundary. six recorded steps.</text>
+    <text class="body soft" x="70" y="174" font-size="21">useful context moves; raw vault authority does not.</text>
+    <g aria-label="legend">
+      <line x1="70" y1="219" x2="104" y2="219" stroke="var(--map-signal)" stroke-width="4" vector-effect="non-scaling-stroke"/>
+      <text class="mono muted" x="118" y="225" font-size="14">user authority</text>
+      <line x1="310" y1="219" x2="344" y2="219" stroke="var(--map-link)" stroke-width="4" vector-effect="non-scaling-stroke"/>
+      <text class="mono muted" x="358" y="225" font-size="14">controlled exchange</text>
+      <line x1="620" y1="219" x2="654" y2="219" stroke="var(--map-muted)" stroke-width="4" vector-effect="non-scaling-stroke"/>
+      <text class="mono muted" x="668" y="225" font-size="14">consumer authority</text>
+    </g>
+    <g aria-label="01 capture">
+      <rect class="card authority" x="70" y="270" width="350" height="150" stroke-width="2"/>
+      <text class="mono signal" x="96" y="302" font-size="14">01 / user authority</text>
+      <text class="display ink" x="96" y="355" font-size="40">capture</text>
+      <text class="body soft" x="96" y="390" font-size="21">retain source, time &amp; integrity</text>
+    </g>
+    <g aria-label="02 normalize">
+      <rect class="card authority" x="480" y="270" width="350" height="150" stroke-width="2"/>
+      <text class="mono signal" x="506" y="302" font-size="14">02 / user authority</text>
+      <text class="display ink" x="506" y="355" font-size="40">normalize</text>
+      <text class="body soft" x="506" y="390" font-size="21">derive with provenance intact</text>
+    </g>
+    <g aria-label="03 vault">
+      <rect class="card authority" x="480" y="485" width="350" height="150" stroke-width="2"/>
+      <text class="mono signal" x="506" y="517" font-size="14">03 / retained authority</text>
+      <text class="display ink" x="506" y="570" font-size="40">vault</text>
+      <text class="body soft" x="506" y="605" font-size="21">private context retains authority</text>
+    </g>
+    <g aria-label="04 decide">
+      <rect class="card exchange" x="70" y="485" width="350" height="150" stroke-width="2"/>
+      <text class="mono link" x="96" y="517" font-size="14">04 / explicit boundary</text>
+      <text class="display ink" x="96" y="570" font-size="40">decide</text>
+      <text class="body soft" x="96" y="605" font-size="21">purpose · recipient · scope · expiry</text>
+    </g>
+    <g aria-label="05 bundle">
+      <rect class="card exchange" x="70" y="700" width="350" height="150" stroke-width="2"/>
+      <text class="mono link" x="96" y="732" font-size="14">05 / controlled disclosure</text>
+      <text class="display ink" x="96" y="785" font-size="40">bundle</text>
+      <text class="body soft" x="96" y="820" font-size="21">approved facts &amp; capabilities only</text>
+    </g>
+    <g aria-label="06 act">
+      <rect class="card consumer" x="480" y="700" width="350" height="150" stroke-width="2"/>
+      <text class="mono muted" x="506" y="732" font-size="14">06 / consumer authority</text>
+      <text class="display ink" x="506" y="785" font-size="40">act</text>
+      <text class="body soft" x="506" y="820" font-size="21">execute only within the bundle</text>
+    </g>
+    <path class="edge" d="M420 345H468" stroke-width="2.5" marker-end="url(#arrow)"/>
+    <path class="edge" d="M655 420V473" stroke-width="2.5" marker-end="url(#arrow)"/>
+    <path class="edge" d="M480 560H432" stroke-width="2.5" marker-end="url(#arrow)"/>
+    <path class="edge" d="M245 635V688" stroke-width="2.5" marker-end="url(#arrow)"/>
+    <path class="edge" d="M420 775H468" stroke-width="2.5" marker-end="url(#arrow)"/>
+    <path class="edge-return" d="M655 850V884" stroke-width="2.5" marker-end="url(#arrow-return)"/>
+    <rect class="receipt" x="70" y="895" width="760" height="105" stroke-width="2"/>
+    <text class="mono signal" x="96" y="930" font-size="14">receipt rail</text>
+    <text class="display ink" x="96" y="973" font-size="31">request → decision → disclosure → action → writeback</text>
+    <path class="edge-return" d="M70 948H48V560H58" stroke-width="2.5" marker-end="url(#arrow-return)"/>
+    <text class="mono muted" x="70" y="1038" font-size="14">outcomes are recorded without copying private payloads.</text>
+    <text class="body soft" x="70" y="1080" font-size="18">proposed memory returns through policy; it never becomes truth silently.</text>
+    <text class="mono muted" x="70" y="1112" font-size="13">portable one-screen overview</text>
+    <text class="mono muted" x="830" y="1112" text-anchor="end" font-size="13">sierracatalina.com/context-layer</text>
+  </g>
+</svg>
