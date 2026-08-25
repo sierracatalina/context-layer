@@ -1,3 +1,5 @@
+import { formatEditorialText } from "../../assets/context-layer-editorial.mjs";
+
 const demoStages = [
   {
     kicker: "Context request",
@@ -339,6 +341,8 @@ let heroTimer = null;
 
 const qs = (selector, root = document) => root.querySelector(selector);
 const qsa = (selector, root = document) => [...root.querySelectorAll(selector)];
+const editorial = (value) => formatEditorialText(String(value));
+const editorialGenerated = (value) => formatEditorialText(String(value), { preserveUnknownCase: true });
 
 function setHeroStage(index) {
   qsa("[data-hero-stage]").forEach((item, itemIndex) => {
@@ -370,9 +374,9 @@ function fieldList(target, fields) {
     const item = document.createElement("li");
     item.dataset.state = state;
     const value = document.createElement("span");
-    value.textContent = label;
+    value.textContent = editorial(label);
     const status = document.createElement("small");
-    status.textContent = state;
+    status.textContent = editorial(state);
     item.append(value, status);
     return item;
   }));
@@ -382,24 +386,24 @@ function setDemoStage(index, announce = true) {
   currentStage = Math.max(0, Math.min(index, demoStages.length - 1));
   const stage = demoStages[currentStage];
 
-  qs("[data-stage-kicker]").textContent = stage.kicker;
-  qs("[data-stage-title]").textContent = stage.title;
-  qs("[data-stage-summary]").textContent = stage.summary;
+  qs("[data-stage-kicker]").textContent = editorial(stage.kicker);
+  qs("[data-stage-title]").textContent = editorial(stage.title);
+  qs("[data-stage-summary]").textContent = editorial(stage.summary);
   qs("[data-stage-callout]").replaceChildren();
   const tag = document.createElement("span");
   tag.className = `status-tag status-tag--${stage.tag[1]}`;
-  tag.textContent = stage.tag[0];
+  tag.textContent = editorial(stage.tag[0]);
   const callout = document.createElement("p");
-  callout.textContent = stage.callout;
+  callout.textContent = editorial(stage.callout);
   qs("[data-stage-callout]").append(tag, callout);
 
   fieldList("[data-stage-input]", stage.input);
   fieldList("[data-stage-output]", stage.output);
-  qs("[data-input-count]").textContent = `${stage.input.length} ${stage.input.length === 1 ? "field" : "fields"}`;
-  qs("[data-output-count]").textContent = `${stage.output.length} ${stage.output.length === 1 ? "field" : "fields"}`;
+  qs("[data-input-count]").textContent = editorial(`${stage.input.length} ${stage.input.length === 1 ? "field" : "fields"}`);
+  qs("[data-output-count]").textContent = editorial(`${stage.output.length} ${stage.output.length === 1 ? "field" : "fields"}`);
   qs("[data-stage-code]").textContent = JSON.stringify(stage.data, null, 2);
-  qs("[data-progress-label]").textContent = `Step ${currentStage + 1} of ${demoStages.length}`;
-  qs("[data-disclosure-label]").textContent = stage.disclosureLabel;
+  qs("[data-progress-label]").textContent = editorial(`Step ${currentStage + 1} of ${demoStages.length}`);
+  qs("[data-disclosure-label]").textContent = editorial(stage.disclosureLabel);
   qs("[data-meter]").setAttribute("aria-valuenow", String(stage.disclosure));
   qs("[data-meter-fill]").style.width = `${stage.disclosure}%`;
   qs("[data-meter-value]").textContent = `${stage.disclosure}%`;
@@ -407,7 +411,7 @@ function setDemoStage(index, announce = true) {
   const prev = qs("[data-prev-stage]");
   const next = qs("[data-next-stage]");
   prev.disabled = currentStage === 0;
-  next.innerHTML = `${stage.next} <span aria-hidden="true">→</span>`;
+  next.innerHTML = `${editorial(stage.next)} <span aria-hidden="true">→</span>`;
 
   qsa("[data-stage-button]").forEach((button, buttonIndex) => {
     button.setAttribute("aria-selected", String(buttonIndex === currentStage));
@@ -416,7 +420,7 @@ function setDemoStage(index, announce = true) {
   });
 
   setHeroStage(currentStage);
-  if (announce) qs("[data-announcer]").textContent = `Step ${currentStage + 1}: ${stage.kicker}. ${stage.title}`;
+  if (announce) qs("[data-announcer]").textContent = editorial(`Step ${currentStage + 1}: ${stage.kicker}. ${stage.title}`);
 }
 
 function setLayer(layerKey, moveFocus = false) {
@@ -429,15 +433,15 @@ function setLayer(layerKey, moveFocus = false) {
   const heading = document.createElement("div");
   const label = document.createElement("p");
   label.className = "utility-label";
-  label.textContent = `${layer.number} / ${layer.label}`;
+  label.textContent = editorial(`${layer.number} / ${layer.label}`);
   const title = document.createElement("h3");
-  title.textContent = layer.title;
+  title.textContent = editorial(layer.title);
   heading.append(label, title);
   const copy = document.createElement("div");
   const summary = document.createElement("p");
-  summary.textContent = layer.summary;
+  summary.textContent = editorial(layer.summary);
   const examples = document.createElement("p");
-  examples.textContent = layer.examples;
+  examples.textContent = editorial(layer.examples);
   examples.style.marginTop = "14px";
   copy.append(summary, examples);
   intro.append(heading, copy);
@@ -451,11 +455,11 @@ function setLayer(layerKey, moveFocus = false) {
     number.textContent = String(index + 1).padStart(2, "0");
     const body = document.createElement("div");
     const name = document.createElement("h4");
-    name.textContent = node[0];
+    name.textContent = editorial(node[0]);
     const description = document.createElement("p");
-    description.textContent = node[1];
+    description.textContent = editorial(node[1]);
     const currentExamples = document.createElement("small");
-    currentExamples.textContent = `Examples: ${node[2]}`;
+    currentExamples.textContent = editorial(`Examples: ${node[2]}`);
     body.append(name, description, currentExamples);
     item.append(number, body);
     nodes.append(item);
@@ -467,7 +471,7 @@ function setLayer(layerKey, moveFocus = false) {
     button.setAttribute("aria-selected", String(selected));
     button.tabIndex = selected ? 0 : -1;
   });
-  qs("[data-announcer]").textContent = `${layer.label} selected. ${layer.title}`;
+  qs("[data-announcer]").textContent = editorial(`${layer.label} selected. ${layer.title}`);
   if (moveFocus) panel.focus({ preventScroll: true });
 }
 
@@ -507,13 +511,13 @@ function navigateToTarget(target) {
   if (element) element.scrollIntoView({ behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "start" });
 }
 
-function addTranscript(role, message) {
+function addTranscript(role, message, formatter = editorial) {
   const transcript = qs("[data-guide-transcript]");
   const row = document.createElement("p");
   if (role === "You") row.className = "is-user";
   const label = document.createElement("strong");
-  label.textContent = role;
-  row.append(label, document.createTextNode(message));
+  label.textContent = editorial(role);
+  row.append(label, document.createTextNode(formatter ? formatter(message) : message));
   transcript.append(row);
   transcript.scrollTop = transcript.scrollHeight;
 }
@@ -521,8 +525,9 @@ function addTranscript(role, message) {
 async function askGuide(question) {
   const status = qs("[data-guide-status]");
   const mode = qs("[data-guide-mode]");
-  status.textContent = "Thinking…";
+  status.textContent = editorial("Thinking…");
   let response = null;
+  let answerFormatter = editorialGenerated;
 
   if (location.protocol === "http:" || location.protocol === "https:") {
     try {
@@ -535,7 +540,7 @@ async function askGuide(question) {
         const body = await result.json();
         if (typeof body.answer === "string") {
           response = { answer: body.answer, target: body.action?.target_id };
-          mode.textContent = "OpenAI guide";
+          mode.textContent = editorial("OpenAI guide");
         }
       }
     } catch {
@@ -545,16 +550,18 @@ async function askGuide(question) {
 
   if (!response) {
     response = fallbackGuide(question);
-    mode.textContent = "Local guide";
+    answerFormatter = editorial;
+    mode.textContent = editorial("Local guide");
   }
 
-  addTranscript("Guide", response.answer);
-  status.textContent = response.target ? "Answering and navigating" : "Answered";
+  const answer = answerFormatter(response.answer);
+  addTranscript("Guide", answer, null);
+  status.textContent = editorial(response.target ? "Answering and navigating" : "Answered");
   if (response.target) window.setTimeout(() => navigateToTarget(response.target), 350);
 
   if (qs("[data-voice-output]").checked && "speechSynthesis" in window) {
     window.speechSynthesis.cancel();
-    window.speechSynthesis.speak(new SpeechSynthesisUtterance(response.answer));
+    window.speechSynthesis.speak(new SpeechSynthesisUtterance(answer));
   }
 }
 
@@ -563,7 +570,7 @@ function initializeVoice() {
   const Recognition = window.SpeechRecognition || window.webkitSpeechRecognition;
   if (!Recognition) {
     button.disabled = true;
-    button.textContent = "Voice input unavailable";
+    button.textContent = editorial("Voice input unavailable");
     return;
   }
   const recognition = new Recognition();
@@ -571,21 +578,21 @@ function initializeVoice() {
   recognition.interimResults = true;
   recognition.continuous = false;
   recognition.addEventListener("start", () => {
-    button.textContent = "Listening…";
-    qs("[data-guide-status]").textContent = "Listening";
+    button.textContent = editorial("Listening…");
+    qs("[data-guide-status]").textContent = editorial("Listening");
   });
   recognition.addEventListener("result", (event) => {
     const transcript = [...event.results].map((result) => result[0].transcript).join("");
     qs("#guide-input").value = transcript;
   });
   recognition.addEventListener("end", () => {
-    button.textContent = "Voice input";
-    qs("[data-guide-status]").textContent = "Ready";
+    button.textContent = editorial("Voice input");
+    qs("[data-guide-status]").textContent = editorial("Ready");
     qs("#guide-input").focus();
   });
   recognition.addEventListener("error", () => {
-    button.textContent = "Voice input";
-    qs("[data-guide-status]").textContent = "Voice input could not start";
+    button.textContent = editorial("Voice input");
+    qs("[data-guide-status]").textContent = editorial("Voice input could not start");
   });
   button.addEventListener("click", () => recognition.start());
 }
@@ -611,7 +618,7 @@ function initialize() {
     const input = qs("#guide-input");
     const question = input.value.trim();
     if (!question) return;
-    addTranscript("You", question);
+    addTranscript("You", question, null);
     input.value = "";
     await askGuide(question);
   });

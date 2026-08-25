@@ -82,7 +82,7 @@ function enhanceCodeCanvas(pre, index) {
   button.className = 'code-canvas__copy';
   button.type = 'button';
   button.textContent = 'copy';
-  button.setAttribute('aria-label', `Copy code snippet ${index + 1} to clipboard`);
+  button.setAttribute('aria-label', `copy code snippet ${index + 1} to clipboard`);
 
   let resetTimer;
   let isCopying = false;

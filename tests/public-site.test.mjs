@@ -29,12 +29,13 @@ test("standalone deployment maps every published route to versioned source", asy
 
 test("public dossier keeps the production identity and local asset contract", async () => {
   const index = await readFile(join(site, "context-layer/_pages/index.html"), "utf8");
-  assert.match(index, /<h1>the <em>Context Layer<\/em>\.<\/h1>/);
+  assert.match(index, /<h1>the <em>context layer<\/em>\.<\/h1>/);
   assert.match(index, /one boundary\. six recorded steps\./);
   assert.match(index, /href="\/context-layer\/architecture"/);
   assert.match(index, /href="\/signal\/the-context-layer"/);
 
   for (const asset of [
+    "icon.svg",
     "context-layer/assets/context-layer-native.css",
     "context-layer/assets/context-layer-native.js",
     "context-layer/downloads/context-layer-architecture.svg",

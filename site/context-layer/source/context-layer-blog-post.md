@@ -287,8 +287,8 @@ The Context Layer is an attempt to make the better architecture portable.
 
 - [Context Layer interactive overview](/)
 - [Context Layer end-to-end demo](/#demo)
-- [Draft technical specification](/reference/specification)
-- [Implementation and interoperability profiles](/reference/implementation)
+- [Draft technical specification](/context-layer/specification)
+- [Implementation and interoperability profiles](/context-layer/implementation)
 - [HTTP Semantics, RFC 9110](https://www.rfc-editor.org/rfc/rfc9110.html)
 - [TLS 1.3, RFC 8446](https://www.rfc-editor.org/info/rfc8446/)
 - [ActivityPub, W3C Recommendation](https://www.w3.org/TR/activitypub/)

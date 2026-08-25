@@ -8,7 +8,6 @@
 | Version identifier | `context-layer/0.2-draft` |
 | Date | 2026-08-17 |
 | Editors' target | Reviewable core contract for implementation and interoperability experiments |
-| Canonical local context | [`../agent-navigation-manifest.json`](../agent-navigation-manifest.json) |
 
 ## Change log
 
