@@ -23,13 +23,16 @@ const requiredProtocolFiles = [
   "examples/local-core-demo.mjs",
 ];
 
-test("repository root is protocol-first and excludes website deployment source", async () => {
+test("repository root is protocol-first and keeps the public site in its own boundary", async () => {
   for (const path of requiredProtocolFiles) {
     await access(join(root, path));
   }
 
+  await access(join(root, "site/context-layer/_pages/index.html"));
+  await access(join(root, "site/vercel.json"));
+
   const entries = new Set(await readdir(root));
-  for (const siteOnlyEntry of [
+  for (const unrelatedApplicationEntry of [
     ".openai",
     "app",
     "build",
@@ -38,7 +41,7 @@ test("repository root is protocol-first and excludes website deployment source",
     "next.config.ts",
     "vite.config.ts",
   ]) {
-    assert.equal(entries.has(siteOnlyEntry), false, siteOnlyEntry);
+    assert.equal(entries.has(unrelatedApplicationEntry), false, unrelatedApplicationEntry);
   }
 });
 

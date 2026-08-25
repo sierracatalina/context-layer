@@ -1,0 +1,43 @@
+# Sierra Catalina
+
+> Sierra Catalina builds small, privacy-first systems for user-owned intelligence, portable context, and cooperative automation.
+
+Canonical site: https://sierracatalina.com
+
+## Context Layer
+
+- [Overview](https://sierracatalina.com/context-layer): Purpose-bound context authorization for users and agents.
+- [Architecture](https://sierracatalina.com/context-layer/architecture): Trust zones, policy decisions, scoped bundles, actions, and receipts.
+- [Technical specification](https://sierracatalina.com/context-layer/specification): Draft Context Layer v0.2 protocol contracts and invariants.
+- [Implementation guide](https://sierracatalina.com/context-layer/implementation): Experimental local-core implementation and interoperability roadmap.
+- [Public code artifacts](https://sierracatalina.com/context-layer/code): Schemas, fixtures, reference runtime, and proof profile.
+- [Interactive demo](https://sierracatalina.com/context-layer/demo): A synthetic request moving through policy, disclosure, action, and receipt.
+- [Essay](https://sierracatalina.com/signal/the-context-layer): Why user-owned context should become portable infrastructure.
+
+## Raw Markdown
+
+- [Technical specification source](https://sierracatalina.com/context-layer/source/context-layer-technical-specification.md)
+- [Implementation guide source](https://sierracatalina.com/context-layer/source/context-layer-implementation-and-interoperability.md)
+- [Essay source](https://sierracatalina.com/context-layer/source/context-layer-blog-post.md)
+
+## Machine-readable artifacts
+
+- [Agent navigation manifest](https://sierracatalina.com/context-layer/source/agent-navigation-manifest.json)
+- [ContextRequest schema](https://sierracatalina.com/context-layer/implementation/context-request.schema.json)
+- [PolicyDecision schema](https://sierracatalina.com/context-layer/implementation/policy-decision.schema.json)
+- [ScopedContextBundle schema](https://sierracatalina.com/context-layer/implementation/scoped-context-bundle.schema.json)
+- [Receipt schema](https://sierracatalina.com/context-layer/implementation/receipt.schema.json)
+- [MemoryUpdateProposal schema](https://sierracatalina.com/context-layer/implementation/memory-update-proposal.schema.json)
+- [Reference implementation](https://sierracatalina.com/context-layer/implementation/context-layer-reference.mjs)
+- [Canonical repository](https://github.com/sierracatalina/context-layer)
+
+## Public positioning
+
+- Machine intelligence should widen human agency, not narrow it.
+- Robots are useful when they make life more legible, local, and humane.
+- Decentralized systems matter because exits matter.
+- Privacy, portability, and consent are product requirements.
+
+## Boundaries
+
+This public site does not disclose private data, credentials, internal operations, or unpublished editorial drafts. Context Layer v0.2 is experimental proof of work, not an adopted standard, production security certification, or proof of third-party interoperability.

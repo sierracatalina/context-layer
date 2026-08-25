@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en" data-sierra-theme="dark"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="/icon.svg" type="image/svg+xml">
+<meta name="theme-color" content="#0a0a0a">
+<meta name="description" content="A tested v0.2 proof profile for Context Layer contracts, encrypted local storage, policy, adapters and receipts.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Context Layer reference starter">
+<meta property="og:description" content="A tested v0.2 proof profile for Context Layer contracts, encrypted local storage, policy, adapters and receipts.">
+<meta property="og:image" content="https://sierracatalina.com/context-layer/og.png">
+<meta property="og:image:width" content="1731">
+<meta property="og:image:height" content="909">
+<meta property="og:image:alt" content="the Context Layer">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://sierracatalina.com/context-layer/og.png">
+<link rel="canonical" href="https://sierracatalina.com/context-layer/code">
+<title>Context Layer reference starter | sierra catalina</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&amp;family=DM+Mono:wght@400;500&amp;family=Lora:wght@400;500&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/context-layer/assets/context-layer-native.css?v=20260814a">
+<script src="/context-layer/assets/context-layer-native.js?v=20260814a" defer></script>
+</head><body>
+<a class="skip-link" href="#main">skip to content</a>
+<header class="context-header"><div class="context-header__inner">
+<a class="context-wordmark" href="https://sierracatalina.com/">sierra catalina</a>
+<nav aria-label="context layer navigation">
+<a href="/context-layer">context index</a>
+<a href="/signal/the-context-layer">essay</a>
+<a href="/context-layer/architecture">architecture</a>
+<a href="/context-layer/demo">demo</a>
+<a href="/context-layer/specification">specification</a>
+<a href="/context-layer/implementation">implementation</a>
+<a href="/context-layer/code">code</a>
+<button type="button" data-context-theme>light</button>
+</nav>
+</div></header>
+<main id="main" class="context-main code-main">
+<header class="document-hero shell">
+<p class="context-meta">v0.2 / local proof profile</p>
+<h1>v0.2 reference implementation.</h1>
+<p class="document-deck">versioned schemas, an encrypted local vault, four-state policy, scoped bundles, append-only receipts, one files adapter & one local-agent consumer.</p>
+<div class="document-meta"><span>tested</span><span>single-user profile</span><span>experimental v0.2</span></div>
+</header>
+<section class="code-layout shell">
+<aside class="code-status">
+<p class="context-meta">implementation status</p>
+<dl>
+<div><dt>included</dt><dd>five core contracts, fixtures & a dependency-free reference runtime</dd></div>
+<div><dt>included</dt><dd>AES-256-GCM local vault, four-state policy & authenticated bundles</dd></div>
+<div><dt>included</dt><dd>anchored append-only receipts, UTF-8 files adapter & local-agent consumer</dd></div>
+<div><dt>excluded</dt><dd>production key custody, portable signatures & remote adapters</dd></div>
+</dl>
+</aside>
+<div class="code-body">
+<section><p class="context-meta">quickstart</p><h2>run one complete exchange.</h2>
+<pre><code>import {
+  decideContextRequest,
+  issueScopedBundle,
+  writeReceipt,
+} from &#39;./context-layer-reference.mjs&#39;;
+
+const decision = decideContextRequest(request, policy);
+const bundle = issueScopedBundle({
+  request,
+  decision,
+  claims,
+  issuer: &#39;did:example:alice&#39;,
+});
+const receipt = writeReceipt({
+  operation: &#39;bundle.issue&#39;,
+  request,
+  decision,
+  bundle,
+});</code></pre>
+<p>the reference runtime accepts a request & policy, reduces the requested selectors, issues an expiring bundle, then writes a payload-minimized receipt.</p></section>
+<section><p class="context-meta">download</p><h2>use the reviewed artifacts.</h2>
+<div class="download-list">
+<a href="/context-layer/implementation/context-layer-reference.mjs" download><strong>reference implementation</strong><span>context-layer-reference.mjs ↓</span></a>
+<a href="/context-layer/implementation/context-request.schema.json" download><strong>context request schema</strong><span>context-request.schema.json ↓</span></a>
+<a href="/context-layer/implementation/policy-decision.schema.json" download><strong>policy decision schema</strong><span>policy-decision.schema.json ↓</span></a>
+<a href="/context-layer/implementation/scoped-context-bundle.schema.json" download><strong>scoped bundle schema</strong><span>scoped-context-bundle.schema.json ↓</span></a>
+<a href="/context-layer/implementation/memory-update-proposal.schema.json" download><strong>memory proposal schema</strong><span>memory-update-proposal.schema.json ↓</span></a>
+<a href="/context-layer/implementation/receipt.schema.json" download><strong>receipt schema</strong><span>receipt.schema.json ↓</span></a>
+<a href="/context-layer/implementation/valid-exchange.json" download><strong>valid exchange fixture</strong><span>valid-exchange.json ↓</span></a>
+<a href="/context-layer/implementation/valid-policy-decision.json" download><strong>valid decision fixture</strong><span>valid-policy-decision.json ↓</span></a>
+<a href="/context-layer/implementation/invalid-policy-decision.json" download><strong>invalid decision fixture</strong><span>invalid-policy-decision.json ↓</span></a>
+<a href="/context-layer/implementation/valid-memory-update-proposal.json" download><strong>valid proposal fixture</strong><span>valid-memory-update-proposal.json ↓</span></a>
+<a href="/context-layer/implementation/invalid-memory-update-proposal.json" download><strong>invalid proposal fixture</strong><span>invalid-memory-update-proposal.json ↓</span></a>
+<a href="/context-layer/implementation/invalid-secret-receipt.json" download><strong>invalid receipt fixture</strong><span>invalid-secret-receipt.json ↓</span></a>
+</div></section>
+</div>
+</section>
+</main>
+<footer class="context-footer"><div class="shell">
+<p><strong>Context Layer</strong> / public working proposal</p>
+<p><a href="https://sierracatalina.com/">sierra catalina</a> / 2026</p>
+</div></footer>
+</body></html>

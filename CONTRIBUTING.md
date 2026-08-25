@@ -2,7 +2,7 @@
 
 Context Layer is an experimental protocol draft. Focused review of invariants, object contracts, fixtures, threat boundaries, and failure behavior is welcome. Contributions must follow the software and documentation license boundary in `LICENSING.md`.
 
-This repository accepts protocol, reference-runtime, local-core, and proof artifacts. Website application, hosting, and deployment source are intentionally maintained elsewhere and should not be added to this repository.
+This repository accepts protocol, reference-runtime, local-core, proof, and public-documentation changes. The canonical published Context Layer site belongs in `site/context-layer/`; unrelated Sierra Catalina website source does not.
 
 ## Before contributing
 

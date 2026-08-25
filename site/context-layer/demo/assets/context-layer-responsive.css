@@ -1,0 +1,136 @@
+.hero {
+  min-height: calc(100vh - 180px);
+}
+
+.thesis {
+  padding-top: 80px;
+}
+
+@media (max-width: 860px) {
+  .primary-nav {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    justify-content: stretch;
+    gap: 0;
+    overflow: visible;
+  }
+
+  .primary-nav a {
+    font-size: 12px;
+    padding: 10px 4px;
+    text-align: center;
+  }
+
+  .hero {
+    min-height: auto;
+    padding-block: 64px 52px;
+  }
+
+  .packet-figure {
+    padding-top: 26px;
+  }
+
+  .packet-track {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    margin: 12px 0 16px;
+  }
+
+  .packet-track::before,
+  .context-packet {
+    display: none;
+  }
+
+  .packet-track li {
+    grid-template-columns: 30px minmax(0, 1fr);
+    min-height: 60px;
+    padding: 8px;
+    border-right: 1px solid var(--rule);
+  }
+
+  .packet-track li:nth-child(3n) {
+    border-right: 0;
+  }
+
+  .packet-track li > span {
+    grid-row: 1 / 3;
+  }
+
+  .packet-track li small {
+    white-space: nowrap;
+  }
+}
+
+@media (max-width: 680px) {
+  .primary-nav {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0;
+    padding-bottom: 8px;
+  }
+
+  .primary-nav a {
+    font-size: 11px;
+    padding: 7px 4px;
+  }
+
+  .hero {
+    padding-block: 24px 28px;
+  }
+
+  .hero h1 {
+    margin-bottom: 18px;
+  }
+
+  .hero__actions {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    margin-top: 24px;
+  }
+
+  .hero__actions .button {
+    min-height: 48px;
+    padding: 8px 10px;
+    font-size: 13px;
+  }
+
+  .packet-figure {
+    padding-top: 14px;
+  }
+
+  .packet-caption,
+  .packet-track li small,
+  .packet-figure > .text-command {
+    display: none;
+  }
+
+  .packet-track {
+    margin: 8px 0 0;
+  }
+
+  .packet-track li {
+    grid-template-columns: 24px minmax(0, 1fr);
+    min-height: 54px;
+    align-items: center;
+    padding: 6px;
+  }
+
+  .packet-track li > span {
+    grid-row: auto;
+  }
+
+  .packet-track li strong {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 350px) {
+  .hero h1 {
+    font-size: 46px;
+  }
+
+  .hero__actions {
+    grid-template-columns: 1fr;
+  }
+
+  .primary-nav a {
+    font-size: 10px;
+  }
+}

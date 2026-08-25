@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en" data-sierra-theme="dark"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="/icon.svg" type="image/svg+xml">
+<meta name="theme-color" content="#0a0a0a">
+<meta name="description" content="A user-controlled contract for moving minimum useful context across models, agents and applications.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="the Context Layer">
+<meta property="og:description" content="A user-controlled contract for moving minimum useful context across models, agents and applications.">
+<meta property="og:image" content="https://sierracatalina.com/context-layer/og.png">
+<meta property="og:image:width" content="1731">
+<meta property="og:image:height" content="909">
+<meta property="og:image:alt" content="the Context Layer">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://sierracatalina.com/context-layer/og.png">
+<link rel="canonical" href="https://sierracatalina.com/context-layer">
+<title>the Context Layer | sierra catalina</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&amp;family=DM+Mono:wght@400;500&amp;family=Lora:wght@400;500&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/context-layer/assets/context-layer-native.css?v=20260814a">
+<script src="/context-layer/assets/context-layer-native.js?v=20260814a" defer></script>
+</head><body>
+<a class="skip-link" href="#main">skip to content</a>
+<header class="context-header"><div class="context-header__inner">
+<a class="context-wordmark" href="https://sierracatalina.com/">sierra catalina</a>
+<nav aria-label="context layer navigation">
+<a href="/context-layer">context index</a>
+<a href="/signal/the-context-layer">essay</a>
+<a href="/context-layer/architecture">architecture</a>
+<a href="/context-layer/demo">demo</a>
+<a href="/context-layer/specification">specification</a>
+<a href="/context-layer/implementation">implementation</a>
+<a href="/context-layer/code">code</a>
+<button type="button" data-context-theme>light</button>
+</nav>
+</div></header>
+<main id="main" class="context-main">
+<header class="context-hero shell">
+<div class="context-hero__copy">
+<p class="context-meta">dossier 001 / public working proposal / 2026.08.21</p>
+<h1>the <em>Context Layer</em>.</h1>
+<p class="context-deck">a user-controlled contract for moving the minimum useful context across models, agents & applications.</p>
+<div class="context-actions">
+<a class="context-action context-action--primary" href="/signal/the-context-layer">read the essay</a>
+<a class="context-action" href="/context-layer/architecture">read the architecture</a>
+<a class="context-action" href="/context-layer/demo">run the interactive demo</a>
+</div>
+</div>
+<aside class="context-hero__status" aria-label="protocol status">
+<span>status</span><strong>v0.2 draft</strong>
+<span>implementation</span><strong>local core + adapter proof</strong>
+<span>authority</span><strong>user-owned vault</strong>
+</aside>
+</header>
+<section class="context-contract shell" aria-labelledby="contract-heading">
+<header class="context-section-head">
+<p class="context-meta">protocol invariant</p>
+<h2 id="contract-heading">one boundary. six recorded steps.</h2>
+<p>each exchange starts with a declared purpose & ends with a receipt. raw vault access never crosses the boundary.</p>
+</header>
+<ol class="protocol-flow">
+<li><details class="protocol-step"><summary><span class="protocol-step__number">01</span><strong>capture</strong><span class="protocol-step__tagline">preserve origin</span></summary><div class="protocol-step__detail"><p>record the source event, time, identity &amp; payload digest before interpretation.</p></div></details></li>
+<li><details class="protocol-step"><summary><span class="protocol-step__number">02</span><strong>normalize</strong><span class="protocol-step__tagline">derive with provenance</span></summary><div class="protocol-step__detail"><p>derive structured claims while retaining source references, timestamps &amp; confidence.</p></div></details></li>
+<li><details class="protocol-step"><summary><span class="protocol-step__number">03</span><strong>vault</strong><span class="protocol-step__tagline">retain authority</span></summary><div class="protocol-step__detail"><p>keep encrypted originals &amp; policy state inside user-controlled authority. raw data never enters bundles or receipts.</p></div></details></li>
+<li><details class="protocol-step"><summary><span class="protocol-step__number">04</span><strong>decide</strong><span class="protocol-step__tagline">allow, reduce, approve or deny</span></summary><div class="protocol-step__detail"><p>evaluate purpose, recipient, selectors, actions &amp; expiry before granting any context.</p></div></details></li>
+<li><details class="protocol-step"><summary><span class="protocol-step__number">05</span><strong>bundle</strong><span class="protocol-step__tagline">minimum useful context</span></summary><div class="protocol-step__detail"><p>issue recipient-bound, expiring, single-use context with restrictions &amp; provenance.</p></div></details></li>
+<li><details class="protocol-step"><summary><span class="protocol-step__number">06</span><strong>act</strong><span class="protocol-step__tagline">execute &amp; receipt</span></summary><div class="protocol-step__detail"><p>verify capabilities, execute the permitted action &amp; append a minimized receipt. memory writes remain proposals.</p></div></details></li>
+</ol>
+<div class="receipt-rail"><span>receipt rail</span><p>request → decision → disclosure → action → writeback</p></div>
+</section>
+<section class="context-index shell" aria-labelledby="reading-heading">
+<header class="context-section-head">
+<p class="context-meta">reading order</p>
+<h2 id="reading-heading">from argument to implementation.</h2>
+</header>
+<div class="context-index__grid">
+<a href="/signal/the-context-layer"><span>01</span><strong>essay</strong><p>the argument in plain language</p></a>
+<a href="/context-layer/architecture"><span>02</span><strong>architecture</strong><p>the system as purpose-bound flows & trust zones</p></a>
+<a href="/context-layer/specification"><span>03</span><strong>specification</strong><p>objects, lifecycles, policy & conformance</p></a>
+<a href="/context-layer/implementation"><span>04</span><strong>implementation</strong><p>profiles, adapters & deployment sequence</p></a>
+<a href="/context-layer/code"><span>05</span><strong>code</strong><p>tested v0.2 contracts & a local proof profile</p></a>
+<a href="/context-layer/demo"><span>06</span><strong>demo</strong><p>run one synthetic request through policy, disclosure & receipt</p></a>
+</div>
+</section>
+<section class="context-start shell" aria-labelledby="start-heading">
+<p class="context-meta">implementation boundary</p>
+<div><h2 id="start-heading">start with the contract.</h2>
+<p>the published proof covers v0.2 contract validation, an encrypted local vault, four-state policy, scoped bundles, anchored receipts, a files adapter & a local-agent consumer. it does not claim production key custody or a portable signing suite.</p></div>
+<a class="context-action" href="/context-layer/code">inspect the starter</a>
+</section>
+</main>
+<footer class="context-footer"><div class="shell">
+<p><strong>Context Layer</strong> / public working proposal</p>
+<p><a href="https://sierracatalina.com/">sierra catalina</a> / 2026</p>
+</div></footer>
+</body></html>
