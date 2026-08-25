@@ -1,7 +1,7 @@
 {
-  "name": "Context Layer",
-  "short_name": "Context Layer",
-  "description": "A public interactive demonstration of the Context Layer working proposal.",
+  "name": "context layer",
+  "short_name": "context layer",
+  "description": "a public interactive demonstration of the context layer working proposal.",
   "start_url": "/context-layer/demo",
   "display": "standalone",
   "background_color": "#0d1117",

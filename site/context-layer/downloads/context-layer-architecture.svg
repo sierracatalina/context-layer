@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" width="900" height="1160" viewBox="0 0 900 1160" role="img" aria-labelledby="title desc" id="protocol-map">
-  <title id="title">context layer one-screen architecture</title>
+  <title id="title">context layer protocol architecture</title>
   <desc id="desc">Six recorded steps move context from capture through normalization, the user-owned vault, a policy decision, a minimum bundle, and a bounded action. A receipt rail records outcomes and returns proposed writeback through policy.</desc>
   <style>
     :root { color-scheme: light dark; }
@@ -138,7 +138,7 @@
     <path class="edge-return" d="M70 948H48V560H58" stroke-width="2.5" marker-end="url(#arrow-return)"/>
     <text class="mono muted" x="70" y="1038" font-size="14">outcomes are recorded without copying private payloads.</text>
     <text class="body soft" x="70" y="1080" font-size="18">proposed memory returns through policy; it never becomes truth silently.</text>
-    <text class="mono muted" x="70" y="1112" font-size="13">portable one-screen overview</text>
+    <text class="mono muted" x="70" y="1112" font-size="13">policy-bound context exchange</text>
     <text class="mono muted" x="830" y="1112" text-anchor="end" font-size="13">sierracatalina.com/context-layer</text>
   </g>
 </svg>

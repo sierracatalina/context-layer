@@ -26,10 +26,10 @@
     "reference"
   ],
   "public_routes": [
-    { "path": "/writing/context-layer", "label": "Published essay", "format": "text/html" },
-    { "path": "/reference/architecture", "label": "Zoomable architecture", "format": "text/html" },
-    { "path": "/reference/specification", "label": "Draft technical specification", "format": "text/html" },
-    { "path": "/reference/implementation", "label": "Implementation profiles", "format": "text/html" }
+    { "path": "/signal/the-context-layer", "label": "Published essay", "format": "text/html" },
+    { "path": "/context-layer/architecture", "label": "Zoomable architecture", "format": "text/html" },
+    { "path": "/context-layer/specification", "label": "Draft technical specification", "format": "text/html" },
+    { "path": "/context-layer/implementation", "label": "Implementation profiles", "format": "text/html" }
   ],
   "constraints": {
     "same_page_only": true,

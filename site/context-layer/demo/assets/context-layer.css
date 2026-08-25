@@ -1034,7 +1034,6 @@ a {
   color: var(--brass-strong);
   font-family: var(--mono);
   font-size: 10px;
-  text-transform: uppercase;
 }
 
 .guide-transcript .is-user strong {

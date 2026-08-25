@@ -17,7 +17,7 @@ It uses **adapter compatibility** as a precise term:
 
 Adapter compatibility does not imply that an adapter exists in this repository, that two vendors have tested interoperability, or that the Context Layer is part of the external protocol's official specification.
 
-The current repository contains the draft specification, five schemas, a dependency-free reference runtime, and an experimental single-user local core with synthetic data. The profiles below define broader implementation targets; website publication and deployment source are maintained separately.
+The current repository contains the draft specification, five schemas, a dependency-free reference runtime, and an experimental single-user local core with synthetic data. Broader adapter, platform, and interoperability profiles remain implementation targets.
 
 ## 2. Where the Context Layer fits
 
@@ -127,7 +127,7 @@ This is the recommended first implementation profile because it keeps the trust 
 | A2A | Agent-to-agent task transport | Bundle carried as structured task data or artifact; remote agent bound as recipient | Reference link only | Remote agent retention and onward disclosure must be explicit |
 | Local/cloud models | Context consumers | Prompt or model input assembled only from a scoped bundle | Illustrative runtime references | Provider retention and logging remain part of recipient policy |
 | OpenAI Realtime | Voice or multimodal consumer | WebRTC session receives scoped instructions and context through a backend | Informative profile only; no conforming implementation | Standard API keys must remain server-side and a demo is not hardened production infrastructure |
-| Web UI | Approval and consumption surface | Show bundle provenance, permissions, expiry, actions, and receipts | Informative profile only; publication UI maintained separately | Static pages do not enforce policy |
+| Web UI | Approval and consumption surface | Show bundle provenance, permissions, expiry, actions, and receipts | Static demonstrator only | Static pages do not enforce policy |
 | iOS/mobile | Approval and consumption surface | Native app consumes bundles and short-lived sessions; credentials use platform storage | Not implemented | Never embed provider API keys in an app binary |
 | x402 | Optional payment condition | Request or action can reference a payment requirement and payment receipt | Reference link only | Payment does not grant context permission |
 

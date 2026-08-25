@@ -18,10 +18,12 @@
   "scripts": {
     "test": "npm run test:contracts && npm run test:site && npm run test:local-core && npm run test:proof",
     "test:contracts": "node --test tests/repository-boundary.test.mjs tests/reference-implementation.test.mjs",
-    "test:site": "node --test tests/public-site.test.mjs",
+    "test:site": "node --test tests/public-site.test.mjs tests/editorial-formatting.test.mjs",
     "test:local-core": "node --test tests/local-core.test.mjs tests/receipt-log-hardening.test.mjs",
     "test:proof": "node --test tests/local-core-demo.test.mjs tests/test-vectors.test.mjs",
     "demo:local-core": "node examples/local-core-demo.mjs",
+    "format:context-layer": "node scripts/format-context-layer-site.mjs",
+    "verify:context-layer": "node scripts/verify-context-layer-editorial.mjs",
     "release:hygiene": "node scripts/release-hygiene.mjs",
     "lint": "node node_modules/eslint/bin/eslint.js ."
   },
