@@ -443,11 +443,9 @@ Schema-valid JSON is not a pass. A `CL-Pass` claim MUST publish results for T01â
 ## 9. Non-goals
 
 - Not an Egoist AI Passport or Switchboard adapter, subset, client, or type import. Observation is recorded in [crosswalk.md](crosswalk.md); that is not adoption.
-- No Grok Bot adapter
 - No PCP grants
 - No Legatus envelope
 - No live issuer
-- No ouro / Ouroboros landing
 - No wildcards for categories, purpose codes, or `client_instance`
 - No un-disclosure of issued bundles
 - No opening of the five Lite schemas

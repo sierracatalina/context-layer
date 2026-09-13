@@ -5,11 +5,10 @@ profile: CL-Pass
 spec: context-layer/0.3-draft companion addendum
 relates to: context-layer/0.2-draft CL-Core-Lite (CLOSED)
 published: 2026-08-29
-close record: https://docs.google.com/document/d/19ZNUrP3zCxRxbXvQ-0EBV9MKuMcJbkKXLKp58MTHtUA/edit
 
 0.2 Lite schemas stay closed. These vectors do not add fields to `context_request`, `policy_decision`, `scoped_context_bundle`, `memory_update_proposal`, or `receipt`. Schema-valid JSON is not a pass. Each test names an oracle that must fail if the invariant is broken even when every object validates.
 
-No PCP grants. No Legatus. No live issuer. No ouro.
+No PCP grants. No Legatus. No live issuer.
 
 ## How to run
 

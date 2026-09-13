@@ -71,7 +71,7 @@ Companion pack: [`protocol/companions/0.3-draft/`](../../protocol/companions/0.3
 | `claim_annotation` | Rides beside claims until a 0.3 core revision. Evidence labels MUST NOT be upgraded. |
 | `memory_category` | Closed enum: `preference` \| `fact` \| `project` \| `instruction` |
 
-Companion schemas, examples, README, spec, and T01–T10 vectors live under [`protocol/companions/0.3-draft/`](../../protocol/companions/0.3-draft/) and [`test-vectors/cl-pass/VECTORS.md`](../../test-vectors/cl-pass/VECTORS.md). Do not invent types. Object names and invariants match the closed Drive record in [`DRIVE-PAGE.md`](../../protocol/companions/0.3-draft/DRIVE-PAGE.md).
+Companion schemas, examples, README, spec, and T01–T10 vectors live under [`protocol/companions/0.3-draft/`](../../protocol/companions/0.3-draft/) and [`test-vectors/cl-pass/VECTORS.md`](../../test-vectors/cl-pass/VECTORS.md). Do not invent types.
 
 ### Invariants (normative for CL-Pass)
 
@@ -127,11 +127,8 @@ Schema-valid JSON is not a pass. A CL-Pass claim MUST publish results for T01–
 | Companion pack | [`protocol/companions/0.3-draft/`](../../protocol/companions/0.3-draft/) |
 | Companion spec | [`protocol/companions/0.3-draft/spec.md`](../../protocol/companions/0.3-draft/spec.md) |
 | 0.2 ↔ 0.3 crosswalk | [`protocol/companions/0.3-draft/crosswalk.md`](../../protocol/companions/0.3-draft/crosswalk.md) |
-| Drive close page | [`protocol/companions/0.3-draft/DRIVE-PAGE.md`](../../protocol/companions/0.3-draft/DRIVE-PAGE.md) |
 | T01–T10 vectors | [`test-vectors/cl-pass/VECTORS.md`](../../test-vectors/cl-pass/VECTORS.md) |
 | Closed Lite schemas | [`protocol/schemas/`](../../protocol/schemas/) |
-| Drive close (canonical) | https://docs.google.com/document/d/19ZNUrP3zCxRxbXvQ-0EBV9MKuMcJbkKXLKp58MTHtUA/edit |
-| Drive vectors (canonical) | https://docs.google.com/document/d/1NGbs7kSk__BtxwkjP-BhMKe_5A99phNVCFA3ICj7nw8/edit |
 
 ## Non-goals (this weekend cut)
 
@@ -140,11 +137,9 @@ This proposal ships **Context Layer only**. The weekend four-protocol set is PCP
 Do not do any of the following in this cut:
 
 - Switchboard / Egoist adapter, SDK, OIDC, MCP, or type-name imports
-- Grok Bot adapter
 - PCP grants
 - Legatus envelope
 - Live issuer
-- ouro / Ouroboros landing
 - Opening the five Lite schemas
 - Wildcards for categories, purpose codes, or `client_instance`
 - Un-disclosure of already issued bundles
