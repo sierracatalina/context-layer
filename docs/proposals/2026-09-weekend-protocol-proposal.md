@@ -71,7 +71,7 @@ Companion pack: [`protocol/companions/0.3-draft/`](../../protocol/companions/0.3
 | `claim_annotation` | Rides beside claims until a 0.3 core revision. Evidence labels MUST NOT be upgraded. |
 | `memory_category` | Closed enum: `preference` \| `fact` \| `project` \| `instruction` |
 
-Companion schemas and examples live under [`protocol/companions/0.3-draft/schemas/`](../../protocol/companions/0.3-draft/schemas/) and [`examples/`](../../protocol/companions/0.3-draft/examples/). Do not invent types. Object names and invariants match the closed Drive record in [`DRIVE-PAGE.md`](../../protocol/companions/0.3-draft/DRIVE-PAGE.md).
+Companion schemas, examples, README, spec, and T01–T10 vectors live under [`protocol/companions/0.3-draft/`](../../protocol/companions/0.3-draft/) and [`test-vectors/cl-pass/VECTORS.md`](../../test-vectors/cl-pass/VECTORS.md). Do not invent types. Object names and invariants match the closed Drive record in [`DRIVE-PAGE.md`](../../protocol/companions/0.3-draft/DRIVE-PAGE.md).
 
 ### Invariants (normative for CL-Pass)
 
