@@ -16,6 +16,7 @@ This is the canonical public repository for both the protocol and its published 
 - [Experimental local core](packages/local-core/)
 - [Threat model](docs/context-layer-threat-model.md)
 - [Executable v0.2 vectors](test-vectors/v0.2/)
+- [Weekend protocol proposal (0.2 Lite + 0.3 CL-Pass)](docs/proposals/2026-09-weekend-protocol-proposal.md)
 
 ## Protocol flow
 
@@ -106,6 +107,18 @@ npx vercel dev site
 ~~~
 
 The repository test suite verifies that all published routes and their required assets remain present. Changes to public copy or design should be made here first so the repository and live documentation cannot silently diverge.
+
+## Protocol proposal (weekend ship)
+
+The 2026-09 weekend cut keeps `CL-Core-Lite` closed and adds a reviewable `context-layer/0.3-draft` companion pack (CL-Pass) beside it. This does not open the five Lite schemas, mint a live issuer, or land Switchboard / ouro work.
+
+| Path | Purpose |
+| --- | --- |
+| [docs/proposals/2026-09-weekend-protocol-proposal.md](docs/proposals/2026-09-weekend-protocol-proposal.md) | Technical write-up for Sierra review |
+| [protocol/companions/0.3-draft/](protocol/companions/0.3-draft/) | Companion objects, closed schemas, examples, Drive close page |
+| [test-vectors/cl-pass/VECTORS.md](test-vectors/cl-pass/VECTORS.md) | Required T01–T10 oracles (schema-valid JSON is not a pass) |
+
+Closed Drive records: [0.3 companion close](https://docs.google.com/document/d/19ZNUrP3zCxRxbXvQ-0EBV9MKuMcJbkKXLKp58MTHtUA/edit) · [CL-Pass vectors](https://docs.google.com/document/d/1NGbs7kSk__BtxwkjP-BhMKe_5A99phNVCFA3ICj7nw8/edit).
 
 ## Security and licensing
 

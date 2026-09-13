@@ -1,0 +1,17 @@
+{
+  "spec_version": "context-layer/0.3-draft",
+  "type": "claim_annotation",
+  "id": "urn:cl:annotation:ann_4401",
+  "created_at": "2026-08-28T17:55:00Z",
+  "issuer": {
+    "id": "urn:cl:annotator:local"
+  },
+  "claim_ref": "urn:cl:claim:pref-quiet-hours",
+  "evidence_basis": "direct_user_save",
+  "visibility": "vault",
+  "category": "preference",
+  "attribution": {
+    "via_principal": "urn:cl:principal:subject-primary",
+    "captured_at": "2026-08-28T17:54:50Z"
+  }
+}

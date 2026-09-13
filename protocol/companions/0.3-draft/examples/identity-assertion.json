@@ -1,0 +1,17 @@
+{
+  "spec_version": "context-layer/0.3-draft",
+  "type": "identity_assertion",
+  "id": "urn:cl:identity:id_4401",
+  "created_at": "2026-08-28T18:00:00Z",
+  "issuer": {
+    "id": "urn:cl:identity-issuer:local"
+  },
+  "subject_ref": "vault://subjects/primary",
+  "principal": "urn:cl:principal:subject-primary",
+  "client_instance": "urn:device:local-workstation",
+  "authenticated_by": "deployment_session",
+  "authenticated_at": "2026-08-28T18:00:00Z",
+  "audience": "urn:app:notes",
+  "expires_at": "2026-08-28T20:00:00Z",
+  "context_grant": false
+}

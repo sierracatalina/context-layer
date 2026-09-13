@@ -1,0 +1,17 @@
+{
+  "spec_version": "context-layer/0.3-draft",
+  "type": "lifecycle_event",
+  "id": "urn:cl:lifecycle:le_4401",
+  "created_at": "2026-08-28T18:05:01Z",
+  "issuer": {
+    "id": "urn:cl:lifecycle:local"
+  },
+  "subject_ref": "vault://subjects/primary",
+  "operation": "pass.issued",
+  "occurred_at": "2026-08-28T18:05:00Z",
+  "refs": {
+    "pass_ref": "urn:cl:pass:pass_4401",
+    "pairing_ref": "urn:cl:pairing:pair_4401"
+  },
+  "payload_included": false
+}
