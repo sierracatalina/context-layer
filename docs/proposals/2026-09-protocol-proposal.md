@@ -132,7 +132,7 @@ Schema-valid JSON is not a pass. A CL-Pass claim MUST publish results for T01–
 
 ## Non-goals
 
-This proposal covers **Context Layer only**. Related protocols outside this repository: PCP · Legatus · AAA.
+This repository ships Context Layer only. PCP, Legatus, and AAA are out of scope for this change.
 
 Do not do any of the following in this proposal:
 
