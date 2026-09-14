@@ -4,7 +4,7 @@ This file records material changes to the Context Layer working draft and its pu
 
 ## Unreleased
 
-- Add the 2026-09 weekend protocol proposal: closed 0.2 Lite remains authoritative; `context-layer/0.3-draft` CL-Pass companions and T01–T10 vectors sit beside it for Sierra review.
+- Add the 2026-09 protocol proposal: closed 0.2 Lite remains authoritative; `context-layer/0.3-draft` CL-Pass companions and T01–T10 vectors sit beside it.
 - Confirm the dual-license boundary and contribution terms before publishing the first proof-of-work prerelease.
 - Populate the canonical protocol-only GitHub repository from the reviewed release commit.
 - Consolidate specification, reference, schema, and fixture artifacts under the explicit `protocol/` boundary; keep website and deployment source outside this repository.

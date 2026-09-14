@@ -3,7 +3,7 @@
 status: working draft · not an adopted standard
 profile: CL-Pass
 spec: context-layer/0.3-draft companion addendum
-relates to: context-layer/0.2-draft CL-Core-Lite (CLOSED)
+relates to: context-layer/0.2-draft CL-Core-Lite
 published: 2026-08-29
 
 0.2 Lite schemas stay closed. These vectors do not add fields to `context_request`, `policy_decision`, `scoped_context_bundle`, `memory_update_proposal`, or `receipt`. Schema-valid JSON is not a pass. Each test names an oracle that must fail if the invariant is broken even when every object validates.

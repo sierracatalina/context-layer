@@ -29,8 +29,8 @@ Website application, hosting, and deployment source are intentionally outside th
 
 If a file combines executable software with embedded explanatory prose and is not explicitly listed in the documentation section, Apache-2.0 applies to the whole file. Third-party dependencies, quoted standards text, linked external material, trademarks, and generated dependency notices remain governed by their own terms.
 
-## Protocol proposal (weekend ship)
+## Protocol proposal (2026-09)
 
-The 2026-09 weekend protocol proposal and `protocol/companions/0.3-draft` companion materials are part of this repository. Schemas, examples, and other executable companion artifacts use Apache-2.0. Proposal prose, companion specification pages, and `test-vectors/cl-pass/VECTORS.md` use CC BY 4.0. This note does not relicense the existing v0.2 product or replace `LICENSE` / `LICENSE-DOCS`.
+The 2026-09 protocol proposal and `protocol/companions/0.3-draft` companion materials are part of this repository. Schemas, examples, and other executable companion artifacts use Apache-2.0. Proposal prose, companion specification pages, and `test-vectors/cl-pass/VECTORS.md` use CC BY 4.0. This note does not relicense the existing v0.2 product or replace `LICENSE` / `LICENSE-DOCS`.
 
 No license grants trademark rights or implies endorsement, protocol adoption, production readiness, security certification, or warranty.

@@ -1,15 +1,15 @@
-# Context Layer — weekend protocol proposal
+# Context Layer — 2026-09 protocol proposal
 
 | Field | Value |
 | --- | --- |
-| Status | Reviewable proposal for Sierra Catalina — not an adopted standard |
+| Status | Working draft — not an adopted standard |
 | Date | 2026-09-13 |
 | Closed Lite | `context-layer/0.2-draft` CL-Core-Lite |
 | Companion profile | `context-layer/0.3-draft` CL-Pass |
 | Repo | https://github.com/sierracatalina/context-layer |
 | License | Existing repository boundary (Apache-2.0 software / CC BY 4.0 prose). This proposal does not relicense v0.2. |
 
-This is the weekend ship write-up. It states what is already closed, what the 0.3 companions add beside Lite, and what this cut does not do.
+This is the 2026-09 proposal write-up. It states what is already closed, what the 0.3 companions add beside Lite, and what this proposal does not do.
 
 ## What Context Layer is
 
@@ -130,11 +130,11 @@ Schema-valid JSON is not a pass. A CL-Pass claim MUST publish results for T01–
 | T01–T10 vectors | [`test-vectors/cl-pass/VECTORS.md`](../../test-vectors/cl-pass/VECTORS.md) |
 | Closed Lite schemas | [`protocol/schemas/`](../../protocol/schemas/) |
 
-## Non-goals (this weekend cut)
+## Non-goals
 
-This proposal ships **Context Layer only**. The weekend four-protocol set is PCP · Context Layer · Legatus · AAA. The other three are out of this repository.
+This proposal covers **Context Layer only**. Related protocols outside this repository: PCP · Legatus · AAA.
 
-Do not do any of the following in this cut:
+Do not do any of the following in this proposal:
 
 - Switchboard / Egoist adapter, SDK, OIDC, MCP, or type-name imports
 - PCP grants
