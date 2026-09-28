@@ -1,0 +1,18 @@
+{
+  "spec_version": "context-layer/0.3-draft",
+  "type": "approval_handle",
+  "id": "urn:cl:approval:ah_4401",
+  "created_at": "2026-08-28T18:10:00Z",
+  "issuer": {
+    "id": "urn:cl:approval-surface:local"
+  },
+  "request_ref": "urn:cl:request:req_880",
+  "decision_ref": "urn:cl:decision:dec_880",
+  "pass_gap": {
+    "missing_categories": [
+      "instruction"
+    ]
+  },
+  "user_visible_url": "https://vault.example/approve/ah_4401",
+  "expires_at": "2026-08-28T18:40:00Z"
+}

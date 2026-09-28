@@ -1,0 +1,14 @@
+{
+  "spec_version": "context-layer/0.3-draft",
+  "type": "client_pairing",
+  "id": "urn:cl:pairing:pair_4401",
+  "created_at": "2026-08-28T18:02:00Z",
+  "issuer": {
+    "id": "urn:cl:pairing:local"
+  },
+  "subject_ref": "vault://subjects/primary",
+  "client_instance": "urn:device:local-workstation",
+  "display_name": "local workstation notes",
+  "paired_at": "2026-08-28T18:02:00Z",
+  "status": "paired"
+}

@@ -16,6 +16,7 @@ This is the canonical public repository for both the protocol and its published 
 - [Experimental local core](packages/local-core/)
 - [Threat model](docs/context-layer-threat-model.md)
 - [Executable v0.2 vectors](test-vectors/v0.2/)
+- [2026-09 protocol proposal (0.2 Lite + 0.3 CL-Pass)](docs/proposals/2026-09-protocol-proposal.md)
 
 ## Protocol flow
 
@@ -106,6 +107,16 @@ npx vercel dev site
 ~~~
 
 The repository test suite verifies that all published routes and their required assets remain present. Changes to public copy or design should be made here first so the repository and live documentation cannot silently diverge.
+
+## Protocol proposal (2026-09)
+
+The 2026-09 proposal keeps `CL-Core-Lite` closed and adds a reviewable `context-layer/0.3-draft` companion pack (CL-Pass) beside it. This does not open the five Lite schemas or mint a live issuer.
+
+| Path | Purpose |
+| --- | --- |
+| [docs/proposals/2026-09-protocol-proposal.md](docs/proposals/2026-09-protocol-proposal.md) | Technical write-up (working draft) |
+| [protocol/companions/0.3-draft/](protocol/companions/0.3-draft/) | Companion objects, closed schemas, examples |
+| [test-vectors/cl-pass/VECTORS.md](test-vectors/cl-pass/VECTORS.md) | Required T01–T10 oracles (schema-valid JSON is not a pass) |
 
 ## Security and licensing
 
