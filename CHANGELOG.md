@@ -4,6 +4,7 @@ This file records material changes to the Context Layer working draft and its pu
 
 ## Unreleased
 
+- Replace shared-secret HMAC bundle authentication with Ed25519 signatures over RFC 8785 (JCS) canonical JSON. Envelopes now carry `authentication: { algorithm: "Ed25519", kid, sig }`; recipients verify with the issuer's public key. The receipt anchor chain is signed the same way. New `packages/local-core/jcs.mjs` vendors a minimal RFC 8785 canonicalizer. Legacy HMAC bundles are readable only behind an explicit `legacyHmac` option and are never written; test vectors and manifests were regenerated accordingly.
 - Add the 2026-09 protocol proposal as a working draft: closed 0.2 Lite remains authoritative; `context-layer/0.3-draft` CL-Pass companions and T01–T10 vectors sit beside it.
 - Confirm the dual-license boundary and contribution terms before publishing the first proof-of-work prerelease.
 - Populate the canonical protocol-only GitHub repository from the reviewed release commit.

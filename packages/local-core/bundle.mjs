@@ -151,12 +151,12 @@ export async function issueScopedBundle({
   }
   if (
     !isPlainObject(authentication)
-    || authentication.algorithm !== "hmac-sha256"
-    || authentication.key_id !== bundleAuthority.key_id
-    || typeof authentication.mac !== "string"
-    || !/^[A-Za-z0-9_-]{43}$/.test(authentication.mac)
+    || authentication.algorithm !== "Ed25519"
+    || authentication.kid !== bundleAuthority.kid
+    || typeof authentication.sig !== "string"
+    || !/^[A-Za-z0-9_-]{86}$/.test(authentication.sig)
     || Object.keys(authentication).some((key) =>
-      !["algorithm", "key_id", "mac"].includes(key))
+      !["algorithm", "kid", "sig"].includes(key))
   ) {
     fail("INVALID_BUNDLE_AUTHENTICATION", "bundle authority returned malformed authentication");
   }
@@ -255,14 +255,17 @@ export function validateScopedBundle(bundle, {
   return true;
 }
 
-export function serializeScopedBundle(authenticatedEnvelope) {
-  validateAuthenticatedBundleEnvelope(authenticatedEnvelope, { enforceExpiry: false });
+export function serializeScopedBundle(authenticatedEnvelope, {
+  legacyHmac = false,
+} = {}) {
+  validateAuthenticatedBundleEnvelope(authenticatedEnvelope, { enforceExpiry: false, legacyHmac });
   return canonicalStringify(authenticatedEnvelope);
 }
 
 export function validateAuthenticatedBundleEnvelope(authenticatedEnvelope, {
   clock = () => new Date(),
   enforceExpiry = true,
+  legacyHmac = false,
 } = {}) {
   requirePlainObject(authenticatedEnvelope, "authenticated bundle envelope");
   if (
@@ -276,21 +279,41 @@ export function validateAuthenticatedBundleEnvelope(authenticatedEnvelope, {
   }
   validateScopedBundle(authenticatedEnvelope.bundle, { clock, enforceExpiry });
   const authentication = authenticatedEnvelope.authentication;
-  if (
-    authentication.algorithm !== "hmac-sha256"
-    || typeof authentication.key_id !== "string"
-    || authentication.key_id.length === 0
-    || typeof authentication.mac !== "string"
-    || !/^[A-Za-z0-9_-]{43}$/.test(authentication.mac)
-    || Object.keys(authentication).some((key) =>
-      !["algorithm", "key_id", "mac"].includes(key))
-  ) {
+  if (isEd25519BundleAuthentication(authentication)) {
+    // current scheme: asymmetric issuer signature, independently verifiable.
+  } else if (legacyHmac && isLegacyHmacBundleAuthentication(authentication)) {
+    // retired shared-secret scheme: accepted only behind the explicit opt-in.
+  } else {
     fail("INVALID_BUNDLE_AUTHENTICATION", "bundle authentication metadata is malformed");
   }
   if (containsForbiddenRawMaterial(authenticatedEnvelope)) {
     fail("BUNDLE_CONTAINS_FORBIDDEN_MATERIAL", "authenticated bundle contains forbidden material");
   }
   return true;
+}
+
+function isEd25519BundleAuthentication(authentication) {
+  return (
+    authentication.algorithm === "Ed25519"
+    && typeof authentication.kid === "string"
+    && authentication.kid.length > 0
+    && typeof authentication.sig === "string"
+    && /^[A-Za-z0-9_-]{86}$/.test(authentication.sig)
+    && Object.keys(authentication).every((key) =>
+      ["algorithm", "kid", "sig"].includes(key))
+  );
+}
+
+function isLegacyHmacBundleAuthentication(authentication) {
+  return (
+    authentication.algorithm === "hmac-sha256"
+    && typeof authentication.key_id === "string"
+    && authentication.key_id.length > 0
+    && typeof authentication.mac === "string"
+    && /^[A-Za-z0-9_-]{43}$/.test(authentication.mac)
+    && Object.keys(authentication).every((key) =>
+      ["algorithm", "key_id", "mac"].includes(key))
+  );
 }
 
 async function requireReceiptPreflight(receiptStore) {
@@ -394,12 +417,12 @@ function normalizeTask(task) {
 function requireSigningAuthority(authority) {
   if (
     !authority
-    || authority.algorithm !== "hmac-sha256"
-    || typeof authority.key_id !== "string"
-    || authority.key_id.length === 0
+    || authority.algorithm !== "Ed25519"
+    || typeof authority.kid !== "string"
+    || authority.kid.length === 0
     || typeof authority.sign !== "function"
   ) {
-    fail("BUNDLE_AUTHORITY_REQUIRED", "bundle issuance requires an HMAC signing authority");
+    fail("BUNDLE_AUTHORITY_REQUIRED", "bundle issuance requires an Ed25519 signing authority");
   }
 }
 

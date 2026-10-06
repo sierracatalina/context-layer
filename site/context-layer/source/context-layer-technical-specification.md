@@ -1013,7 +1013,7 @@ As of 2026-08-21, the public project provides:
 
 - Five v0.2 JSON schemas for requests, decisions, bundles, memory proposals, and receipts
 - A dependency-free reference module with deterministic reduction, validation, transforms, and minimized receipts
-- An experimental single-user local core with an AES-256-GCM vault, four-state policy evaluation, HMAC-authenticated bundle envelopes, and an authenticated append-only receipt log
+- An experimental single-user local core with an AES-256-GCM vault, four-state policy evaluation, Ed25519-signed bundle envelopes over RFC 8785 canonical JSON, and an authenticated append-only receipt log
 - One narrow UTF-8 files adapter and one local-agent consumer as conformance evidence
 - Synthetic positive and negative fixtures, a minimized demo, and SHA-bound test vectors
 - A reviewed v0.2 technical specification and informative implementation profiles
@@ -1029,7 +1029,7 @@ It does **not** currently provide:
 - A hardened multi-user network service
 - A completed iOS client
 
-The local HMAC envelope and receipt anchor demonstrate integrity inside the tested single-user profile; they are not portable signatures or a hardware-rooted audit system. The files adapter, local consumer, and HTML demo use synthetic data and MUST NOT be treated as production integrations.
+The local Ed25519 envelope and receipt anchor demonstrate integrity inside the tested single-user profile. Envelopes carry `algorithm: "Ed25519"`, `kid`, and `sig` so recipients can verify bundles independently with the issuer's public key; legacy HMAC bundles are readable only behind an explicit opt-in and are never written. This remains an experimental profile: managed key custody, hardware-rooted audit, and hostile-administrator protection are still absent. The files adapter, local consumer, and HTML demo use synthetic data and MUST NOT be treated as production integrations.
 
 ## 17. Open design questions
 

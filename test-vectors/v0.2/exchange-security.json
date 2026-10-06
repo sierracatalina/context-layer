@@ -2,7 +2,7 @@
   "vector_set": "context-layer-exchange-security/0.2",
   "classification": "synthetic-test-only",
   "fixed_time": "2030-01-01T12:00:00.000Z",
-  "synthetic_test_only_hmac_material_hex": "5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a",
+  "synthetic_test_only_ed25519_material_hex": "5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a",
   "authority_key_id": "urn:cl:key:synthetic-test-only-bundle-authority",
   "request": {
     "spec_version": "context-layer/0.2-draft",
@@ -125,11 +125,11 @@
     "decision": "allow_with_reductions",
     "bundle_expires_at": "2030-01-01T12:01:00.000Z",
     "envelope_version": 1,
-    "authentication_algorithm": "hmac-sha256",
+    "authentication_algorithm": "Ed25519",
     "inner_bundle_rejects_authentication": true,
     "tampered_record_error": "RECORD_INTEGRITY_MISMATCH",
     "forged_capability_error": "BUNDLE_AUTHENTICATION_FAILED",
-    "forged_mac_error": "BUNDLE_AUTHENTICATION_FAILED",
+    "forged_sig_error": "BUNDLE_AUTHENTICATION_FAILED",
     "raw_material_error": "BUNDLE_CONTAINS_FORBIDDEN_MATERIAL",
     "forbidden_serialized_fragments": [
       "SYNTHETIC_TEST_ONLY_DENIED_RAW_VAULT_SENTINEL",

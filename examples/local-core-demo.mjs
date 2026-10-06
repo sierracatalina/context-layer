@@ -10,7 +10,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 
 import {
-  createHmacBundleAuthority,
+  createEd25519BundleAuthority,
   createLocalAgentConsumer,
   createUtf8FilesAdapter,
   digestJson,
@@ -199,7 +199,7 @@ async function buildSyntheticSummary() {
       clock: clockAt(),
     });
 
-    authority = await createHmacBundleAuthority({
+    authority = await createEd25519BundleAuthority({
       keyId: "urn:cl:key:synthetic-demo-bundle-authority",
       keyProvider: async () => syntheticBundleKey,
     });
@@ -219,7 +219,7 @@ async function buildSyntheticSummary() {
       principal: RECIPIENT,
       receiptLog,
       bundleVerifier: authority.createVerifier(),
-      trustedKeyId: authority.key_id,
+      trustedKeyId: authority.kid,
       clock: clockAt(),
     });
     const session = await consumer.openBundle(serializeScopedBundle(envelope));
