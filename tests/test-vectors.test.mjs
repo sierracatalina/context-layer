@@ -16,7 +16,8 @@ import addFormats from "ajv-formats";
 import {
   canonicalStringify,
   containsForbiddenRawMaterial,
-  createHmacBundleAuthority,
+  createEd25519BundleAuthority,
+  createLegacyHmacBundleVerifier,
   createLocalAgentConsumer,
   createOperationReceipt,
   digestJson,
@@ -79,8 +80,9 @@ test("manifest binds every synthetic vector by content and coverage", async () =
     "approval_authentication",
     "approval_expiry",
     "minimum_bundle_expiry",
-    "hmac_tamper_rejection",
-    "hmac_forgery_rejection",
+    "ed25519_tamper_rejection",
+    "ed25519_forgery_rejection",
+    "legacy_hmac_opt_in",
     "raw_vault_isolation",
     "receipt_anchor_required",
     "receipt_rollback_rejection",
@@ -203,7 +205,7 @@ test("approval vectors require an authenticated binding and reject expiry", asyn
   }
 });
 
-test("bundle vectors enforce minimum expiry, HMAC authenticity, and raw-vault isolation", async (t) => {
+test("bundle vectors enforce minimum expiry, Ed25519 authenticity, and raw-vault isolation", async (t) => {
   const exchange = await createExchange();
   t.after(() => exchange.authority.close());
   const { decision, envelope, receiptStore } = exchange;
@@ -231,7 +233,7 @@ test("bundle vectors enforce minimum expiry, HMAC authenticity, and raw-vault is
     principal: exchangeVectors.request.recipient.principal,
     receiptLog: receiptStore,
     bundleVerifier: exchange.authority.createVerifier(),
-    trustedKeyId: exchange.authority.key_id,
+    trustedKeyId: exchange.authority.kid,
     clock: fixedClock(exchangeVectors.fixed_time),
   });
 
@@ -258,11 +260,23 @@ test("bundle vectors enforce minimum expiry, HMAC authenticity, and raw-vault is
     hasCode(expected.forged_capability_error),
   );
 
-  const forgedMac = clone(envelope);
-  forgedMac.authentication.mac = "A".repeat(43);
+  const forgedSig = clone(envelope);
+  forgedSig.authentication.sig = "A".repeat(86);
   await assert.rejects(
-    consumer.openBundle(serializeScopedBundle(forgedMac)),
-    hasCode(expected.forged_mac_error),
+    consumer.openBundle(serializeScopedBundle(forgedSig)),
+    hasCode(expected.forged_sig_error),
+  );
+
+  const legacyHmac = clone(envelope);
+  legacyHmac.authentication = {
+    algorithm: "hmac-sha256",
+    key_id: exchangeVectors.authority_key_id,
+    mac: "A".repeat(43),
+  };
+  // Without the opt-in the same bytes are rejected at serialization time.
+  assert.throws(
+    () => serializeScopedBundle(legacyHmac),
+    hasCode("INVALID_BUNDLE_AUTHENTICATION"),
   );
 
   const rawUnsigned = unsignedRecord(envelope.bundle);
@@ -276,6 +290,64 @@ test("bundle vectors enforce minimum expiry, HMAC authenticity, and raw-vault is
     hasCode(expected.raw_material_error),
   );
   assert.equal(validateBundleSchema(rawBundle), false);
+});
+
+test("legacy HMAC bundles open only behind the legacyHmac option", async (t) => {
+  const exchange = await createExchange();
+  t.after(() => exchange.authority.close());
+  const { createHmac } = await import("node:crypto");
+  const key = Buffer.from(
+    exchangeVectors.synthetic_test_only_ed25519_material_hex,
+    "hex",
+  );
+  // Hand-roll the retired envelope: identical bundle, HMAC authentication.
+  const mac = createHmac("sha256", key)
+    .update(canonicalStringify(exchange.envelope.bundle), "utf8")
+    .digest("base64url");
+  const legacyEnvelope = {
+    envelope_version: 1,
+    bundle: clone(exchange.envelope.bundle),
+    authentication: {
+      algorithm: "hmac-sha256",
+      key_id: exchangeVectors.authority_key_id,
+      mac,
+    },
+  };
+  const legacyVerifier = await createLegacyHmacBundleVerifier({
+    keyId: exchangeVectors.authority_key_id,
+    keyProvider: async () => key,
+  });
+  t.after(() => legacyVerifier.close());
+
+  const legacyConsumer = await createLocalAgentConsumer({
+    principal: exchangeVectors.request.recipient.principal,
+    receiptLog: exchange.receiptStore,
+    bundleVerifier: legacyVerifier,
+    trustedKeyId: exchangeVectors.authority_key_id,
+    clock: fixedClock(exchangeVectors.fixed_time),
+    legacyHmac: true,
+  });
+  const session = await legacyConsumer.openBundle(
+    serializeScopedBundle(legacyEnvelope, { legacyHmac: true }),
+  );
+  assert.equal(session.bundle_id, exchange.envelope.bundle.id);
+
+  // The same envelope is rejected without the opt-in.
+  await assert.rejects(
+    legacyConsumer.openBundle(serializeScopedBundle(legacyEnvelope, { legacyHmac: true })),
+    hasCode("BUNDLE_REPLAY"),
+  );
+  const strictConsumer = await createLocalAgentConsumer({
+    principal: exchangeVectors.request.recipient.principal,
+    receiptLog: memoryReceiptStore(),
+    bundleVerifier: exchange.authority.createVerifier(),
+    trustedKeyId: exchangeVectors.authority_key_id,
+    clock: fixedClock(exchangeVectors.fixed_time),
+  });
+  await assert.rejects(
+    strictConsumer.openBundle(JSON.stringify(legacyEnvelope)),
+    hasCode("INVALID_BUNDLE_AUTHENTICATION"),
+  );
 });
 
 test("receipt vectors require an anchor and detect authenticated rollback", async (t) => {
@@ -328,7 +400,7 @@ test("memory vectors remain pending and reject every direct-write surface", asyn
     principal: exchangeVectors.request.recipient.principal,
     receiptLog: exchange.receiptStore,
     bundleVerifier: exchange.authority.createVerifier(),
-    trustedKeyId: exchange.authority.key_id,
+    trustedKeyId: exchange.authority.kid,
     clock: fixedClock(exchangeVectors.fixed_time),
   });
   const session = await consumer.openBundle(serializeScopedBundle(exchange.envelope));
@@ -370,19 +442,19 @@ test("vector sources contain no private workstation path or unlabeled key materi
     const source = await readFile(join(vectorRoot, entry.path), "utf8");
     assert.doesNotMatch(source, /(?:[A-Za-z]:\\|\/Users\/|\/home\/)/);
     if (source.includes("material_hex")) {
-      assert.match(source, /synthetic_test_only_[a-z_]+_material_hex/);
+      assert.match(source, /synthetic_test_only_[a-z0-9_]+_material_hex/);
     }
   }
-  assert.equal(exchangeVectors.synthetic_test_only_hmac_material_hex.length, 64);
+  assert.equal(exchangeVectors.synthetic_test_only_ed25519_material_hex.length, 64);
   assert.equal(receiptMemoryVectors.synthetic_test_only_anchor_material_hex.length, 64);
 });
 
 async function createExchange() {
   const receiptStore = memoryReceiptStore();
-  const authority = await createHmacBundleAuthority({
+  const authority = await createEd25519BundleAuthority({
     keyId: exchangeVectors.authority_key_id,
     keyProvider: async () => Buffer.from(
-      exchangeVectors.synthetic_test_only_hmac_material_hex,
+      exchangeVectors.synthetic_test_only_ed25519_material_hex,
       "hex",
     ),
   });

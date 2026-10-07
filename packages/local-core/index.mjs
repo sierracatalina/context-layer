@@ -11,8 +11,11 @@ export {
 export { LocalCoreError } from "./errors.mjs";
 export {
   BUNDLE_AUTHENTICATION_ALGORITHM,
-  createHmacBundleAuthority,
+  LEGACY_BUNDLE_AUTHENTICATION_ALGORITHM,
+  createEd25519BundleAuthority,
+  createLegacyHmacBundleVerifier,
 } from "./authority.mjs";
+export { jcsBytes, jcsStringify } from "./jcs.mjs";
 export {
   openLocalVault,
   VAULT_CIPHER,

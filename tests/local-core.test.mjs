@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { createPublicKey, verify as verifySignature } from "node:crypto";
 import {
   mkdtemp,
   mkdir,
@@ -16,7 +17,8 @@ import test from "node:test";
 import {
   canonicalStringify,
   containsForbiddenRawMaterial,
-  createHmacBundleAuthority,
+  createEd25519BundleAuthority,
+  createLegacyHmacBundleVerifier,
   createLocalAgentConsumer,
   createOperationReceipt,
   createUtf8FilesAdapter,
@@ -24,6 +26,8 @@ import {
   evaluatePolicy,
   finalizeCanonicalRecord,
   issueScopedBundle,
+  jcsBytes,
+  jcsStringify,
   openLocalVault,
   openReceiptLog,
   serializeScopedBundle,
@@ -175,7 +179,7 @@ async function createTestBundleAuthority({
   keyId = AUTHORITY_KEY_ID,
   fill = 29,
 } = {}) {
-  return createHmacBundleAuthority({
+  return createEd25519BundleAuthority({
     keyId,
     keyProvider: async () => Buffer.alloc(32, fill),
   });
@@ -211,7 +215,7 @@ async function makeBundle({
     bundle,
     bundleAuthority: authority,
     bundleVerifier: authority.createVerifier(),
-    trustedKeyId: authority.key_id,
+    trustedKeyId: authority.kid,
   };
 }
 
@@ -668,8 +672,8 @@ test("bundle issuer filters denied fields, is deterministic, and uses full canon
   assert.equal(bundleA.bundle.recipient, RECIPIENT);
   assert.equal(bundleA.bundle.restrictions.retention_seconds, 30);
   assert.equal(Object.keys(bundleA.bundle.provenance).length, 1);
-  assert.equal(bundleA.authentication.key_id, AUTHORITY_KEY_ID);
-  assert.equal(bundleA.authentication.algorithm, "hmac-sha256");
+  assert.equal(bundleA.authentication.kid, AUTHORITY_KEY_ID);
+  assert.equal(bundleA.authentication.algorithm, "Ed25519");
   const serialized = serializeScopedBundle(bundleA);
   assert.equal(serialized.includes("DENIED_SOURCE_SENTINEL"), false);
   assert.equal(serialized.includes("vault://"), false);
@@ -820,18 +824,66 @@ test("bundle validation detects canonical tampering and forged raw-vault materia
   );
 });
 
-test("HMAC bundle authority owns and zeroes its key copy and closes safely", async () => {
+test("RFC 8785 preserves Unicode scalars, UTF-16 key order, and JSON escapes", () => {
+  const input = { "\ue000": "last", "😀": "𐀀", a: ["😀", "e\u0301"] };
+  const expected = '{"a":["😀","é"],"😀":"𐀀","\ue000":"last"}';
+  assert.equal(jcsStringify(input), expected);
+  assert.deepEqual(jcsBytes(input), Buffer.from(expected, "utf8"));
+  assert.equal(jcsStringify("\u0000\b\t\n\f\r\u001f\"\\/"), '"\\u0000\\b\\t\\n\\f\\r\\u001f\\"\\\\/"');
+  for (const point of [0x20, 0xd7ff, 0xe000, 0xffff, 0x10000, 0x1f600, 0x10ffff]) {
+    const scalar = String.fromCodePoint(point);
+    assert.equal(jcsStringify(scalar), '"' + scalar + '"');
+  }
+});
+
+test("RFC 8785 rejects lone surrogates in values and property names", () => {
+  for (const value of ["\ud800", "\udfff", "\ud800x", "\ud800\ud800", "😀\udfff"]) {
+    for (const input of [value, { nested: [value] }, { [value]: "value" }]) {
+      assert.throws(() => jcsStringify(input), (error) => error.code === "NON_JSON_VALUE");
+    }
+  }
+});
+
+test("Ed25519 Unicode signatures interoperate with independent canonical bytes", async (t) => {
+  // Generated with Python cryptography 46.0.0 Ed25519PrivateKey.from_private_bytes
+  // using bytes([17]) * 32 and the fixed UTF-8 bytes below, independently of JCS.
+  const bytes = Buffer.from("7b2261223a5b22f09f9880222c2265cc81225d2c22f09f9880223a22f0908080222c22ee8080223a226c617374227d", "hex");
+  const externalSig = "tBhNOCOx2QYO0vIAv1Ut-S1LGGgZsTysY4Mgf3g7Wm8kSJt4UxSUZSt-qd5XG9bmx-4DmRuYokRwCBz2c-7yBg";
+  const publicKey = createPublicKey({
+    key: Buffer.from("MCowBQYDK2VwAyEA0EqyMnQrtKs6E2i9RhXk5tAiSrcaAWuvhSCjMsl3hzc=", "base64"),
+    format: "der",
+    type: "spki",
+  });
+  const authority = await createTestBundleAuthority({ fill: 17 });
+  t.after(() => authority.close());
+  const payload = { "\ue000": "last", "😀": "𐀀", a: ["😀", "e\u0301"] };
+  const authentication = await authority.sign(payload);
+  assert.equal(authentication.sig, externalSig);
+  assert.equal(verifySignature(null, bytes, publicKey, Buffer.from(authentication.sig, "base64url")), true);
+  assert.equal(await authority.createVerifier().verify(payload, { ...authentication, sig: externalSig }), true);
+  assert.equal(await authority.verify({ ...payload, a: ["😀", "é"] }, authentication), false);
+});
+
+test("Ed25519 bundle authority signs over JCS and closes safely", async () => {
   const sourceKey = Buffer.alloc(32, 17);
-  const authority = await createHmacBundleAuthority({
+  const authority = await createEd25519BundleAuthority({
     keyId: AUTHORITY_KEY_ID,
     keyProvider: async () => sourceKey,
   });
   const verifier = authority.createVerifier();
   const payload = { bundle: "test" };
   const authentication = await authority.sign(payload);
+  assert.equal(authentication.algorithm, "Ed25519");
+  assert.equal(authentication.kid, AUTHORITY_KEY_ID);
+  assert.match(authentication.sig, /^[A-Za-z0-9_-]{86}$/);
+  assert.deepEqual(Object.keys(authentication).sort(), ["algorithm", "kid", "sig"]);
+  assert.equal(await authority.verify(payload, authentication), true);
   assert.equal(await verifier.verify(payload, authentication), true);
-  authority.close();
+  // signature is deterministic (RFC 8032) and bound to the exact payload
+  assert.equal((await authority.sign(payload)).sig, authentication.sig);
+  assert.equal(await verifier.verify({ bundle: "tampered" }, authentication), false);
   assert.equal(sourceKey.every((byte) => byte === 17), true, "authority must own its key copy");
+  authority.close();
   await assert.rejects(
     authority.sign(payload),
     (error) => error.code === "BUNDLE_AUTHORITY_CLOSED",
@@ -840,6 +892,83 @@ test("HMAC bundle authority owns and zeroes its key copy and closes safely", asy
     verifier.verify(payload, authentication),
     (error) => error.code === "BUNDLE_AUTHORITY_CLOSED",
   );
+});
+
+test("Ed25519 verification rejects tampering, wrong keys, and malformed signatures", async () => {
+  const authority = await createTestBundleAuthority();
+  const other = await createTestBundleAuthority({ fill: 30 });
+  const payload = { bundle: "test" };
+  const authentication = await authority.sign(payload);
+
+  assert.equal(await other.createVerifier().verify(payload, authentication), false);
+  assert.equal(await authority.verify(payload, { ...authentication, kid: "urn:cl:key:wrong" }), false);
+  assert.equal(await authority.verify(payload, { ...authentication, algorithm: "Ed25519", sig: undefined }), false);
+  assert.equal(await authority.verify(payload, { ...authentication, sig: "not-base64url!!" }), false);
+  assert.equal(await authority.verify(payload, { ...authentication, sig: "A".repeat(86) }), false);
+  assert.equal(
+    await authority.verify(payload, { ...authentication, extra: true }),
+    false,
+    "authentication objects with extra fields are rejected",
+  );
+  assert.equal(
+    await authority.verify({ bundle: "test", extra: "field" }, authentication),
+    false,
+    "payload mutations are rejected",
+  );
+  authority.close();
+  other.close();
+});
+
+test("legacy HMAC bundles are readable only behind the legacyHmac option", async () => {
+  const { createHmac } = await import("node:crypto");
+  const key = Buffer.alloc(32, 17);
+  const authority = await createEd25519BundleAuthority({
+    keyId: AUTHORITY_KEY_ID,
+    keyProvider: async () => key,
+  });
+  const legacy = await createLegacyHmacBundleVerifier({
+    keyId: AUTHORITY_KEY_ID,
+    keyProvider: async () => key,
+  });
+  assert.equal(legacy.algorithm, "hmac-sha256");
+  assert.equal(typeof legacy.sign, "undefined", "legacy verifier must not sign");
+
+  const { bundle: envelope } = await makeBundle();
+  const innerBundle = envelope.bundle;
+  const mac = createHmac("sha256", key)
+    .update(canonicalStringify(innerBundle), "utf8")
+    .digest("base64url");
+  const legacyEnvelope = {
+    envelope_version: 1,
+    bundle: innerBundle,
+    authentication: { algorithm: "hmac-sha256", key_id: AUTHORITY_KEY_ID, mac },
+  };
+  const serialized = serializeScopedBundle(legacyEnvelope, { legacyHmac: true });
+  const consumer = await createLocalAgentConsumer({
+    principal: RECIPIENT,
+    receiptLog: memoryReceiptStore(),
+    bundleVerifier: legacy,
+    trustedKeyId: AUTHORITY_KEY_ID,
+    clock: clockAt(),
+    legacyHmac: true,
+  });
+  const session = await consumer.openBundle(serialized);
+  assert.equal(session.bundle_id, innerBundle.id);
+
+  // Without the opt-in the same bytes are rejected.
+  const strictConsumer = await createLocalAgentConsumer({
+    principal: RECIPIENT,
+    receiptLog: memoryReceiptStore(),
+    bundleVerifier: authority.createVerifier(),
+    trustedKeyId: AUTHORITY_KEY_ID,
+    clock: clockAt(),
+  });
+  await assert.rejects(
+    strictConsumer.openBundle(JSON.stringify(legacyEnvelope)),
+    (error) => error.code === "INVALID_BUNDLE_AUTHENTICATION",
+  );
+  authority.close();
+  legacy.close();
 });
 
 test("local consumer fails closed without the trusted bundle authority or with the wrong key", async () => {
@@ -1320,7 +1449,7 @@ test("consumer fails closed on preflight and reports indeterminate post-action r
       principal: RECIPIENT,
       receiptLog: memoryReceiptStore({ failPreflight: true }),
       bundleVerifier: authority.createVerifier(),
-      trustedKeyId: authority.key_id,
+      trustedKeyId: authority.kid,
       clock: clockAt(),
     }),
     (error) => error.code === "RECEIPT_PREFLIGHT_FAILED",
@@ -1335,7 +1464,7 @@ test("consumer fails closed on preflight and reports indeterminate post-action r
         receipts: async () => [],
       },
       bundleVerifier: authority.createVerifier(),
-      trustedKeyId: authority.key_id,
+      trustedKeyId: authority.kid,
       clock: clockAt(),
     }),
     (error) => error.code === "RECEIPT_PREFLIGHT_FAILED",
@@ -1515,7 +1644,7 @@ test("end-to-end files-to-agent flow proves denied raw-vault material cannot cro
     principal: RECIPIENT,
     receiptLog,
     bundleVerifier: bundleAuthority.createVerifier(),
-    trustedKeyId: bundleAuthority.key_id,
+    trustedKeyId: bundleAuthority.kid,
     clock: clockAt(),
   });
   const session = await consumer.openBundle(serialized);

@@ -7,7 +7,7 @@ import test from "node:test";
 import Ajv2020 from "ajv/dist/2020.js";
 import addFormats from "ajv-formats";
 import {
-  createHmacBundleAuthority,
+  createEd25519BundleAuthority,
   createLocalAgentConsumer,
   createOperationReceipt as createLocalOperationReceipt,
   evaluatePolicy as evaluateLocalPolicy,
@@ -816,7 +816,7 @@ test("actual local-core decisions, bundles, receipts, and proposals validate pub
       return [...receipts];
     },
   };
-  const authority = await createHmacBundleAuthority({
+  const authority = await createEd25519BundleAuthority({
     keyId: "urn:cl:key:public-cross-validation",
     keyProvider: async () => Buffer.alloc(32, 23),
   });
@@ -850,7 +850,7 @@ test("actual local-core decisions, bundles, receipts, and proposals validate pub
     formatAjvErrors(validateBundleSchema),
   );
   assert.equal(validateBundleSchema(envelope), false, "transport envelope is not an inner bundle");
-  assert.equal(envelope.authentication.algorithm, "hmac-sha256");
+  assert.equal(envelope.authentication.algorithm, "Ed25519");
 
   const partialReceipt = createLocalOperationReceipt({
     operation: "policy.preflight",
@@ -875,7 +875,7 @@ test("actual local-core decisions, bundles, receipts, and proposals validate pub
     principal,
     receiptLog: receiptStore,
     bundleVerifier: authority.createVerifier(),
-    trustedKeyId: authority.key_id,
+    trustedKeyId: authority.kid,
     clock,
   });
   const session = await consumer.openBundle(serializeLocalScopedBundle(envelope));

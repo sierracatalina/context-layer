@@ -24,12 +24,13 @@
     },
     {
       "path": "exchange-security.json",
-      "sha256": "a8de368e235a9dc88aacd305633e8ae55df891b5aaf9ed4993f15b4a766d12fb",
+      "sha256": "b5a023c98947e07f8637486c00a64b877b4a43548556d60b20ee73724d5a964d",
       "coverage": [
         "minimum_bundle_expiry",
-        "hmac_tamper_rejection",
-        "hmac_forgery_rejection",
-        "raw_vault_isolation"
+        "ed25519_tamper_rejection",
+        "ed25519_forgery_rejection",
+        "raw_vault_isolation",
+        "legacy_hmac_opt_in"
       ]
     },
     {

@@ -15,7 +15,7 @@ node --test tests/test-vectors.test.mjs
 ## Safety classification
 
 Every identity, value, path fragment, and cryptographic byte sequence in this
-package is synthetic-test-only. Fixed HMAC material exists solely to make
+package is synthetic-test-only. Fixed Ed25519 seed material exists solely to make
 outputs reproducible. It is public test data, is not a deployable credential,
 and must never be copied into configuration or production code.
 

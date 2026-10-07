@@ -31,10 +31,11 @@ export async function createLocalAgentConsumer({
   trustedKeyId,
   revocationProvider = null,
   clock = () => new Date(),
+  legacyHmac = false,
 } = {}) {
   requiredString(principal, "principal");
   requiredString(trustedKeyId, "trustedKeyId");
-  requireBundleVerifier(bundleVerifier, trustedKeyId);
+  requireBundleVerifier(bundleVerifier, trustedKeyId, { legacyHmac });
   requireReceiptLog(receiptLog);
   if (
     revocationProvider !== null
@@ -81,8 +82,11 @@ export async function createLocalAgentConsumer({
       validateAuthenticatedBundleEnvelope(authenticatedEnvelope, {
         clock,
         enforceExpiry: false,
+        legacyHmac,
       });
-      if (!secureEqualText(authenticatedEnvelope.authentication.key_id, trustedKeyId)) {
+      const authenticationKid = authenticatedEnvelope.authentication.kid
+        ?? authenticatedEnvelope.authentication.key_id;
+      if (!secureEqualText(authenticationKid, trustedKeyId)) {
         fail("UNTRUSTED_BUNDLE_AUTHORITY", "bundle was not authenticated by the trusted authority");
       }
       let authenticated = false;
@@ -412,16 +416,25 @@ async function assertNotRevoked(provider, bundle) {
   }
 }
 
-function requireBundleVerifier(verifier, trustedKeyId) {
-  if (
-    !verifier
-    || verifier.algorithm !== "hmac-sha256"
-    || typeof verifier.key_id !== "string"
-    || typeof verifier.verify !== "function"
-  ) {
-    fail("BUNDLE_VERIFIER_REQUIRED", "local agent requires an HMAC bundle verifier");
+function requireBundleVerifier(verifier, trustedKeyId, { legacyHmac = false } = {}) {
+  const verifierKid = verifier?.kid ?? verifier?.key_id;
+  const isEd25519 = (
+    verifier
+    && verifier.algorithm === "Ed25519"
+    && typeof verifier.kid === "string"
+    && typeof verifier.verify === "function"
+  );
+  const isLegacyHmac = (
+    legacyHmac
+    && verifier
+    && verifier.algorithm === "hmac-sha256"
+    && typeof verifier.key_id === "string"
+    && typeof verifier.verify === "function"
+  );
+  if (!isEd25519 && !isLegacyHmac) {
+    fail("BUNDLE_VERIFIER_REQUIRED", "local agent requires an Ed25519 bundle verifier");
   }
-  if (!secureEqualText(verifier.key_id, trustedKeyId)) {
+  if (!secureEqualText(verifierKid, trustedKeyId)) {
     fail("UNTRUSTED_BUNDLE_AUTHORITY", "bundle verifier does not match the trusted key ID");
   }
 }
