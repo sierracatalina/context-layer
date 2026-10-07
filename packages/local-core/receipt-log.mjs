@@ -424,6 +424,7 @@ async function openAnchorForLog(logPath, anchor) {
     filePath: anchorPath,
     key: anchor.key ?? null,
     keyProvider: anchor.keyProvider ?? null,
+    legacyHmacKey: anchor.legacyHmacKey ?? null,
     logId: digestJson({ receipt_log_path: logPath }),
     genesisTailDigest: GENESIS_DIGEST,
     genesisFileDigest: digestText(""),

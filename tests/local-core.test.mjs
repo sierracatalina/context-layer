@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { createPublicKey, verify as verifySignature } from "node:crypto";
 import {
   mkdtemp,
   mkdir,
@@ -25,6 +26,8 @@ import {
   evaluatePolicy,
   finalizeCanonicalRecord,
   issueScopedBundle,
+  jcsBytes,
+  jcsStringify,
   openLocalVault,
   openReceiptLog,
   serializeScopedBundle,
@@ -819,6 +822,46 @@ test("bundle validation detects canonical tampering and forged raw-vault materia
     }),
     (error) => error.code === "DECISION_REQUEST_MISMATCH",
   );
+});
+
+test("RFC 8785 preserves Unicode scalars, UTF-16 key order, and JSON escapes", () => {
+  const input = { "\ue000": "last", "😀": "𐀀", a: ["😀", "e\u0301"] };
+  const expected = '{"a":["😀","é"],"😀":"𐀀","\ue000":"last"}';
+  assert.equal(jcsStringify(input), expected);
+  assert.deepEqual(jcsBytes(input), Buffer.from(expected, "utf8"));
+  assert.equal(jcsStringify("\u0000\b\t\n\f\r\u001f\"\\/"), '"\\u0000\\b\\t\\n\\f\\r\\u001f\\"\\\\/"');
+  for (const point of [0x20, 0xd7ff, 0xe000, 0xffff, 0x10000, 0x1f600, 0x10ffff]) {
+    const scalar = String.fromCodePoint(point);
+    assert.equal(jcsStringify(scalar), '"' + scalar + '"');
+  }
+});
+
+test("RFC 8785 rejects lone surrogates in values and property names", () => {
+  for (const value of ["\ud800", "\udfff", "\ud800x", "\ud800\ud800", "😀\udfff"]) {
+    for (const input of [value, { nested: [value] }, { [value]: "value" }]) {
+      assert.throws(() => jcsStringify(input), (error) => error.code === "NON_JSON_VALUE");
+    }
+  }
+});
+
+test("Ed25519 Unicode signatures interoperate with independent canonical bytes", async (t) => {
+  // Generated with Python cryptography 46.0.0 Ed25519PrivateKey.from_private_bytes
+  // using bytes([17]) * 32 and the fixed UTF-8 bytes below, independently of JCS.
+  const bytes = Buffer.from("7b2261223a5b22f09f9880222c2265cc81225d2c22f09f9880223a22f0908080222c22ee8080223a226c617374227d", "hex");
+  const externalSig = "tBhNOCOx2QYO0vIAv1Ut-S1LGGgZsTysY4Mgf3g7Wm8kSJt4UxSUZSt-qd5XG9bmx-4DmRuYokRwCBz2c-7yBg";
+  const publicKey = createPublicKey({
+    key: Buffer.from("MCowBQYDK2VwAyEA0EqyMnQrtKs6E2i9RhXk5tAiSrcaAWuvhSCjMsl3hzc=", "base64"),
+    format: "der",
+    type: "spki",
+  });
+  const authority = await createTestBundleAuthority({ fill: 17 });
+  t.after(() => authority.close());
+  const payload = { "\ue000": "last", "😀": "𐀀", a: ["😀", "e\u0301"] };
+  const authentication = await authority.sign(payload);
+  assert.equal(authentication.sig, externalSig);
+  assert.equal(verifySignature(null, bytes, publicKey, Buffer.from(authentication.sig, "base64url")), true);
+  assert.equal(await authority.createVerifier().verify(payload, { ...authentication, sig: externalSig }), true);
+  assert.equal(await authority.verify({ ...payload, a: ["😀", "é"] }, authentication), false);
 });
 
 test("Ed25519 bundle authority signs over JCS and closes safely", async () => {

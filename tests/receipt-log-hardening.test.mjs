@@ -1,9 +1,11 @@
 import assert from "node:assert/strict";
 import { spawn } from "node:child_process";
+import { createHmac, createPrivateKey, createPublicKey, sign, verify } from "node:crypto";
 import {
   mkdtemp,
   mkdir,
   readFile,
+  readdir,
   rm,
   unlink,
   writeFile,
@@ -15,6 +17,7 @@ import test from "node:test";
 import {
   canonicalStringify,
   digestJson,
+  digestText,
   finalizeCanonicalRecord,
   verifyCanonicalRecord,
 } from "../packages/local-core/canonical.mjs";
@@ -114,6 +117,188 @@ function logEntry(sequence, previousEntryDigest, operation) {
   };
   return { ...unsigned, entry_digest: digestJson(unsigned) };
 }
+
+function testPrivateKey(seed) {
+  return createPrivateKey({
+    key: Buffer.concat([Buffer.from("302e020100300506032b657004220420", "hex"), seed]),
+    format: "der",
+    type: "pkcs8",
+  });
+}
+
+function legacyMac(unsigned, key) {
+  // Frozen pre-Ed25519 format from d064a22; never invoke the new anchor writer.
+  return "hmac-sha256:" + createHmac("sha256", key)
+    .update("context-layer/receipt-anchor/v1\0", "utf8")
+    .update(canonicalStringify(unsigned), "utf8").digest("hex");
+}
+
+async function writeLegacyLog(filePath, anchor, count = 2) {
+  const entries = [];
+  const records = [];
+  let source = "";
+  let previousMac = "hmac-sha256:" + "0".repeat(64);
+  let tail = RECEIPT_LOG_GENESIS_DIGEST;
+  for (let index = 0; index <= count; index += 1) {
+    if (index > 0) {
+      const entry = logEntry(index, tail, index === 1 ? "bundle.consume" : "legacy.append");
+      entries.push(entry);
+      source += canonicalStringify(entry) + "\n";
+      tail = entry.entry_digest;
+    }
+    const unsigned = {
+      anchor_version: 1,
+      log_id: digestJson({ receipt_log_path: filePath }),
+      anchor_sequence: index,
+      entries: index,
+      tail_digest: tail,
+      byte_length: Buffer.byteLength(source),
+      file_digest: digestText(source),
+      previous_mac: previousMac,
+    };
+    previousMac = legacyMac(unsigned, anchor.key);
+    records.push({ ...unsigned, mac: previousMac });
+  }
+  await writeFile(filePath, source);
+  await writeFile(anchor.filePath, records.map(canonicalStringify).join("\n") + "\n");
+  return { entries, records, source };
+}
+
+test("version-1 HMAC logs verify read-only, migrate on open, and keep replay history", async (t) => {
+  for (const count of [0, 2]) {
+    await t.test("entries=" + count, async (t) => {
+      const directory = await temporaryDirectory(t, "legacy-migrate");
+      const filePath = join(directory, "receipts.jsonl");
+      const key = Buffer.alloc(32, 19);
+      const anchor = anchorConfig(directory, key);
+      const fixture = await writeLegacyLog(filePath, anchor, count);
+      const original = await readFile(anchor.filePath, "utf8");
+      assert.equal((await verifyReceiptLog(filePath, { anchor })).entries, count);
+      assert.equal(await readFile(anchor.filePath, "utf8"), original);
+      const log = await openReceiptLog({ filePath, anchor });
+      t.after(() => log.close());
+      assert.deepEqual(await log.receipts(), fixture.entries.map((entry) => entry.receipt));
+      assert.equal(await readFile(filePath, "utf8"), fixture.source);
+      const migrated = (await readFile(anchor.filePath, "utf8")).trim().split("\n").map(JSON.parse);
+      assert.equal(migrated.length, count + 1);
+      const publicKey = createPublicKey(testPrivateKey(key));
+      for (let index = 0; index < migrated.length; index += 1) {
+        const { sig, ...unsigned } = migrated[index];
+        assert.equal(unsigned.anchor_version, 2);
+        assert.equal(Object.hasOwn(unsigned, "mac"), false);
+        assert.equal(Object.hasOwn(unsigned, "previous_mac"), false);
+        assert.equal(unsigned.entries, fixture.records[index].entries);
+        assert.equal(unsigned.tail_digest, fixture.records[index].tail_digest);
+        assert.equal(unsigned.file_digest, fixture.records[index].file_digest);
+        assert.equal(verify(null, Buffer.from(canonicalStringify(unsigned)), publicKey, Buffer.from(sig.slice(8), "base64url")), true);
+      }
+      if (count) {
+        await assert.rejects(log.append(fixture.entries[0].receipt), (error) => error.code === "RECEIPT_REPLAY_CONFLICT");
+      }
+      await log.append(receipt("after.migration"));
+      await log.close();
+      const reopened = await openReceiptLog({ filePath, anchor });
+      assert.equal((await reopened.verify()).entries, count + 1);
+      await reopened.close();
+      assert.equal(key.every((byte) => byte === 19), true);
+      assert.deepEqual((await readdir(directory)).sort(), ["receipt-anchor.jsonl", "receipts.jsonl"]);
+    });
+  }
+});
+
+test("HMAC anchors can migrate to a separate Ed25519 key", async (t) => {
+  const directory = await temporaryDirectory(t, "legacy-separate-key");
+  const filePath = join(directory, "receipts.jsonl");
+  const legacyKey = Buffer.alloc(32, 20);
+  const anchor = anchorConfig(directory, legacyKey);
+  await writeLegacyLog(filePath, anchor);
+  const signingKey = testPrivateKey(Buffer.alloc(32, 21));
+  await assert.rejects(
+    openReceiptLog({ filePath, anchor: { ...anchor, key: signingKey } }),
+    (error) => error.code === "RECEIPT_ANCHOR_LEGACY_KEY_REQUIRED",
+  );
+  const log = await openReceiptLog({ filePath, anchor: { ...anchor, key: signingKey, legacyHmacKey: legacyKey } });
+  await log.close();
+  assert.equal(legacyKey.every((byte) => byte === 20), true);
+  // The retired HMAC key is no longer needed once migration is complete.
+  const reopened = await openReceiptLog({ filePath, anchor: { ...anchor, key: signingKey } });
+  await reopened.append(receipt("separate.key"));
+  await reopened.close();
+});
+
+test("legacy migration preserves fail-closed authentication and log checks", async (t) => {
+  const cases = [
+    ["wrong-key", "RECEIPT_ANCHOR_AUTHENTICATION_FAILED"],
+    ["tamper", "RECEIPT_ANCHOR_AUTHENTICATION_FAILED"],
+    ["chain", "RECEIPT_ANCHOR_CHAIN_MISMATCH"],
+    ["rollback", "RECEIPT_LOG_ROLLBACK"],
+    ["rewrite", "RECEIPT_LOG_REWRITE"],
+  ];
+  for (const [kind, expectedCode] of cases) {
+    await t.test(kind, async (t) => {
+      const directory = await temporaryDirectory(t, "legacy-reject");
+      const filePath = join(directory, "receipts.jsonl");
+      const anchor = anchorConfig(directory, Buffer.alloc(32, 22));
+      const { records, entries } = await writeLegacyLog(filePath, anchor);
+      if (kind === "tamper") records[0].mac = "hmac-sha256:" + "f".repeat(64);
+      if (kind === "chain") {
+        const unsigned = { ...records[1] };
+        delete unsigned.mac;
+        unsigned.previous_mac = "hmac-sha256:" + "f".repeat(64);
+        records[1] = { ...unsigned, mac: legacyMac(unsigned, anchor.key) };
+      }
+      if (kind === "rollback") await writeFile(filePath, canonicalStringify(entries[0]) + "\n");
+      if (kind === "rewrite") await writeFile(filePath, entries.map((entry) => " " + canonicalStringify(entry)).join("\n") + "\n");
+      await writeFile(anchor.filePath, records.map(canonicalStringify).join("\n") + "\n");
+      const before = await readFile(anchor.filePath, "utf8");
+      const config = kind === "wrong-key" ? { ...anchor, key: Buffer.alloc(32, 23) } : anchor;
+      await assert.rejects(openReceiptLog({ filePath, anchor: config }), (error) => error.code === expectedCode);
+      assert.equal(await readFile(anchor.filePath, "utf8"), before);
+      assert.deepEqual((await readdir(directory)).sort(), ["receipt-anchor.jsonl", "receipts.jsonl"]);
+    });
+  }
+});
+
+test("pre-release version-1 Ed25519 anchors upgrade without losing their chain", async (t) => {
+  const directory = await temporaryDirectory(t, "prerelease-anchor");
+  const filePath = join(directory, "receipts.jsonl");
+  const anchor = anchorConfig(directory, Buffer.alloc(32, 24));
+  const { records } = await writeLegacyLog(filePath, anchor);
+  let previousSig = "ed25519:" + "0".repeat(86);
+  const oldRecords = records.map((record) => {
+    const fields = { ...record };
+    delete fields.mac;
+    delete fields.previous_mac;
+    const unsigned = { ...fields, previous_sig: previousSig };
+    previousSig = "ed25519:" + sign(null, Buffer.from(canonicalStringify(unsigned)), testPrivateKey(anchor.key)).toString("base64url");
+    return { ...unsigned, sig: previousSig };
+  });
+  await writeFile(anchor.filePath, oldRecords.map(canonicalStringify).join("\n") + "\n");
+  const log = await openReceiptLog({ filePath, anchor });
+  assert.equal((await log.verify()).entries, 2);
+  await log.append(receipt("prerelease.upgraded"));
+  await log.close();
+  const migrated = (await readFile(anchor.filePath, "utf8")).trim().split("\n").map(JSON.parse);
+  assert.equal(migrated.every((record) => record.anchor_version === 2), true);
+});
+
+test("concurrent opens migrate an HMAC log once under the receipt lock", async (t) => {
+  const directory = await temporaryDirectory(t, "legacy-concurrent");
+  const filePath = join(directory, "receipts.jsonl");
+  const anchor = anchorConfig(directory, Buffer.alloc(32, 25));
+  await writeLegacyLog(filePath, anchor);
+  const providerAnchor = { ...anchor, key: undefined, keyProvider: async () => anchor.key };
+  const logs = await Promise.all([
+    openReceiptLog({ filePath, anchor: providerAnchor }),
+    openReceiptLog({ filePath, anchor: providerAnchor }),
+  ]);
+  t.after(() => Promise.all(logs.map((log) => log.close())));
+  await Promise.all(logs.map((log, index) => log.append(receipt("concurrent.migration." + index))));
+  assert.equal((await logs[0].verify()).entries, 4);
+  const records = (await readFile(anchor.filePath, "utf8")).trim().split("\n").map(JSON.parse);
+  assert.equal(records.length, 5);
+  assert.equal(records.every((record) => record.anchor_version === 2), true);
+});
 
 function spawnAppendWorker({ filePath, anchorPath, barrierPath, key, operation }) {
   const child = spawn(

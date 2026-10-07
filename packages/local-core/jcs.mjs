@@ -11,9 +11,9 @@
 // - Object properties sorted by UTF-16 code units (JavaScript default string order).
 // - Numbers serialized per ECMAScript Number-to-String (JSON.stringify semantics;
 //   -0 serializes as "0").
-// - Strings: JSON escaping, with astral characters emitted as UTF-16 surrogate
-//   pair \uXXXX escapes and lone surrogates escaped (never raw UTF-8).
-// - Duplicate properties, NaN, and Infinity are rejected.
+// - Strings: JSON escaping, preserving valid Unicode scalars (including astral
+//   characters) and rejecting lone surrogates.
+// - NaN and Infinity are rejected; callers must reject duplicate names when parsing.
 
 import { fail } from "./errors.mjs";
 
@@ -43,18 +43,14 @@ function encodeString(value) {
     if (unit >= 0xd800 && unit <= 0xdbff) {
       const low = value.charCodeAt(index + 1);
       if (low >= 0xdc00 && low <= 0xdfff) {
-        // Valid surrogate pair: RFC 8785 requires both halves escaped.
-        out += "\\u" + unit.toString(16).padStart(4, "0")
-          + "\\u" + low.toString(16).padStart(4, "0");
+        out += value[index] + value[index + 1];
         index += 1;
         continue;
       }
-      out += "\\u" + unit.toString(16).padStart(4, "0");
-      continue;
+      fail("NON_JSON_VALUE", "JCS strings must not contain lone surrogates");
     }
     if (unit >= 0xdc00 && unit <= 0xdfff) {
-      out += "\\u" + unit.toString(16).padStart(4, "0");
-      continue;
+      fail("NON_JSON_VALUE", "JCS strings must not contain lone surrogates");
     }
     out += value[index];
   }

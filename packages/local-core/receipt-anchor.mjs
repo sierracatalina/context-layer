@@ -1,5 +1,6 @@
 import { constants } from "node:fs";
 import {
+  createHmac,
   createPrivateKey,
   createPublicKey,
   KeyObject,
@@ -7,7 +8,7 @@ import {
   sign,
   verify,
 } from "node:crypto";
-import { mkdir, open, readFile, stat, unlink } from "node:fs/promises";
+import { mkdir, open, readFile, rename, stat, unlink } from "node:fs/promises";
 import { dirname, resolve } from "node:path";
 import { setTimeout as delay } from "node:timers/promises";
 
@@ -19,7 +20,9 @@ import {
 import { fail } from "./errors.mjs";
 import { jcsBytes } from "./jcs.mjs";
 
-const ANCHOR_VERSION = 1;
+const ANCHOR_VERSION = 2;
+const MAC_PREFIX = "hmac-sha256:";
+const GENESIS_MAC = MAC_PREFIX + "0".repeat(64);
 const SIG_PREFIX = "ed25519:";
 const GENESIS_SIG = SIG_PREFIX + "0".repeat(86);
 const SIG_VALUE_PATTERN = /^[A-Za-z0-9_-]{86}$/;
@@ -38,12 +41,16 @@ const ANCHOR_KEYS = Object.freeze([
   "sig",
   "tail_digest",
 ]);
+const LEGACY_ANCHOR_KEYS = Object.freeze(ANCHOR_KEYS
+  .filter((key) => key !== "sig" && key !== "previous_sig")
+  .concat("mac", "previous_mac").sort());
 
 export async function openReceiptAnchor({
   filePath,
   path: configuredPath,
   keyProvider = null,
   key: configuredKey = null,
+  legacyHmacKey = null,
   logId,
   genesisTailDigest,
   genesisFileDigest,
@@ -72,8 +79,14 @@ export async function openReceiptAnchor({
   await mkdir(dirname(absoluteLockPath), { recursive: true, mode: 0o700 });
 
   const suppliedKey = await loadKey(configuredKey, keyProvider, absolutePath);
+  if (legacyHmacKey !== null && (!(legacyHmacKey instanceof Uint8Array) || legacyHmacKey.length !== 32)) {
+    fail("INVALID_RECEIPT_ANCHOR_KEY", "legacyHmacKey must contain exactly 32 bytes");
+  }
   const { privateKey, seed } = loadEd25519PrivateKey(suppliedKey);
   const publicKey = createPublicKey(privateKey);
+  // Preserve existing 32-byte key/keyProvider configurations. A separate retired
+  // HMAC key can be supplied when migrating to a different Ed25519 signing key.
+  const legacyKey = legacyHmacKey === null ? seed : Buffer.from(legacyHmacKey);
 
   let closed = false;
 
@@ -96,6 +109,17 @@ export async function openReceiptAnchor({
     } catch {
       return false;
     }
+  }
+
+  function verifyMac(unsignedRecord, mac) {
+    if (legacyKey === null) {
+      fail("RECEIPT_ANCHOR_LEGACY_KEY_REQUIRED", "legacy HMAC anchors require their original 32-byte key via legacyHmacKey");
+    }
+    const expected = MAC_PREFIX + createHmac("sha256", legacyKey)
+      .update("context-layer/receipt-anchor/v1\0", "utf8")
+      .update(canonicalStringify(unsignedRecord), "utf8")
+      .digest("hex");
+    return secureEqualText(mac, expected);
   }
 
   function createRecord({
@@ -142,10 +166,12 @@ export async function openReceiptAnchor({
           anchor_sequence: index,
         });
       }
-      validateRecordShape(record, index, logId);
-      const { sig, ...unsigned } = record;
-      if (!verifySig(unsigned, sig)) {
-        fail("RECEIPT_ANCHOR_AUTHENTICATION_FAILED", "receipt anchor signature is invalid", {
+      const legacy = validateRecordShape(record, index, logId);
+      const authenticationKey = legacy ? "mac" : "sig";
+      const previousKey = legacy ? "previous_mac" : "previous_sig";
+      const { [authenticationKey]: authentication, ...unsigned } = record;
+      if (!(legacy ? verifyMac(unsigned, authentication) : verifySig(unsigned, authentication))) {
+        fail("RECEIPT_ANCHOR_AUTHENTICATION_FAILED", "receipt anchor authentication is invalid", {
           anchor_sequence: index,
         });
       }
@@ -155,13 +181,14 @@ export async function openReceiptAnchor({
           || record.byte_length !== 0
           || !secureEqualText(record.tail_digest, genesisTailDigest)
           || !secureEqualText(record.file_digest, genesisFileDigest)
-          || !secureEqualText(record.previous_sig, GENESIS_SIG)
+          || !secureEqualText(record[previousKey], legacy ? GENESIS_MAC : GENESIS_SIG)
         ) {
           fail("RECEIPT_ANCHOR_INVALID_GENESIS", "receipt anchor genesis is invalid");
         }
       } else if (
         record.entries !== previous.entries + 1
-        || !secureEqualText(record.previous_sig, previous.sig)
+        || record.anchor_version !== previous.anchor_version
+        || !secureEqualText(record[previousKey], previous[authenticationKey])
       ) {
         fail("RECEIPT_ANCHOR_CHAIN_MISMATCH", "receipt anchor ordering or chain is invalid", {
           anchor_sequence: index,
@@ -171,6 +198,39 @@ export async function openReceiptAnchor({
       previous = record;
     }
     return { exists: true, records, last: previous };
+  }
+
+  async function migrateAnchor(records) {
+    let previousSig = GENESIS_SIG;
+    const migrated = records.map((record) => {
+      const next = createRecord({
+        anchorSequence: record.anchor_sequence,
+        entries: record.entries,
+        tailDigest: record.tail_digest,
+        byteLength: record.byte_length,
+        fileDigest: record.file_digest,
+        previousSig,
+      });
+      previousSig = next.sig;
+      return next;
+    });
+    // The caller holds the receipt-log lock. Verify the entire old chain and log
+    // before replacing anything; a failed write leaves the original sidecar intact.
+    const temporaryPath = absolutePath + ".migrate-" + randomBytes(16).toString("hex");
+    const handle = await open(temporaryPath, "wx", 0o600);
+    try {
+      try {
+        await handle.writeFile(migrated.map(canonicalStringify).join("\n") + "\n", "utf8");
+        await handle.sync();
+      } finally {
+        await handle.close();
+      }
+      await rename(temporaryPath, absolutePath);
+    } finally {
+      await unlink(temporaryPath).catch((error) => {
+        if (error.code !== "ENOENT") throw error;
+      });
+    }
   }
 
   async function verifyState(state, { initialize = false } = {}) {
@@ -228,6 +288,9 @@ export async function openReceiptAnchor({
         entries: normalized.entries,
       });
     }
+    if (initialize && anchorState.last.anchor_version === 1) {
+      await migrateAnchor(anchorState.records);
+    }
     return normalized;
   }
 
@@ -248,6 +311,9 @@ export async function openReceiptAnchor({
       || !secureEqualText(anchorState.last.file_digest, expected.fileDigest)
     ) {
       fail("RECEIPT_ANCHOR_MISMATCH", "receipt anchor changed before it could be advanced");
+    }
+    if (anchorState.last.anchor_version !== ANCHOR_VERSION) {
+      fail("RECEIPT_ANCHOR_MIGRATION_REQUIRED", "open the receipt log to migrate its legacy anchor before appending");
     }
     const record = createRecord({
       anchorSequence: anchorState.last.anchor_sequence + 1,
@@ -282,6 +348,7 @@ export async function openReceiptAnchor({
   function close() {
     if (!closed) {
       if (seed) seed.fill(0);
+      if (legacyKey && legacyKey !== seed) legacyKey.fill(0);
       closed = true;
     }
   }
@@ -385,13 +452,15 @@ function validateRecordShape(record, index, logId) {
     });
   }
   const keys = Object.keys(record).sort();
-  if (keys.length !== ANCHOR_KEYS.length || keys.some((key, keyIndex) => key !== ANCHOR_KEYS[keyIndex])) {
+  const legacy = record.anchor_version === 1 && Object.hasOwn(record, "mac");
+  const expectedKeys = legacy ? LEGACY_ANCHOR_KEYS : ANCHOR_KEYS;
+  if (keys.length !== expectedKeys.length || keys.some((key, keyIndex) => key !== expectedKeys[keyIndex])) {
     fail("RECEIPT_ANCHOR_INVALID_RECORD", "receipt anchor record has unsupported fields", {
       anchor_sequence: index,
     });
   }
   if (
-    record.anchor_version !== ANCHOR_VERSION
+    (record.anchor_version !== ANCHOR_VERSION && record.anchor_version !== 1)
     || record.anchor_sequence !== index
     || !Number.isSafeInteger(record.entries)
     || record.entries < 0
@@ -405,8 +474,17 @@ function validateRecordShape(record, index, logId) {
   }
   requiredDigest(record.tail_digest, "anchor.tail_digest");
   requiredDigest(record.file_digest, "anchor.file_digest");
-  requiredSignature(record.previous_sig, "anchor.previous_sig");
-  requiredSignature(record.sig, "anchor.sig");
+  if (legacy) {
+    for (const value of [record.previous_mac, record.mac]) {
+      if (typeof value !== "string" || !/^hmac-sha256:[0-9a-f]{64}$/.test(value)) {
+        fail("RECEIPT_ANCHOR_INVALID_RECORD", "legacy receipt anchor requires HMAC-SHA-256 values");
+      }
+    }
+  } else {
+    requiredSignature(record.previous_sig, "anchor.previous_sig");
+    requiredSignature(record.sig, "anchor.sig");
+  }
+  return legacy;
 }
 
 function normalizeLogState(state) {

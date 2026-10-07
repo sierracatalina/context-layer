@@ -71,6 +71,19 @@ npm run demo:local-core
 
 npm test runs the repository-boundary, public-contract, local-core, receipt-hardening, demo, and proof-vector suites. All fixtures and demos are synthetic.
 
+### Receipt anchor upgrades
+
+New receipt anchors use `anchor_version: 2` with Ed25519 signatures. `openReceiptLog`
+verifies an existing version-1 HMAC chain and its matching receipt log before
+atomically replacing the sidecar with a version-2 chain under the receipt-log lock.
+Receipt bytes and replay history are preserved. Existing 32-byte `anchor.key` or
+`anchor.keyProvider` configurations continue to work; when using a different
+Ed25519 signing key, supply the original 32-byte HMAC key as `anchor.legacyHmacKey`
+for migration. It can be retired after a successful upgrade. The pre-release
+version-1 Ed25519 format is also verified and upgraded. `verifyReceiptLog` remains
+read-only. Tampered or mismatched logs fail closed before migration; older HMAC-only
+software cannot reopen upgraded sidecars.
+
 ## Repository map
 
 | Path | Purpose |
