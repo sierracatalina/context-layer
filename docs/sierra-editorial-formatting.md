@@ -25,6 +25,14 @@ prose. A deliberately transformed short metadata label may remain decorative
 only after its source text already satisfies this contract; body copy,
 headlines, and technical identifiers must not depend on a transform.
 
+## Plain-language overview exception
+
+`OVERVIEW.md` & `/context-layer/overview` use normal sentence case by explicit
+editorial choice. All other pages retain the lowercase contract. The overview
+is generated from its Markdown source by `scripts/verify-context-layer-overview.mjs`;
+the same check enforces parity, word limits, reading ease, links & glossary coverage.
+The exception does not change shared navigation, runtime copy or protocol sources.
+
 ## Type roles
 
 - Display headings: Cormorant Garamond.
