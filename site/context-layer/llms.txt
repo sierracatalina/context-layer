@@ -6,7 +6,9 @@ Canonical site: https://sierracatalina.com
 
 ## Context Layer
 
-- [Overview](https://sierracatalina.com/context-layer): Purpose-bound context authorization for users and agents.
+- [Protocol home](https://sierracatalina.com/context-layer): Purpose-bound context authorization for users and agents.
+- [Plain-language overview](https://sierracatalina.com/context-layer/overview): A short explanation of the problem, flow and limits.
+- [Glossary](https://sierracatalina.com/context-layer/source/glossary.md): One-line definitions of core and draft companion terms.
 - [Architecture](https://sierracatalina.com/context-layer/architecture): Trust zones, policy decisions, scoped bundles, actions, and receipts.
 - [Technical specification](https://sierracatalina.com/context-layer/specification): Draft Context Layer v0.2 protocol contracts and invariants.
 - [Implementation guide](https://sierracatalina.com/context-layer/implementation): Experimental local-core implementation and interoperability roadmap.

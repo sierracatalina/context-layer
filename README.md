@@ -2,9 +2,13 @@
 
 **v0.2-draft · experimental protocol · open specification and reference implementation**
 
-Context Layer is a protocol for moving the minimum useful context across applications, models, and agents while keeping authority with the user. Every exchange begins with a declared purpose, passes through policy, produces a recipient-bound scoped bundle, and leaves a minimized receipt.
+## TL;DR
 
-This is the canonical public repository for both the protocol and its published documentation experience. It contains the specification, schemas, reference runtime, local-core proof, threat model, test vectors, executable tests, and the source served at [sierracatalina.com/context-layer](https://sierracatalina.com/context-layer).
+Context Layer is a draft set of rules for sharing context with an app or AI agent. An app asks for facts for one task. Policy checks decide what it can see & do. It gets a small packet with a time limit, rather than full access to the user's vault. Receipts record what happened. New memory starts as a proposal.
+
+This repo has the spec, tests & a working local proof for one user. The proof uses made-up data. It is not ready for production or proven to work across vendors.
+
+Start with the [plain-language overview](OVERVIEW.md) & [one-line glossary](GLOSSARY.md). The [public site's source](site/context-layer/) lives here too.
 
 ## Start here
 
@@ -102,7 +106,8 @@ software cannot reopen upgraded sidecars.
 
 ## Public documentation
 
-- [Overview](https://sierracatalina.com/context-layer)
+- [Plain-language overview](https://sierracatalina.com/context-layer/overview)
+- [Protocol home](https://sierracatalina.com/context-layer)
 - [Architecture](https://sierracatalina.com/context-layer/architecture)
 - [Specification](https://sierracatalina.com/context-layer/specification)
 - [Implementation](https://sierracatalina.com/context-layer/implementation)
