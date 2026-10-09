@@ -1,0 +1,39 @@
+{
+  "spec_version": "context-layer/0.2-draft",
+  "type": "policy_decision",
+  "id": "urn:cl:decision:synthetic-invalid-decision",
+  "created_at": "2026-08-12T14:33:01Z",
+  "issuer": {
+    "id": "urn:cl:policy-engine:local"
+  },
+  "request_ref": "urn:cl:request:req_701",
+  "decision": "needs_approval",
+  "policy_snapshot": {
+    "version": "personal-policy/42",
+    "digest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  },
+  "granted_selectors": [
+    {
+      "predicate": "requested_delivery_date"
+    }
+  ],
+  "denied_selectors": [],
+  "granted_actions": [
+    "email.send"
+  ],
+  "denied_actions": [],
+  "transform_requirements": [],
+  "retention": {
+    "mode": "ephemeral",
+    "max_seconds": 3600
+  },
+  "onward_disclosure": "forbidden",
+  "receipt_requirement": {
+    "level": "operation",
+    "required": true
+  },
+  "expires_at": "2026-08-12T16:33:00Z",
+  "reason_codes": [
+    "APPROVAL_REQUIRED"
+  ]
+}

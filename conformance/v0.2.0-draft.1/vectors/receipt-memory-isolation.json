@@ -1,0 +1,42 @@
+{
+  "vector_set": "context-layer-receipt-memory-isolation/0.2",
+  "classification": "synthetic-test-only",
+  "fixed_time": "2030-01-01T12:00:00.000Z",
+  "synthetic_test_only_anchor_material_hex": "7c7c7c7c7c7c7c7c7c7c7c7c7c7c7c7c7c7c7c7c7c7c7c7c7c7c7c7c7c7c7c7c",
+  "receipt_operations": [
+    "synthetic.operation_one",
+    "synthetic.operation_two"
+  ],
+  "expected": {
+    "missing_anchor_error": "RECEIPT_ANCHOR_REQUIRED",
+    "rollback_error": "RECEIPT_LOG_ROLLBACK",
+    "payload_included": false
+  },
+  "memory_proposal": {
+    "operation": "add_or_contradict",
+    "proposed_claims": [
+      {
+        "predicate": "possible.synthetic_deadline",
+        "object": {
+          "value": "2030-02-01",
+          "datatype": "date"
+        },
+        "confidence": 0.55
+      }
+    ],
+    "provenance_handles": [],
+    "rationale": "Synthetic test-only proposal requiring source and user review.",
+    "expected_status": "pending_validation",
+    "expected_approval_requirements": [
+      "source_required",
+      "user_confirm"
+    ],
+    "direct_write_field": "raw_vault_write",
+    "expected_direct_write_error": "MEMORY_PROPOSAL_CONTAINS_FORBIDDEN_MATERIAL",
+    "forbidden_session_members": [
+      "commitMemory",
+      "readPayload",
+      "vault"
+    ]
+  }
+}

@@ -1,0 +1,234 @@
+{
+  "files": [
+    {
+      "path": ".gitignore",
+      "sha256": "c5f4552592dad390cab0d478aec16e73397adaff78da7b837fc694999f5e147a",
+      "bytes": 62
+    },
+    {
+      "path": "LICENSE",
+      "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+      "bytes": 11358
+    },
+    {
+      "path": "LICENSE-DOCS",
+      "sha256": "9e5f1b3c610b9c2da5c313bf81d577a7d1acec686bdb0384edefa6df0f90cd94",
+      "bytes": 18656
+    },
+    {
+      "path": "LINEAGE.md",
+      "sha256": "dae7a8674e82f771ee69e2da08ac53e8c421994b35f5b393d7b085579eb9d3b6",
+      "bytes": 4772
+    },
+    {
+      "path": "README.md",
+      "sha256": "2e090f665b9f81efcb6cd0eb86af32008d7eeac6374fd303fb0172647fdb5024",
+      "bytes": 5993
+    },
+    {
+      "path": "clarification-manifest.json",
+      "sha256": "b559439f091c5d5647acc118194a374396ddd6e5912c5160c94db1005e584866",
+      "bytes": 510
+    },
+    {
+      "path": "context_layer_independent/__init__.py",
+      "sha256": "b11eaf98e2bb5b14ab904f86f9d3315eb09b105a518876f76100acdb7a1cbd4d",
+      "bytes": 419
+    },
+    {
+      "path": "context_layer_independent/adapter.py",
+      "sha256": "613054087aa73bf78eac8459c6e76463532edcfa9580d00fa7eba6f081b83713",
+      "bytes": 5042
+    },
+    {
+      "path": "context_layer_independent/core.py",
+      "sha256": "fc7d4c6ddc657c5424fab8a53e353f61d591d11b0ee4532e9eb912cbc9203815",
+      "bytes": 35783
+    },
+    {
+      "path": "context_layer_independent/profile.py",
+      "sha256": "2309b3cf0ba29c6caf832aed6b9be952349ed6bc76f7e154b8386e7b80f1e21c",
+      "bytes": 30509
+    },
+    {
+      "path": "dependency-provenance.json",
+      "sha256": "30fef4d50774c255c1864a149d65f6f39dc5dfa4b25dc38310a46d892c8bb6b7",
+      "bytes": 4822
+    },
+    {
+      "path": "pyproject.toml",
+      "sha256": "07fc8bccfb88c2d6c70f2e17d2765f34a165ff0f12aec759bdcce880487d89fb",
+      "bytes": 412
+    },
+    {
+      "path": "reports/public-vectors.json",
+      "sha256": "25515da2551ab5ca7c7dc1ac9a0ca942aa82a926a1619f0f243bbb5d91fdb6cc",
+      "bytes": 12267
+    },
+    {
+      "path": "reports/unit-tests.txt",
+      "sha256": "723496436bdb925ce53d63c7a09b25cc2032ca9a29e0fccf9afecac944175cc3",
+      "bytes": 10772
+    },
+    {
+      "path": "reports/verification-summary.json",
+      "sha256": "790817347c3d96774fed9d2e2aca6e8493da2d21a2d372672218030d9223aeba",
+      "bytes": 860
+    },
+    {
+      "path": "requirements.lock",
+      "sha256": "bfc7e8f108475907a02e36a7bd5cb338228ade432ac6ed1dd9abb9924687791a",
+      "bytes": 1456
+    },
+    {
+      "path": "requirements.txt",
+      "sha256": "d0390d6557443bbdc0fac17dfd3b54b8d9d2846b669b58d161c1af3ef372ccd4",
+      "bytes": 360
+    },
+    {
+      "path": "run_vectors.py",
+      "sha256": "9a10d54ee7f942244f29bf176534157923db414ef9300e9dc45118b67605c77f",
+      "bytes": 12411
+    },
+    {
+      "path": "source-manifest.json",
+      "sha256": "d8aa90b87c0e526a0816f5e4463690be94ce2c20f7f8c9b3fa0d75fe8232f938",
+      "bytes": 9276
+    },
+    {
+      "path": "source-only/adapter-contract.md",
+      "sha256": "480b186966bba8f2c87b287f946bf0c15dc2aa7da8a15586c6477870b65a01a1",
+      "bytes": 5012
+    },
+    {
+      "path": "source-only/profiles/local-core-0.2-draft.1.md",
+      "sha256": "c0103260c0fcff84bb9f0565c7b2c03139e251f4a165c35300b8dca93d45094a",
+      "bytes": 24572
+    },
+    {
+      "path": "source-packet/CONTRIBUTING.md",
+      "sha256": "19d14ae2ae4cd1d2262378cc65e2eb71e69448d26110b1097e5d1deb3915d7bc",
+      "bytes": 2083
+    },
+    {
+      "path": "source-packet/LICENSE",
+      "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+      "bytes": 11358
+    },
+    {
+      "path": "source-packet/LICENSE-DOCS",
+      "sha256": "9e5f1b3c610b9c2da5c313bf81d577a7d1acec686bdb0384edefa6df0f90cd94",
+      "bytes": 18656
+    },
+    {
+      "path": "source-packet/LICENSING.md",
+      "sha256": "7e8532d9ab22b375108888af30f33a6c2b3906f36b5cab6e681cb02c231cb194",
+      "bytes": 2341
+    },
+    {
+      "path": "source-packet/protocol/fixtures/invalid-memory-update-proposal.json",
+      "sha256": "877d80f6d5153deacefcf1872594deeb45b0dbade56da0a973d9fae2f597d97f",
+      "bytes": 780
+    },
+    {
+      "path": "source-packet/protocol/fixtures/invalid-policy-decision.json",
+      "sha256": "04ccb7f279d714741b0548ccf50941ce8593975d1d4011d9190d9568ad314d7b",
+      "bytes": 946
+    },
+    {
+      "path": "source-packet/protocol/fixtures/invalid-secret-receipt.json",
+      "sha256": "3666a2edbb099d9e365ccf0d63bdcbd292c75f31c91a8b0dffbdcadce7cc0611",
+      "bytes": 1067
+    },
+    {
+      "path": "source-packet/protocol/fixtures/valid-exchange.json",
+      "sha256": "6413978df9af1c5b777362e3ac83371486731c75f66152bfe0aa79b4f4dbc95b",
+      "bytes": 3076
+    },
+    {
+      "path": "source-packet/protocol/fixtures/valid-memory-update-proposal.json",
+      "sha256": "9bd0c1746b7a209b73d9ef7b5c6239b536cec234089b46b970c4ad34b73fccb9",
+      "bytes": 829
+    },
+    {
+      "path": "source-packet/protocol/fixtures/valid-policy-decision.json",
+      "sha256": "9ee9c49035c2d0f0ca60fa561d0b13cd790b147ec391ca2c8129e19b67863e41",
+      "bytes": 1243
+    },
+    {
+      "path": "source-packet/protocol/schemas/context-request.schema.json",
+      "sha256": "e3d7f226208d73a0a3bde4d1a03a9e0590f5816b2fe15bc741f6c05e3bc3237f",
+      "bytes": 5386
+    },
+    {
+      "path": "source-packet/protocol/schemas/memory-update-proposal.schema.json",
+      "sha256": "76b209476a533c4c5819090a881eaacce2cefe00e71b88044fa53e5f42006035",
+      "bytes": 4277
+    },
+    {
+      "path": "source-packet/protocol/schemas/policy-decision.schema.json",
+      "sha256": "b39bace9af7ca80ada0fb06d4f45e97cba6ee123822eee5534bdf2e901bd0b4a",
+      "bytes": 8264
+    },
+    {
+      "path": "source-packet/protocol/schemas/receipt.schema.json",
+      "sha256": "26386ed05c6ba858b70f1f8f3a92590c4336a84b5a7791d6a19a6f2b031f296f",
+      "bytes": 3867
+    },
+    {
+      "path": "source-packet/protocol/schemas/scoped-context-bundle.schema.json",
+      "sha256": "d5462f71928021b03236dcdfa02450276c4981d5de583070292d92841efa8f38",
+      "bytes": 7371
+    },
+    {
+      "path": "source-packet/protocol/spec/context-layer-implementation-and-interoperability.md",
+      "sha256": "e6469192c92540fde30296748c61cd10600b1ce150d1581a13edb5fea7288ab3",
+      "bytes": 32100
+    },
+    {
+      "path": "source-packet/protocol/spec/context-layer-technical-specification.md",
+      "sha256": "b484f60f403c00fa23db03838d9c359c31dc3dd59f6608970aed897544fe9c00",
+      "bytes": 48200
+    },
+    {
+      "path": "source-packet/test-vectors/v0.2/README.md",
+      "sha256": "8837754e4b6eff3075de4e902b26bb3e42bf5f6dfe4f0932dc1f8b52e0248237",
+      "bytes": 1613
+    },
+    {
+      "path": "source-packet/test-vectors/v0.2/canonicalization.json",
+      "sha256": "1f0899a693e51985c1affe5a456b90f7224fc875a1d615f372df8a3b057a9314",
+      "bytes": 1636
+    },
+    {
+      "path": "source-packet/test-vectors/v0.2/exchange-security.json",
+      "sha256": "b5a023c98947e07f8637486c00a64b877b4a43548556d60b20ee73724d5a964d",
+      "bytes": 4073
+    },
+    {
+      "path": "source-packet/test-vectors/v0.2/manifest.json",
+      "sha256": "e4257079c5738bbd579d44c374c6d0fcb9ee98d4b09bad462f3d15f9cad8d687",
+      "bytes": 1331
+    },
+    {
+      "path": "source-packet/test-vectors/v0.2/policy-cases.json",
+      "sha256": "45d4ce69f415eb7d48a937d042ae4f1d72cd1221f0b7b34cb946ae782cc05528",
+      "bytes": 6512
+    },
+    {
+      "path": "source-packet/test-vectors/v0.2/receipt-memory-isolation.json",
+      "sha256": "40397701a45f284b9911d987916bc65a25c562ca726ead3117467ece505d47d9",
+      "bytes": 1271
+    },
+    {
+      "path": "tests/test_core.py",
+      "sha256": "420615511b38cc23b2500fe597adeba95ea6accb80fdffa2bfcb6f7a3ab36f98",
+      "bytes": 23098
+    },
+    {
+      "path": "tests/test_profile.py",
+      "sha256": "afa786e114f7cc69cc932c59f15067c9b891783acf273139e9b8d68c7f706a96",
+      "bytes": 16041
+    }
+  ]
+}

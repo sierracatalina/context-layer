@@ -16,16 +16,23 @@
     "node": ">=22.13.0"
   },
   "scripts": {
-    "test": "npm run test:contracts && npm run test:site && npm run test:local-core && npm run test:proof",
-    "test:contracts": "node --test tests/repository-boundary.test.mjs tests/reference-implementation.test.mjs",
-    "test:site": "node --test tests/public-site.test.mjs tests/editorial-formatting.test.mjs",
+    "test": "npm run test:contracts && npm run test:site && npm run test:local-core && npm run test:proof && npm run test:docs && npm run test:security && npm run test:conformance",
+    "test:contracts": "node --test tests/repository-boundary.test.mjs tests/reference-implementation.test.mjs tests/governance-evidence.test.mjs tests/conformance-kit.test.mjs",
+    "test:site": "node --test tests/public-site.test.mjs tests/editorial-formatting.test.mjs tests/overview.test.mjs",
     "test:local-core": "node --test tests/local-core.test.mjs tests/receipt-log-hardening.test.mjs",
     "test:proof": "node --test tests/local-core-demo.test.mjs tests/test-vectors.test.mjs",
+    "test:docs": "node scripts/generate-spec-docs.mjs --check && node --test tests/spec-documentation.test.mjs",
     "demo:local-core": "node examples/local-core-demo.mjs",
-    "format:context-layer": "node scripts/format-context-layer-site.mjs",
-    "verify:context-layer": "node scripts/verify-context-layer-editorial.mjs",
+    "format:context-layer": "node scripts/format-context-layer-site.mjs && node scripts/verify-context-layer-overview.mjs --write",
+    "verify:context-layer": "node scripts/verify-context-layer-editorial.mjs && node scripts/verify-context-layer-overview.mjs",
     "release:hygiene": "node scripts/release-hygiene.mjs",
-    "lint": "node node_modules/eslint/bin/eslint.js ."
+    "lint": "node node_modules/eslint/bin/eslint.js .",
+    "test:mcp-demo": "npm --prefix examples/mcp-agent-demo test",
+    "demo:mcp": "node examples/mcp-agent-demo/protocol-demo.mjs",
+    "test:security": "node --test tests/security/fuzz-properties.test.mjs",
+    "test:conformance": "node conformance/v0.2.0-draft.1/run.mjs -- node scripts/conformance-reference-adapter.mjs",
+    "test:independent": "node scripts/check-independent-conformance.mjs",
+    "test:all": "npm test && npm run test:independent && npm run test:mcp-demo"
   },
   "devDependencies": {
     "@eslint/js": "9.39.4",

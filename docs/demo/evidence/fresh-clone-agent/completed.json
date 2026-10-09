@@ -1,0 +1,1 @@
+{"verified_at_utc": "2026-10-09T23:07:41.558842+00:00", "checks": ["actual MCP trace has three permitted fields and no personal sentinel values", "fresh model worker returned its own three-bullet agenda", "agenda covers scope, owner and Friday check-in"], "model_id": "unavailable"}

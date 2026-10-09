@@ -1,0 +1,48 @@
+
+$ git clone --single-branch --branch improve/mcp-disclosure-demo https://github.com/sierracatalina/context-layer.git [FRESH_CLONE]
+Cloning into '[FRESH_CLONE]'...
+
+$ git checkout --detach f50e9684533229e707fc6ec6a5e541c8e79d785e
+HEAD is now at f50e968 Record public fresh-clone MCP setup timing and pin reproducible revision
+
+$ npm --prefix examples/mcp-agent-demo ci --ignore-scripts --no-audit --no-fund
+
+added 95 packages in 5s
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+npm notice
+npm notice New major version of npm available! 11.9.0 -> 12.2.0
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.0
+npm notice To update run: npm install -g npm@12.2.0
+npm notice
+
+$ npm --prefix examples/mcp-agent-demo test
+
+> context-layer-mcp-agent-demo@0.1.0 test
+> node --test demo.test.mjs
+
+✔ official MCP client negotiates stdio and invokes discoverable tool (182.822758ms)
+✔ scoped MCP payload removes unrelated values before the client receives them (193.35224ms)
+✔ private-only selector is denied through actual MCP transport (181.768301ms)
+✔ agent-controlled selectors cannot override policy (209.975642ms)
+✔ wildcard request fails closed (204.33457ms)
+✔ verified bundle cannot be consumed twice (45.412744ms)
+✔ changing signed context is rejected before reconsumption (41.144701ms)
+✔ expired session cannot perform another disclosure (29.684131ms)
+ℹ tests 8
+ℹ suites 0
+ℹ pass 8
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1317.258656
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+$ node examples/mcp-agent-demo/protocol-demo.mjs outputs/mcp-protocol-demo
+CONTEXT LAYER / real MCP stdio / synthetic data only
+This automated protocol client is not itself an AI agent.
+BEFORE: 6 fields disclosed, including 3 unrelated personal fields.
+AFTER: 3 fields disclosed; allow_with_reductions.
+NEGATIVE: private.journal-only request -> deny; 0 fields.
+MCP 2025-11-25; Ed25519 verified; receipts: bundle.issue, bundle.consume, context.disclose.
+PASS in 0.57s. Evidence: [FRESH_CLONE]/outputs/mcp-protocol-demo
