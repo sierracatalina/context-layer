@@ -37,22 +37,23 @@ human comprehension, outside review, production interoperability or certificatio
 | [C05](#c05) | Receipt chains detect tested tampering and migrate earlier anchors. | implemented-tested |
 | [C06](#c06) | The vault encrypts persisted test data and the files adapter enforces tested root boundaries. | implemented-tested |
 | [C07](#c07) | The consumer produces pending memory proposals without a direct commit API. | implemented-tested |
-| [C08](#c08) | Four hash-bound core vector sets and a synthetic local demo are executable. | implemented-tested |
+| [C08](#c08) | A versioned standalone kit executes the scoped local-profile transcript against JavaScript and Python adapters. | implemented-tested |
 | [C09](#c09) | The documentation site includes checked routes, source/asset contracts and progressive mobile navigation. | implemented-tested |
 | [C10](#c10) | Package metadata and core/companion wire identifiers are separate. | implemented-inspected |
 | [C11](#c11) | CL-Pass schemas and behavioral oracles describe a separate experimental proposal. | proposed-untested |
 | [C12](#c12) | Broader source, organization, federation, semantic proxy and discovery profiles are design targets. | proposed-untested |
 | [C13](#c13) | One local MCP stdio demo narrows six synthetic fields to three before delivery and denies a private-only request. | implemented-tested |
 | [C14](#c14) | The Nostr profile is unsubmitted and event kinds remain unassigned. | proposed-untested |
-| [C15](#c15) | Outside implementation and adoption are not established by baseline artifacts. | not-established |
+| [C15](#c15) | Outside maintenance and adoption are not established by these project-produced experiments. | not-established |
 | [C16](#c16) | Independent security review and certification are not established. | not-established |
-| [C17](#c17) | Generated/fuzz coverage beyond deterministic regressions is not established at baseline. | not-established |
+| [C17](#c17) | A bounded seeded generated/property suite exercises malformed inputs, receipt corruption, concurrent replay and revocation/expiry. | implemented-tested |
 | [C18](#c18) | Human comprehension, explain-back and external user outcomes are unmeasured. | not-established |
-| [C19](#c19) | Immutable schema publication and standalone external conformance are unverified at baseline. | not-established |
+| [C19](#c19) | Eleven version-addressed schema snapshots and their static site candidates pass offline identity, reference and hash checks. | implemented-tested |
 | [C20](#c20) | Private disclosure has a documented GitHub destination; form availability requires an authenticated check. | implemented-inspected |
 | [C21](#c21) | A plain-language overview and one-line glossary satisfy documented automated readability and coverage checks. | implemented-tested |
-| [C22](#c22) | Core navigation, a concise summary and a complete normative index preserve existing requirement passages and examples. | implemented-tested |
+| [C22](#c22) | Core navigation, a concise topic summary and a complete normative index preserve existing uppercase requirements and examples; section 13 now explicitly summarizes roles informatively. | implemented-tested |
 | [C23](#c23) | Proposed measurable goals, user stories, release gates and private-report routing have reviewable repository artifacts. | implemented-tested |
+| [C24](#c24) | An independently authored Python experiment passes its own tests and the shared local-profile transcript. | implemented-tested |
 
 ## Evidence by claim
 
@@ -150,17 +151,19 @@ The consumer produces pending memory proposals without a direct commit API.
 
 ### C08
 
-Four hash-bound core vector sets and a synthetic local demo are executable.
+A versioned standalone kit executes the scoped local-profile transcript against JavaScript and Python adapters.
 
 - Status: **implemented-tested**. Reviewed 2026-10-09.
-- Scope: Core v0.2 manifest and repository-local JavaScript runner.
-- Evidence revision: `0a8d016c822f38e8fc857422e133d0699c42a21f`.
-- [test-vectors/v0.2/manifest.json](https://github.com/sierracatalina/context-layer/blob/0a8d016c822f38e8fc857422e133d0699c42a21f/test-vectors/v0.2/manifest.json).
-- [examples/local-core-demo.mjs](https://github.com/sierracatalina/context-layer/blob/0a8d016c822f38e8fc857422e133d0699c42a21f/examples/local-core-demo.mjs).
-- [tests/test-vectors.test.mjs](https://github.com/sierracatalina/context-layer/blob/0a8d016c822f38e8fc857422e133d0699c42a21f/tests/test-vectors.test.mjs): “manifest binds every synthetic vector by content and coverage”.
-- [tests/local-core-demo.test.mjs](https://github.com/sierracatalina/context-layer/blob/0a8d016c822f38e8fc857422e133d0699c42a21f/tests/local-core-demo.test.mjs): “synthetic demo runs end to end and emits only its minimized summary”.
-- Limits: The baseline runner imports repository modules. Six fixtures and CL-Pass prose oracles are not six executable vector sets or a standalone kit.
-- Next evidence: Version an implementation-neutral kit and report actual case and set totals.
+- Scope: Forty-five common-kit assertions per adapter, four unchanged original vector sets, six separate contract fixtures and a labeled reference-derived full-object supplement.
+- Evidence revision: `af610f6e39ee0b8dbc3db49f098676bb1fd729c1`.
+- CI evidence: [recorded workflow run](https://github.com/sierracatalina/context-layer/actions/runs/38006012587). This is evidence for the pinned source revision, not the final integrated candidate or deployment.
+- [CONFORMANCE.md](https://github.com/sierracatalina/context-layer/blob/af610f6e39ee0b8dbc3db49f098676bb1fd729c1/CONFORMANCE.md).
+- [conformance/v0.2.0-draft.1/manifest.json](https://github.com/sierracatalina/context-layer/blob/af610f6e39ee0b8dbc3db49f098676bb1fd729c1/conformance/v0.2.0-draft.1/manifest.json).
+- [tests/conformance-kit.test.mjs](https://github.com/sierracatalina/context-layer/blob/af610f6e39ee0b8dbc3db49f098676bb1fd729c1/tests/conformance-kit.test.mjs): “exported kit runs outside repository and tests real reference adapter results”.
+- [tests/conformance-kit.test.mjs](https://github.com/sierracatalina/context-layer/blob/af610f6e39ee0b8dbc3db49f098676bb1fd729c1/tests/conformance-kit.test.mjs): “full-object profile oracles satisfy independent closed schemas and explicit scope”.
+- [scripts/check-independent-conformance.mjs](https://github.com/sierracatalina/context-layer/blob/af610f6e39ee0b8dbc3db49f098676bb1fd729c1/scripts/check-independent-conformance.mjs).
+- Limits: The supplement is reference-derived, not an independent oracle. The kit is exported offline, not registry-published or a certification. A passing transcript does not establish complete core/role conformance, outside adoption or universally correct reference behavior.
+- Next evidence: Run the exact final combined candidate on both hosted operating systems and retain assertion-level reports; resolve remaining profile/coverage questions in issues #13–17 without treating source links as resolution.
 
 ### C09
 
@@ -168,13 +171,12 @@ The documentation site includes checked routes, source/asset contracts and progr
 
 - Status: **implemented-tested**. Reviewed 2026-10-09.
 - Scope: site/context-layer source and site/vercel.json, including the plain-language overview and mobile-menu state checks.
-- Evidence revision: `0747517319b65902f72a146cb0ec6cc959c59782`.
-- CI evidence: [recorded workflow run](https://github.com/sierracatalina/context-layer/actions/runs/38001192309). This is evidence for the pinned source revision, not the final integrated candidate or deployment.
-- [site/vercel.json](https://github.com/sierracatalina/context-layer/blob/0747517319b65902f72a146cb0ec6cc959c59782/site/vercel.json).
-- [tests/public-site.test.mjs](https://github.com/sierracatalina/context-layer/blob/0747517319b65902f72a146cb0ec6cc959c59782/tests/public-site.test.mjs): “all public routes expose a progressive mobile menu with the full navigation”.
-- [tests/public-site.test.mjs](https://github.com/sierracatalina/context-layer/blob/0747517319b65902f72a146cb0ec6cc959c59782/tests/public-site.test.mjs): “mobile menu supports repeat toggles, dismissal, responsive changes and history restore”.
-- [tests/overview.test.mjs](https://github.com/sierracatalina/context-layer/blob/0747517319b65902f72a146cb0ec6cc959c59782/tests/overview.test.mjs): “overview, TLDR, glossary, rendered page and local links satisfy the G1 contract”.
-- [tests/editorial-formatting.test.mjs](https://github.com/sierracatalina/context-layer/blob/0747517319b65902f72a146cb0ec6cc959c59782/tests/editorial-formatting.test.mjs).
+- Evidence revision: `378aab9cf48c5148c8ffce1f5fca17bcbee08f18`.
+- [site/vercel.json](https://github.com/sierracatalina/context-layer/blob/378aab9cf48c5148c8ffce1f5fca17bcbee08f18/site/vercel.json).
+- [tests/public-site.test.mjs](https://github.com/sierracatalina/context-layer/blob/378aab9cf48c5148c8ffce1f5fca17bcbee08f18/tests/public-site.test.mjs): “all public routes expose a progressive mobile menu with the full navigation”.
+- [tests/public-site.test.mjs](https://github.com/sierracatalina/context-layer/blob/378aab9cf48c5148c8ffce1f5fca17bcbee08f18/tests/public-site.test.mjs): “mobile menu supports repeat toggles, dismissal, responsive changes and history restore”.
+- [tests/overview.test.mjs](https://github.com/sierracatalina/context-layer/blob/378aab9cf48c5148c8ffce1f5fca17bcbee08f18/tests/overview.test.mjs): “overview, TLDR, glossary, rendered page and local links satisfy the G1 contract”.
+- [tests/editorial-formatting.test.mjs](https://github.com/sierracatalina/context-layer/blob/378aab9cf48c5148c8ffce1f5fca17bcbee08f18/tests/editorial-formatting.test.mjs).
 - Limits: Source assertions and simulated events do not verify production deployment, rendered browser viewports or human usability. The overview preserves a narrow sentence-case exception; ordinary site prose keeps its editorial contract.
 - Next evidence: Check rendered protected preview and production bytes at the exact deployment revision; keep deployment protection in place.
 
@@ -248,13 +250,13 @@ The Nostr profile is unsubmitted and event kinds remain unassigned.
 
 ### C15
 
-Outside implementation and adoption are not established by baseline artifacts.
+Outside maintenance and adoption are not established by these project-produced experiments.
 
 - Status: **not-established**. Reviewed 2026-10-09.
-- Scope: All code and demonstrations in the pinned repository snapshot.
-- Evidence revision: `0a8d016c822f38e8fc857422e133d0699c42a21f`.
-- [README.md](https://github.com/sierracatalina/context-layer/blob/0a8d016c822f38e8fc857422e133d0699c42a21f/README.md).
-- [test-vectors/v0.2/README.md](https://github.com/sierracatalina/context-layer/blob/0a8d016c822f38e8fc857422e133d0699c42a21f/test-vectors/v0.2/README.md).
+- Scope: JavaScript experiments and the independently authored Python implementation produced within this project.
+- Evidence revision: `af610f6e39ee0b8dbc3db49f098676bb1fd729c1`.
+- [implementations/python/LINEAGE.md](https://github.com/sierracatalina/context-layer/blob/af610f6e39ee0b8dbc3db49f098676bb1fd729c1/implementations/python/LINEAGE.md).
+- [CONFORMANCE.md](https://github.com/sierracatalina/context-layer/blob/af610f6e39ee0b8dbc3db49f098676bb1fd729c1/CONFORMANCE.md).
 - Limits: Project-produced second-language or clean-room code can test implementability without proving outside ownership or adoption.
 - Next evidence: Apply GOALS.md G-IMPLEMENT and G-ADOPT with consenting outside project-owner confirmation.
 
@@ -264,23 +266,27 @@ Independent security review and certification are not established.
 
 - Status: **not-established**. Reviewed 2026-10-09.
 - Scope: Protocol, cryptography, local runtime and site.
-- Evidence revision: `0a8d016c822f38e8fc857422e133d0699c42a21f`.
-- [SECURITY.md](https://github.com/sierracatalina/context-layer/blob/0a8d016c822f38e8fc857422e133d0699c42a21f/SECURITY.md).
-- [docs/context-layer-threat-model.md](https://github.com/sierracatalina/context-layer/blob/0a8d016c822f38e8fc857422e133d0699c42a21f/docs/context-layer-threat-model.md).
+- Evidence revision: `af610f6e39ee0b8dbc3db49f098676bb1fd729c1`.
+- [SECURITY.md](https://github.com/sierracatalina/context-layer/blob/af610f6e39ee0b8dbc3db49f098676bb1fd729c1/SECURITY.md).
+- [docs/context-layer-threat-model.md](https://github.com/sierracatalina/context-layer/blob/af610f6e39ee0b8dbc3db49f098676bb1fd729c1/docs/context-layer-threat-model.md).
+- [docs/security-review-status.md](https://github.com/sierracatalina/context-layer/blob/af610f6e39ee0b8dbc3db49f098676bb1fd729c1/docs/security-review-status.md).
 - Limits: Regression tests and disclosure instructions are not an outside audit, security score or certification.
 - Next evidence: Record real independent review scope and finding dispositions; keep unsupported assurances absent.
 
 ### C17
 
-Generated/fuzz coverage beyond deterministic regressions is not established at baseline.
+A bounded seeded generated/property suite exercises malformed inputs, receipt corruption, concurrent replay and revocation/expiry.
 
-- Status: **not-established**. Reviewed 2026-10-09.
-- Scope: Bundle/receipt parsing, replay and revocation properties.
-- Evidence revision: `0a8d016c822f38e8fc857422e133d0699c42a21f`.
-- [tests/local-core.test.mjs](https://github.com/sierracatalina/context-layer/blob/0a8d016c822f38e8fc857422e133d0699c42a21f/tests/local-core.test.mjs).
-- [tests/receipt-log-hardening.test.mjs](https://github.com/sierracatalina/context-layer/blob/0a8d016c822f38e8fc857422e133d0699c42a21f/tests/receipt-log-hardening.test.mjs).
-- Limits: Named negative examples are not a measured fuzz campaign.
-- Next evidence: Link reproducible seeds, command, corpus, budget and failures for a generated/property suite.
+- Status: **implemented-tested**. Reviewed 2026-10-09.
+- Scope: Five deterministic property families; xorshift32-v1 seed 12648430, default 256 generated cases with configurable bound 1–4096 and documented per-family caps.
+- Evidence revision: `af610f6e39ee0b8dbc3db49f098676bb1fd729c1`.
+- CI evidence: [recorded workflow run](https://github.com/sierracatalina/context-layer/actions/runs/38006012587). This is evidence for the pinned source revision, not the final integrated candidate or deployment.
+- [docs/security-testing.md](https://github.com/sierracatalina/context-layer/blob/af610f6e39ee0b8dbc3db49f098676bb1fd729c1/docs/security-testing.md).
+- [tests/security/fuzz-properties.test.mjs](https://github.com/sierracatalina/context-layer/blob/af610f6e39ee0b8dbc3db49f098676bb1fd729c1/tests/security/fuzz-properties.test.mjs): “seeded bundle JSON/shape mutations reject without releasing context”.
+- [tests/security/fuzz-properties.test.mjs](https://github.com/sierracatalina/context-layer/blob/af610f6e39ee0b8dbc3db49f098676bb1fd729c1/tests/security/fuzz-properties.test.mjs): “generated concurrent single-use and restart properties use durable shared storage”.
+- [tests/security/fuzz-properties.test.mjs](https://github.com/sierracatalina/context-layer/blob/af610f6e39ee0b8dbc3db49f098676bb1fd729c1/tests/security/fuzz-properties.test.mjs): “generated revocation/expiry rechecks prevent handler invocation after open”.
+- Limits: This is a fixed-seed bounded campaign, not a coverage-guided fuzzer, exhaustive proof, hostile-process assessment or outside cryptographic review. Per-family scenario limits differ from the configured generated-case count.
+- Next evidence: Record final-candidate seed, case budget and results; preserve private reporting for vulnerability details and obtain actual outside review separately.
 
 ### C18
 
@@ -296,15 +302,18 @@ Human comprehension, explain-back and external user outcomes are unmeasured.
 
 ### C19
 
-Immutable schema publication and standalone external conformance are unverified at baseline.
+Eleven version-addressed schema snapshots and their static site candidates pass offline identity, reference and hash checks.
 
-- Status: **not-established**. Reviewed 2026-10-09.
-- Scope: Core and companion schema IDs and deployment paths.
-- Evidence revision: `0a8d016c822f38e8fc857422e133d0699c42a21f`.
-- [protocol/schemas/receipt.schema.json](https://github.com/sierracatalina/context-layer/blob/0a8d016c822f38e8fc857422e133d0699c42a21f/protocol/schemas/receipt.schema.json).
-- [protocol/companions/0.3-draft/README.md](https://github.com/sierracatalina/context-layer/blob/0a8d016c822f38e8fc857422e133d0699c42a21f/protocol/companions/0.3-draft/README.md).
-- Limits: An $id, local route or alias does not prove a stable live URL or successful standalone installation.
-- Next evidence: Resolve each versioned URL, compare expected bytes/hashes and test the packaged runner outside the checkout.
+- Status: **implemented-tested**. Reviewed 2026-10-09.
+- Scope: Five core 0.2.0-draft.1 schemas and six separate companion 0.3.0-draft.1 schemas, with a shared hash catalog and legacy aliases.
+- Evidence revision: `af610f6e39ee0b8dbc3db49f098676bb1fd729c1`.
+- CI evidence: [recorded workflow run](https://github.com/sierracatalina/context-layer/actions/runs/38006012587). This is evidence for the pinned source revision, not the final integrated candidate or deployment.
+- [protocol/schemas/schema-catalog.json](https://github.com/sierracatalina/context-layer/blob/af610f6e39ee0b8dbc3db49f098676bb1fd729c1/protocol/schemas/schema-catalog.json).
+- [site/context-layer/schemas/index.json](https://github.com/sierracatalina/context-layer/blob/af610f6e39ee0b8dbc3db49f098676bb1fd729c1/site/context-layer/schemas/index.json).
+- [tests/conformance-kit.test.mjs](https://github.com/sierracatalina/context-layer/blob/af610f6e39ee0b8dbc3db49f098676bb1fd729c1/tests/conformance-kit.test.mjs): “versioned schemas compile offline and publication candidates preserve exact identities and refs”.
+- [tests/conformance-kit.test.mjs](https://github.com/sierracatalina/context-layer/blob/af610f6e39ee0b8dbc3db49f098676bb1fd729c1/tests/conformance-kit.test.mjs): “schema catalog binds every versioned source and site candidate”.
+- Limits: The catalog explicitly records prepared-not-deployment-verified status. These proposed version directories are not immutable published releases yet; an identifier or local file does not prove a live URL. Companion schema checks do not implement CL-Pass behavior.
+- Next evidence: After approved site deployment, fetch all eleven versioned URLs and legacy aliases and compare bytes, IDs and catalog hashes; freeze released versions instead of overwriting them.
 
 ### C20
 
@@ -312,8 +321,8 @@ Private disclosure has a documented GitHub destination; form availability requir
 
 - Status: **implemented-inspected**. Reviewed 2026-10-09.
 - Scope: Repository security policy and issue routing.
-- Evidence revision: `0a8d016c822f38e8fc857422e133d0699c42a21f`.
-- [SECURITY.md](https://github.com/sierracatalina/context-layer/blob/0a8d016c822f38e8fc857422e133d0699c42a21f/SECURITY.md).
+- Evidence revision: `af610f6e39ee0b8dbc3db49f098676bb1fd729c1`.
+- [SECURITY.md](https://github.com/sierracatalina/context-layer/blob/af610f6e39ee0b8dbc3db49f098676bb1fd729c1/SECURITY.md).
 - Limits: Public read on 2026-10-09 reached GitHub login only. This verifies the destination route, not an eligible reporter submission. No fallback contact is invented.
 - Next evidence: Verify the authenticated private form before release; do not post exploit details publicly if unavailable.
 
@@ -323,32 +332,32 @@ A plain-language overview and one-line glossary satisfy documented automated rea
 
 - Status: **implemented-tested**. Reviewed 2026-10-09.
 - Scope: Five-section overview, README TL;DR, 119 glossary entries, 81 distinct extracted source terms and generated site mirrors.
-- Evidence revision: `0747517319b65902f72a146cb0ec6cc959c59782`.
-- CI evidence: [recorded workflow run](https://github.com/sierracatalina/context-layer/actions/runs/38001192309). This is evidence for the pinned source revision, not the final integrated candidate or deployment.
-- [OVERVIEW.md](https://github.com/sierracatalina/context-layer/blob/0747517319b65902f72a146cb0ec6cc959c59782/OVERVIEW.md).
-- [GLOSSARY.md](https://github.com/sierracatalina/context-layer/blob/0747517319b65902f72a146cb0ec6cc959c59782/GLOSSARY.md).
-- [docs/overview-validation.md](https://github.com/sierracatalina/context-layer/blob/0747517319b65902f72a146cb0ec6cc959c59782/docs/overview-validation.md).
-- [tests/overview.test.mjs](https://github.com/sierracatalina/context-layer/blob/0747517319b65902f72a146cb0ec6cc959c59782/tests/overview.test.mjs): “overview, TLDR, glossary, rendered page and local links satisfy the G1 contract”.
-- [tests/overview.test.mjs](https://github.com/sierracatalina/context-layer/blob/0747517319b65902f72a146cb0ec6cc959c59782/tests/overview.test.mjs): “glossary derives coverage from both specifications and fails on an omitted term”.
-- Limits: Flesch estimates use a deterministic heuristic and are not observed human comprehension. The pinned overview is the reviewed source-branch revision; later integrated wording has separately rerun metrics. No nontechnical explain-back study is claimed.
+- Evidence revision: `378aab9cf48c5148c8ffce1f5fca17bcbee08f18`.
+- [OVERVIEW.md](https://github.com/sierracatalina/context-layer/blob/378aab9cf48c5148c8ffce1f5fca17bcbee08f18/OVERVIEW.md).
+- [GLOSSARY.md](https://github.com/sierracatalina/context-layer/blob/378aab9cf48c5148c8ffce1f5fca17bcbee08f18/GLOSSARY.md).
+- [docs/overview-validation.md](https://github.com/sierracatalina/context-layer/blob/378aab9cf48c5148c8ffce1f5fca17bcbee08f18/docs/overview-validation.md).
+- [tests/overview.test.mjs](https://github.com/sierracatalina/context-layer/blob/378aab9cf48c5148c8ffce1f5fca17bcbee08f18/tests/overview.test.mjs): “overview, TLDR, glossary, rendered page and local links satisfy the G1 contract”.
+- [tests/overview.test.mjs](https://github.com/sierracatalina/context-layer/blob/378aab9cf48c5148c8ffce1f5fca17bcbee08f18/tests/overview.test.mjs): “glossary derives coverage from both specifications and fails on an omitted term”.
+- Limits: Flesch estimates use a deterministic heuristic and are not observed human comprehension. The integrated optional-PCP wording passes the same automated contract; no nontechnical explain-back study is claimed.
 - Next evidence: Rerun source/rendered checks on the integrated commit, review protected browser rendering and record consented human explain-back results.
 
 ### C22
 
-Core navigation, a concise summary and a complete normative index preserve existing requirement passages and examples.
+Core navigation, a concise topic summary and a complete normative index preserve existing uppercase requirements and examples; section 13 now explicitly summarizes roles informatively.
 
 - Status: **implemented-tested**. Reviewed 2026-10-09.
-- Scope: Core v0.2 specification only: 123 raw uppercase MUST/SHOULD occurrences, 119 indexed occurrences in 56 passages after excluding the language definition. Primary-source prior-art comparisons are informative.
-- Evidence revision: `b60781c9cdaa3a326d0173717087cf3c5903e196`.
-- CI evidence: [recorded workflow run](https://github.com/sierracatalina/context-layer/actions/runs/38001341242). This is evidence for the pinned source revision, not the final integrated candidate or deployment.
-- [NORMATIVE-SUMMARY.md](https://github.com/sierracatalina/context-layer/blob/b60781c9cdaa3a326d0173717087cf3c5903e196/NORMATIVE-SUMMARY.md).
-- [NORMATIVE-INDEX.md](https://github.com/sierracatalina/context-layer/blob/b60781c9cdaa3a326d0173717087cf3c5903e196/NORMATIVE-INDEX.md).
-- [PRIOR-ART.md](https://github.com/sierracatalina/context-layer/blob/b60781c9cdaa3a326d0173717087cf3c5903e196/PRIOR-ART.md).
-- [tests/spec-documentation.test.mjs](https://github.com/sierracatalina/context-layer/blob/b60781c9cdaa3a326d0173717087cf3c5903e196/tests/spec-documentation.test.mjs): “navigation and citation edits preserve all normative excerpts and code examples”.
-- [tests/spec-documentation.test.mjs](https://github.com/sierracatalina/context-layer/blob/b60781c9cdaa3a326d0173717087cf3c5903e196/tests/spec-documentation.test.mjs): “every indexed passage renders in full and has shared GitHub/site anchors”.
-- [tests/spec-documentation.test.mjs](https://github.com/sierracatalina/context-layer/blob/b60781c9cdaa3a326d0173717087cf3c5903e196/tests/spec-documentation.test.mjs): “each prior-art comparison includes the required decision dimensions and primary links”.
-- Limits: Counts are keyword occurrences and passages, not atomic requirements. The complete index is longer than the one-page summary. Companion/Nostr drafts are outside the core index. Section 13 mixed-case Must implement/document remains ambiguous under the uppercase BCP 14 rule; its text and strength are not silently changed.
-- Next evidence: Resolve normative ambiguities explicitly before a stable contract or expanded conformance claim; retain exact source/hash preservation checks after integration.
+- Scope: Core v0.2 specification only: 123 raw uppercase MUST/SHOULD occurrences, 119 indexed occurrences in 56 passages after excluding the language definition. All 37 original role bullets are preserved. Prior-art comparisons and local-profile links are informative.
+- Evidence revision: `378aab9cf48c5148c8ffce1f5fca17bcbee08f18`.
+- [NORMATIVE-SUMMARY.md](https://github.com/sierracatalina/context-layer/blob/378aab9cf48c5148c8ffce1f5fca17bcbee08f18/NORMATIVE-SUMMARY.md).
+- [NORMATIVE-INDEX.md](https://github.com/sierracatalina/context-layer/blob/378aab9cf48c5148c8ffce1f5fca17bcbee08f18/NORMATIVE-INDEX.md).
+- [PRIOR-ART.md](https://github.com/sierracatalina/context-layer/blob/378aab9cf48c5148c8ffce1f5fca17bcbee08f18/PRIOR-ART.md).
+- [tests/spec-documentation.test.mjs](https://github.com/sierracatalina/context-layer/blob/378aab9cf48c5148c8ffce1f5fca17bcbee08f18/tests/spec-documentation.test.mjs): “navigation and citation edits preserve all normative excerpts and code examples”.
+- [tests/spec-documentation.test.mjs](https://github.com/sierracatalina/context-layer/blob/378aab9cf48c5148c8ffce1f5fca17bcbee08f18/tests/spec-documentation.test.mjs): “every indexed passage renders in full and has shared GitHub/site anchors”.
+- [tests/spec-documentation.test.mjs](https://github.com/sierracatalina/context-layer/blob/378aab9cf48c5148c8ffce1f5fca17bcbee08f18/tests/spec-documentation.test.mjs): “each prior-art comparison includes the required decision dimensions and primary links”.
+- [tests/spec-documentation.test.mjs](https://github.com/sierracatalina/context-layer/blob/378aab9cf48c5148c8ffce1f5fca17bcbee08f18/tests/spec-documentation.test.mjs): “informative role overview preserves all original bullets and existing requirement scope”.
+- [CHANGELOG.md](https://github.com/sierracatalina/context-layer/blob/378aab9cf48c5148c8ffce1f5fca17bcbee08f18/CHANGELOG.md).
+- Limits: Counts are keyword occurrences and passages, not atomic requirements. The one-page document is a topic summary; the complete requirement listing remains a separate longer index. Section 13 selects the informative interpretation under the existing uppercase-only convention; this is not equivalence with every earlier stricter reading. No existing uppercase obligation, condition, profile boundary, code example or role bullet is changed. Companion/Nostr drafts remain outside this core index.
+- Next evidence: Independently review the exact integrated section 13 change and compatibility note under issue #18 before disposition. General canonicalization, approval, receipt, schema/profile and coverage questions remain tracked in issues #13–17.
 
 ### C23
 
@@ -365,6 +374,22 @@ Proposed measurable goals, user stories, release gates and private-report routin
 - [tests/governance-evidence.test.mjs](https://github.com/sierracatalina/context-layer/blob/9149d9ecb14ef2807495ff70d448320439353b04/tests/governance-evidence.test.mjs): “security reporting routes privately and public forms discourage sensitive details”.
 - Limits: Targets, owners and dates are unaccepted proposals. Documentation is not release authorization, a completed external review, verified private-form availability, outside adoption or a v0.3 tag.
 - Next evidence: Obtain owner acceptance, verify the authenticated private report form, decide any external-review recipient/budget and apply exact-candidate release gates before promotion.
+
+### C24
+
+An independently authored Python experiment passes its own tests and the shared local-profile transcript.
+
+- Status: **implemented-tested**. Reviewed 2026-10-09.
+- Scope: Python 3.12 experiment with 92 unit tests, 52 standalone public-vector assertions, 45 common-kit assertions and nine cross-implementation byte/parity/bidirectional checks.
+- Evidence revision: `af610f6e39ee0b8dbc3db49f098676bb1fd729c1`.
+- CI evidence: [recorded workflow run](https://github.com/sierracatalina/context-layer/actions/runs/38006012587). This is evidence for the pinned source revision, not the final integrated candidate or deployment.
+- [implementations/python/LINEAGE.md](https://github.com/sierracatalina/context-layer/blob/af610f6e39ee0b8dbc3db49f098676bb1fd729c1/implementations/python/LINEAGE.md).
+- [implementations/python/reports/verification-summary.json](https://github.com/sierracatalina/context-layer/blob/af610f6e39ee0b8dbc3db49f098676bb1fd729c1/implementations/python/reports/verification-summary.json).
+- [implementations/python/tests/test_profile.py](https://github.com/sierracatalina/context-layer/blob/af610f6e39ee0b8dbc3db49f098676bb1fd729c1/implementations/python/tests/test_profile.py): “test_profile_signature_verified_with_only_public_key”.
+- [implementations/python/tests/test_profile.py](https://github.com/sierracatalina/context-layer/blob/af610f6e39ee0b8dbc3db49f098676bb1fd729c1/implementations/python/tests/test_profile.py): “test_profile_bound_approval_transcript”.
+- [scripts/check-independent-conformance.mjs](https://github.com/sierracatalina/context-layer/blob/af610f6e39ee0b8dbc3db49f098676bb1fd729c1/scripts/check-independent-conformance.mjs).
+- Limits: The implementation author used a source-only packet plus separately authored profile prose. The profile author inspected JavaScript; the implementer did not. This is project-produced implementation-process independence, not outside maintenance, adoption or security audit. Python does not implement version-1 receipt-anchor migration, a production vault or every core role.
+- Next evidence: Run final combined hosted Linux/Windows checks and preserve exact source/clarification provenance; resolve recorded general-core ambiguities and obtain consenting outside implementation evidence separately.
 
 ## Keeping claims honest
 
