@@ -101,6 +101,23 @@
       </div>
     </section>
 
+    <section class="section section--ruled" id="mcp-walkthrough" aria-labelledby="mcp-title">
+      <div class="shell">
+        <div class="section-heading">
+          <p class="eyebrow">recorded implementation evidence / synthetic data</p>
+          <h2 id="mcp-title">a real agent, a smaller disclosure.</h2>
+        </div>
+        <p>two independent model agents prepared the same fictional meeting agenda through an official MCP client bridge over stdio. the broad tool returned six fields; the scoped tool returned three task-relevant fields. both agents produced an agenda covering pilot scope, an owner &amp; a Friday check-in.</p>
+        <video controls preload="metadata" playsinline width="1280" height="720" style="display:block;width:100%;height:auto;border-radius:1rem;margin:1.5rem 0" poster="/context-layer/demo/media/mcp-agent-walkthrough.png" aria-label="recorded MCP client walkthrough with synthetic meeting data">
+          <source src="/context-layer/demo/media/mcp-agent-walkthrough.mp4" type="video/mp4">
+          <track kind="captions" src="/context-layer/demo/media/mcp-agent-walkthrough.vtt" srclang="en" label="english">
+          <p><a href="/context-layer/demo/media/mcp-agent-walkthrough.mp4">download the recorded walkthrough</a></p>
+        </video>
+        <p>the recording combines real command output with a labeled replay of captured agent results. the route is agent → shell bridge → MCP client → server. direct native-host integration, provider-side deletion &amp; production security remain unclaimed.</p>
+        <p><a href="https://github.com/sierracatalina/context-layer/tree/main/examples/mcp-agent-demo">run the MCP example</a> · <a href="https://github.com/sierracatalina/context-layer/tree/main/docs/demo">inspect the traces, agendas &amp; timing scope</a></p>
+      </div>
+    </section>
+
     <section class="demo-section section" id="demo" aria-labelledby="demo-title">
       <div class="shell">
         <div class="section-heading section-heading--split">
@@ -258,7 +275,7 @@
         </div>
         <div class="status-note">
           <span class="status-tag status-tag--proposal">working proposal</span>
-          <p>this site demonstrates intended behavior with fictional data. it does not claim standards adoption, production security, live vault access, or completed interoperability.</p>
+          <p>the browser simulation shows intended behavior. the recorded MCP example separately verifies one synthetic, local agent-through-bridge flow. neither establishes standards adoption, production security, live vault access, or general interoperability.</p>
         </div>
       </div>
     </section>

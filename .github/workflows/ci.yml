@@ -38,6 +38,12 @@ jobs:
       - name: Install locked dependencies
         run: npm ci
 
+      - name: Install isolated MCP demo dependencies
+        run: npm --prefix examples/mcp-agent-demo ci --ignore-scripts --no-audit --no-fund
+
+      - name: Verify real MCP protocol demo
+        run: npm run test:mcp-demo
+
       - name: Lint
         run: npm run lint
 
