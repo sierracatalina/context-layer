@@ -120,3 +120,14 @@ for (const mode of ["scope", "unknown-field", "approval", "retention"]) {
     assert.ok(report.results.some((item) => item.status === "failed" && item.id.startsWith(mode === "approval" ? "approval/" : "policy/")));
   });
 }
+
+
+test("workflow shell commands avoid unquoted YAML mapping separators", async () => {
+  const workflow = await readFile(join(root, ".github/workflows/ci.yml"), "utf8");
+  for (const line of workflow.split("\n")) {
+    const match = /^\s*run:\s+(.+)$/.exec(line);
+    if (!match || /^[>|'"]/.test(match[1])) continue;
+    assert.doesNotMatch(match[1], /:\s/, "quote or block-format shell command: " + line);
+  }
+  assert.match(workflow, /run: >-\n\s+python -m pip install[^\n]*--only-binary=:all:/);
+});

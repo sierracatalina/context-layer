@@ -43,7 +43,8 @@ jobs:
           python-version: '3.12'
 
       - name: Install hash-locked independent implementation dependencies
-        run: python -m pip install --disable-pip-version-check --require-hashes --only-binary=:all: -r implementations/python/requirements.lock
+        run: >-
+          python -m pip install --disable-pip-version-check --require-hashes --only-binary=:all: -r implementations/python/requirements.lock
 
       - name: Install locked dependencies
         run: npm ci
