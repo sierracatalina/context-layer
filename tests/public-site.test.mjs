@@ -45,3 +45,86 @@ test("public dossier keeps the production identity and local asset contract", as
     await access(join(site, asset));
   }
 });
+
+test("all public routes expose a progressive mobile menu with the full navigation", async () => {
+  for (const file of routes.values()) {
+    const html = await readFile(join(site, file), "utf8");
+    assert.match(html, /class="context-menu-toggle"[^>]*aria-expanded="false"[^>]*aria-controls="context-navigation"[^>]*hidden/);
+    assert.equal((html.match(/id="context-navigation"/g) ?? []).length, 1);
+    for (const route of routes.keys()) assert(html.includes(`href="${route}"`));
+    assert.match(html, /context-layer-native\.js\?v=20261009a/);
+  }
+});
+
+test("overview explains an everyday example before technical detail and separates prototype status", async () => {
+  const index = await readFile(join(site, "context-layer/_pages/index.html"), "utf8");
+  assert(index.indexOf('id="everyday-example"') < index.indexOf('class="context-contract shell"'));
+  assert.match(index, /illustrative flow with fictional notes/);
+  assert.match(index, /requests are prepared, not sent/);
+  for (const id of ["why-context", "everyday-example", "contract-heading", "current-status", "reading-heading"]) {
+    assert(index.includes(`href="#${id}"`));
+    assert.equal((index.match(new RegExp(`id="${id}"`, "g")) ?? []).length, 1);
+  }
+  const implementation = await readFile(join(site, "context-layer/_pages/implementation.html"), "utf8");
+  assert.match(implementation, /id="poppy-adapter"/);
+  assert.match(implementation, /OAuth, DPoP, live transport, business actions &amp; external interoperability remain unimplemented/);
+  assert.match(implementation, /the adapter does not implement session authentication/);
+});
+
+test("mobile menu supports repeat toggles, dismissal, responsive changes and history restore", async () => {
+  const { runInNewContext } = await import("node:vm");
+  const handlers = new Map();
+  const attributes = new Map();
+  const indicator = { textContent: "+" };
+  let focused = false;
+  const listen = (target, event, handler) => handlers.set(`${target}:${event}`, handler);
+  const header = {
+    dataset: {},
+    removeAttribute: (key) => { attributes.delete(key); delete header.dataset.menuOpen; },
+    hasAttribute: (key) => key === "data-menu-open" && "menuOpen" in header.dataset,
+    contains: (target) => target === menu,
+  };
+  const menu = {
+    hidden: true,
+    setAttribute: (key, value) => attributes.set(key, value),
+    getAttribute: (key) => attributes.get(key),
+    querySelector: () => indicator,
+    addEventListener: (event, handler) => listen("menu", event, handler),
+    focus: () => { focused = true; },
+  };
+  const current = { href: "https://example.org/context-layer", setAttribute: (key, value) => attributes.set(`link:${key}`, value) };
+  const nav = {
+    addEventListener: (event, handler) => listen("nav", event, handler),
+    querySelectorAll: () => [current],
+  };
+  const document = {
+    documentElement: { dataset: {} },
+    querySelector: (selector) => ({ ".context-header": header, ".context-menu-toggle": menu, "#context-navigation": nav })[selector] ?? null,
+    querySelectorAll: () => [],
+    addEventListener: (event, handler) => listen("document", event, handler),
+  };
+  const window = {
+    location: { pathname: "/context-layer" },
+    matchMedia: () => ({ addEventListener: (event, handler) => listen("media", event, handler) }),
+    addEventListener: (event, handler) => listen("window", event, handler),
+  };
+  const script = await readFile(join(site, "context-layer/assets/context-layer-native.js"), "utf8");
+  runInNewContext(script, { document, window, URL, localStorage: { getItem: () => null } });
+  assert.equal(menu.hidden, false);
+  assert.equal(attributes.get("link:aria-current"), "page");
+  const click = () => handlers.get("menu:click")();
+  click(); assert.equal(attributes.get("aria-expanded"), "true");
+  click(); assert.equal(attributes.get("aria-expanded"), "false");
+  click(); handlers.get("document:keydown")({ key: "Escape" });
+  assert.equal(attributes.get("aria-expanded"), "false"); assert(focused);
+  for (const dismiss of [
+    () => handlers.get("document:click")({ target: {} }),
+    () => handlers.get("nav:click")({ target: { closest: () => current } }),
+    () => handlers.get("media:change")(),
+    () => handlers.get("window:pageshow")(),
+  ]) {
+    click(); dismiss();
+    assert.equal(attributes.get("aria-expanded"), "false");
+    assert.equal(indicator.textContent, "+");
+  }
+});

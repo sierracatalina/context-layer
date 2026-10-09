@@ -42,6 +42,8 @@ const canonicalIdentifiers = new Map([
   ["openid", "OpenID"],
   ["openapi", "OpenAPI"],
   ["postgresql", "PostgreSQL"],
+  ["poppy", "Poppy"],
+  ["pcp", "PCP"],
   ["thursday", "Thursday"],
   ["rfc", "RFC"],
   ["sqlite", "SQLite"],
