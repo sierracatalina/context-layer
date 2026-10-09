@@ -16,11 +16,12 @@
     "node": ">=22.13.0"
   },
   "scripts": {
-    "test": "npm run test:contracts && npm run test:site && npm run test:local-core && npm run test:proof",
+    "test": "npm run test:contracts && npm run test:site && npm run test:local-core && npm run test:proof && npm run test:docs",
     "test:contracts": "node --test tests/repository-boundary.test.mjs tests/reference-implementation.test.mjs",
     "test:site": "node --test tests/public-site.test.mjs tests/editorial-formatting.test.mjs",
     "test:local-core": "node --test tests/local-core.test.mjs tests/receipt-log-hardening.test.mjs",
     "test:proof": "node --test tests/local-core-demo.test.mjs tests/test-vectors.test.mjs",
+    "test:docs": "node scripts/generate-spec-docs.mjs --check && node --test tests/spec-documentation.test.mjs",
     "demo:local-core": "node examples/local-core-demo.mjs",
     "format:context-layer": "node scripts/format-context-layer-site.mjs",
     "verify:context-layer": "node scripts/verify-context-layer-editorial.mjs",
