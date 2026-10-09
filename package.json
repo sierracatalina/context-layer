@@ -17,7 +17,7 @@
   },
   "scripts": {
     "test": "npm run test:contracts && npm run test:site && npm run test:local-core && npm run test:proof",
-    "test:contracts": "node --test tests/repository-boundary.test.mjs tests/reference-implementation.test.mjs",
+    "test:contracts": "node --test tests/repository-boundary.test.mjs tests/reference-implementation.test.mjs tests/governance-evidence.test.mjs",
     "test:site": "node --test tests/public-site.test.mjs tests/editorial-formatting.test.mjs",
     "test:local-core": "node --test tests/local-core.test.mjs tests/receipt-log-hardening.test.mjs",
     "test:proof": "node --test tests/local-core-demo.test.mjs tests/test-vectors.test.mjs",

@@ -1,17 +1,26 @@
 # Changelog
 
-This file records material changes to the Context Layer working draft and its public reference artifacts. The project follows semantic-versioning-shaped prerelease tags, but draft protocol identifiers remain unstable until a stable specification is declared.
+This file records material changes to the Context Layer working draft and its public reference artifacts. Package prereleases use SemVer-compatible identifiers; core wire and companion profile identifiers are separate and remain unstable. See RELEASE.md for the current version policy. Historical entries describe their own snapshots, not the present repository boundary.
 
 ## Unreleased
+
+### Governance and evidence hardening
+
+- Add proposed, measurable outside-implementation, three-project adoption and v1-freeze targets with unaccepted role owners, dates, acceptance measures and three synthetic user stories. No external adoption or delivery commitment is claimed.
+- Add a staged roadmap and explicit v0.3 readiness gates; retain current package metadata at `0.2.0-draft.2` and distinguish core, companion, conformance and release versions. No tag or release is created by these changes.
+- Correct current release and source-boundary documentation to include `site/context-layer/`; preserve historical release descriptions as historical evidence.
+- Add public non-security bug/specification forms, a private security-reporting route and a PR evidence checklist. No security contact or enabled-reporting status is invented.
+- Add a repository-wide claims-to-evidence ledger and regression checks, with explicit scope and pending independent review, adoption, live deployment and interoperability evidence.
+- Label broader implementation recipes and essay capabilities as proposed/untested unless a named artifact and result demonstrate the narrower behavior.
+
+### Runtime and earlier draft work
 
 - Correct RFC 8785 string serialization to preserve non-BMP Unicode and reject lone surrogates; cover interoperability with independently generated Ed25519 signature bytes.
 - Write receipt anchors as version 2; verify and atomically migrate version-1 HMAC or pre-release Ed25519 sidecars on open, preserving receipt bytes and replay history. Existing 32-byte key providers remain compatible; `anchor.legacyHmacKey` supports migration to a separate signing key.
 - Replace shared-secret HMAC bundle authentication with Ed25519 signatures over RFC 8785 (JCS) canonical JSON. Envelopes now carry `authentication: { algorithm: "Ed25519", kid, sig }`; recipients verify with the issuer's public key. The receipt anchor chain is signed the same way. New `packages/local-core/jcs.mjs` vendors a minimal RFC 8785 canonicalizer. Legacy HMAC bundles are readable only behind an explicit `legacyHmac` option and are never written; test vectors and manifests were regenerated accordingly.
 - Add the 2026-09 protocol proposal as a working draft: closed 0.2 Lite remains authoritative; `context-layer/0.3-draft` CL-Pass companions and T01–T10 vectors sit beside it.
-- Confirm the dual-license boundary and contribution terms before publishing the first proof-of-work prerelease.
-- Populate the canonical protocol-only GitHub repository from the reviewed release commit.
-- Consolidate specification, reference, schema, and fixture artifacts under the explicit `protocol/` boundary; keep website and deployment source outside this repository.
-- Publish the reviewed `v0.2-draft` prerelease only after the full release suite passes.
+- Consolidate specification, reference, schema and fixture artifacts under the explicit `protocol/` boundary. The current documentation site and standalone routing configuration are now included under `site/`.
+- Require exact-candidate verification and explicit approval before any new prerelease; existing `v0.2-draft` history remains unchanged.
 
 ## 0.2-draft - 2026-08-21
 

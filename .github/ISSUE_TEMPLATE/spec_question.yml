@@ -1,0 +1,33 @@
+name: Specification question
+description: Clarify a draft requirement, ambiguity, compatibility decision or evidence gap.
+title: "[Spec] "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        This discussion is public. Use synthetic examples only.
+        Suspected vulnerabilities belong in [private reporting](https://github.com/sierracatalina/context-layer/security/advisories/new), not this form.
+  - type: input
+    id: reference
+    attributes:
+      label: Draft, profile and requirement or section
+      description: Link the exact revision and stable requirement ID if available.
+    validations:
+      required: true
+  - type: textarea
+    id: question
+    attributes:
+      label: Ambiguity or question
+      description: Describe the conflicting readings and what an independent implementation cannot decide from the text.
+    validations:
+      required: true
+  - type: textarea
+    id: example
+    attributes:
+      label: Synthetic example and expected outcomes
+      description: Show the smallest example, with both readings if applicable. Do not disclose a security exploit here.
+  - type: textarea
+    id: compatibility
+    attributes:
+      label: Proposed clarification and compatibility impact
+      description: Separate current normative behavior, observed test results and your proposed behavior. Mention migration and affected tests.

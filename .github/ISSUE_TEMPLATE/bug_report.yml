@@ -1,0 +1,43 @@
+name: Bug report
+description: Report a reproducible, non-security defect using synthetic data.
+title: "[Bug] "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        This is a public issue. Never include credentials, private notes, personal data, or exploit details.
+        For a suspected vulnerability, stop and use [private reporting](https://github.com/sierracatalina/context-layer/security/advisories/new).
+        If that form is unavailable, wait for a private channel; do not submit the details here. See SECURITY.md.
+  - type: checkboxes
+    id: public-safety
+    attributes:
+      label: Safe public report
+      options:
+        - label: This is not a suspected vulnerability, and all evidence is synthetic and contains no secrets or private data.
+          required: true
+  - type: input
+    id: revision
+    attributes:
+      label: Version and exact commit
+      description: Include the package, wire/profile and conformance versions relevant to the defect.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Minimal synthetic reproduction
+      description: Include the command, prerequisites, OS and runtime versions. Remove private paths and logs.
+    validations:
+      required: true
+  - type: textarea
+    id: behavior
+    attributes:
+      label: Expected and observed behavior
+      description: Link the specification requirement or documented behavior and state the smallest failing case.
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Test evidence and scope
+      description: List passing, failing and untested cases. A passing schema alone does not prove behavioral conformance.
