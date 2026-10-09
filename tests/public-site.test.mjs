@@ -67,6 +67,8 @@ test("overview explains an everyday example before technical detail and separate
   }
   const implementation = await readFile(join(site, "context-layer/_pages/implementation.html"), "utf8");
   assert.match(implementation, /id="poppy-adapter"/);
+  assert.match(implementation, /PCP \[personal context protocol\]/);
+  assert(!implementation.includes("personal consent protocol"));
   assert.match(implementation, /OAuth, DPoP, live transport, business actions &amp; external interoperability remain unimplemented/);
   assert.match(implementation, /the adapter does not implement session authentication/);
 });
