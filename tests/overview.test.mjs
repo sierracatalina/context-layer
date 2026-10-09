@@ -46,7 +46,11 @@ test("glossary derives coverage from both specifications and fails on an omitted
   ].map(read));
   const inventory = glossaryInventory(core, companion, guide);
   for (const term of ["Subject", "Claim annotation", "Policy engine", "CL-Discovery", "minimum_reveal_response", "execute.approved_action", "needs_approval", "preference", "bundle.expired"]) assert(inventory.some((entry) => entry.term === term), term);
-  assert.throws(() => verifyGlossary(glossary.replace(/^- \*\*Claim annotation\*\*.*\n/m, ""), inventory), /missing glossary term/);
+  for (const text of [glossary, glossary.replace(/\r?\n/g, "\r\n")]) {
+    const removed = text.replace(/^- \*\*Claim annotation\*\*[^\n]*\n/m, "");
+    assert.notEqual(removed, text, "missing-term fixture must actually remove an entry");
+    assert.throws(() => verifyGlossary(removed, inventory), /missing glossary term/);
+  }
   assert.throws(() => verifyGlossary(`${glossary}\n- **Subject**: Duplicate.\n`, inventory), /duplicate/);
   assert.throws(() => verifyGlossary(`${glossary}\n  A wrapped definition.\n`, inventory), /cannot wrap/);
   const changedCore = core.replace("## 5. Terminology", "## 5. Terminology\n\n**New term**\nA new definition.");
