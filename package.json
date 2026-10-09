@@ -25,7 +25,9 @@
     "format:context-layer": "node scripts/format-context-layer-site.mjs",
     "verify:context-layer": "node scripts/verify-context-layer-editorial.mjs",
     "release:hygiene": "node scripts/release-hygiene.mjs",
-    "lint": "node node_modules/eslint/bin/eslint.js ."
+    "lint": "node node_modules/eslint/bin/eslint.js .",
+    "test:mcp-demo": "npm --prefix examples/mcp-agent-demo test",
+    "demo:mcp": "node examples/mcp-agent-demo/protocol-demo.mjs"
   },
   "devDependencies": {
     "@eslint/js": "9.39.4",

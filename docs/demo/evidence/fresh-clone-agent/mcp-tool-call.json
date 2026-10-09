@@ -1,0 +1,185 @@
+{
+  "mode": "scoped",
+  "server": {
+    "name": "context-layer-meeting-demo",
+    "version": "0.1.0"
+  },
+  "tools": [
+    "get_meeting_context"
+  ],
+  "protocol_version": "2025-11-25",
+  "payload": {
+    "synthetic": true,
+    "mode": "scoped",
+    "decision": "allow_with_reductions",
+    "context": [
+      {
+        "predicate": "meeting.goal",
+        "value": "Atlas kickoff: agree on a two-week pilot for the fictional community library."
+      },
+      {
+        "predicate": "meeting.decisions",
+        "value": "Decide pilot scope, choose one owner, and set a Friday check-in."
+      },
+      {
+        "predicate": "collaboration.preference",
+        "value": "Jordan prefers three short agenda bullets with a decision at the end of each."
+      }
+    ],
+    "disclosed_fields": 3,
+    "withheld_fields": [
+      "health.note",
+      "finance.balance",
+      "private.journal"
+    ],
+    "bundle_id": "urn:cl:bundle:c8068812dcfc3348cc6ba5fafad76db1f17052656ef0cece240a90e0f9e3ff8c",
+    "bundle_digest": "sha256:c8068812dcfc3348cc6ba5fafad76db1f17052656ef0cece240a90e0f9e3ff8c",
+    "signature_algorithm": "Ed25519",
+    "expires_at": "2026-10-09T23:12:12.244Z",
+    "receipts": [
+      {
+        "id": "urn:cl:receipt:515a2a1f48b1ed8ac3ed2dfc8d563048364b16c22ca5154d1df975ecf269a237",
+        "operation": "bundle.issue",
+        "outcome": "success",
+        "payload_included": false
+      },
+      {
+        "id": "urn:cl:receipt:3230e4b2ba076fb276bc8fb273dd7bc9abbe2eddf3829cb50118bbad61650ebd",
+        "operation": "bundle.consume",
+        "outcome": "success",
+        "payload_included": false
+      },
+      {
+        "id": "urn:cl:receipt:66638767c49e847c1dcf7a1da416cd4f394ade11befd0f6b637cfe5b62789331",
+        "operation": "context.disclose",
+        "outcome": "success",
+        "payload_included": false
+      }
+    ]
+  },
+  "is_error": false,
+  "wire": [
+    {
+      "at": "2026-10-09T23:07:12.065Z",
+      "direction": "client-to-server",
+      "message": {
+        "method": "initialize",
+        "params": {
+          "protocolVersion": "2025-11-25",
+          "capabilities": {},
+          "clientInfo": {
+            "name": "context-layer-demo-bridge",
+            "version": "0.1.0"
+          }
+        },
+        "jsonrpc": "2.0",
+        "id": 0
+      }
+    },
+    {
+      "at": "2026-10-09T23:07:12.236Z",
+      "direction": "server-to-client",
+      "message": {
+        "jsonrpc": "2.0",
+        "id": 0,
+        "result": {
+          "protocolVersion": "2025-11-25",
+          "capabilities": {
+            "tools": {
+              "listChanged": true
+            }
+          },
+          "serverInfo": {
+            "name": "context-layer-meeting-demo",
+            "version": "0.1.0"
+          }
+        }
+      }
+    },
+    {
+      "at": "2026-10-09T23:07:12.238Z",
+      "direction": "client-to-server",
+      "message": {
+        "method": "notifications/initialized",
+        "jsonrpc": "2.0"
+      }
+    },
+    {
+      "at": "2026-10-09T23:07:12.238Z",
+      "direction": "client-to-server",
+      "message": {
+        "method": "tools/list",
+        "jsonrpc": "2.0",
+        "id": 1
+      }
+    },
+    {
+      "at": "2026-10-09T23:07:12.241Z",
+      "direction": "server-to-client",
+      "message": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "result": {
+          "tools": [
+            {
+              "name": "get_meeting_context",
+              "description": "Get synthetic facts for fictional Jordan's Atlas kickoff. Omit selectors for all available fields; the deployment policy controls disclosure.",
+              "inputSchema": {
+                "$schema": "http://json-schema.org/draft-07/schema#",
+                "type": "object",
+                "properties": {
+                  "selectors": {
+                    "minItems": 1,
+                    "maxItems": 12,
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              },
+              "annotations": {
+                "readOnlyHint": true,
+                "destructiveHint": false,
+                "openWorldHint": false
+              },
+              "execution": {
+                "taskSupport": "forbidden"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "at": "2026-10-09T23:07:12.242Z",
+      "direction": "client-to-server",
+      "message": {
+        "method": "tools/call",
+        "params": {
+          "name": "get_meeting_context",
+          "arguments": {}
+        },
+        "jsonrpc": "2.0",
+        "id": 2
+      }
+    },
+    {
+      "at": "2026-10-09T23:07:12.269Z",
+      "direction": "server-to-client",
+      "message": {
+        "jsonrpc": "2.0",
+        "id": 2,
+        "result": {
+          "content": [
+            {
+              "type": "text",
+              "text": "{\"synthetic\":true,\"mode\":\"scoped\",\"decision\":\"allow_with_reductions\",\"context\":[{\"predicate\":\"meeting.goal\",\"value\":\"Atlas kickoff: agree on a two-week pilot for the fictional community library.\"},{\"predicate\":\"meeting.decisions\",\"value\":\"Decide pilot scope, choose one owner, and set a Friday check-in.\"},{\"predicate\":\"collaboration.preference\",\"value\":\"Jordan prefers three short agenda bullets with a decision at the end of each.\"}],\"disclosed_fields\":3,\"withheld_fields\":[\"health.note\",\"finance.balance\",\"private.journal\"],\"bundle_id\":\"urn:cl:bundle:c8068812dcfc3348cc6ba5fafad76db1f17052656ef0cece240a90e0f9e3ff8c\",\"bundle_digest\":\"sha256:c8068812dcfc3348cc6ba5fafad76db1f17052656ef0cece240a90e0f9e3ff8c\",\"signature_algorithm\":\"Ed25519\",\"expires_at\":\"2026-10-09T23:12:12.244Z\",\"receipts\":[{\"id\":\"urn:cl:receipt:515a2a1f48b1ed8ac3ed2dfc8d563048364b16c22ca5154d1df975ecf269a237\",\"operation\":\"bundle.issue\",\"outcome\":\"success\",\"payload_included\":false},{\"id\":\"urn:cl:receipt:3230e4b2ba076fb276bc8fb273dd7bc9abbe2eddf3829cb50118bbad61650ebd\",\"operation\":\"bundle.consume\",\"outcome\":\"success\",\"payload_included\":false},{\"id\":\"urn:cl:receipt:66638767c49e847c1dcf7a1da416cd4f394ade11befd0f6b637cfe5b62789331\",\"operation\":\"context.disclose\",\"outcome\":\"success\",\"payload_included\":false}]}"
+            }
+          ],
+          "isError": false
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "synthetic": true,
+  "agenda_generated_at_utc": "2026-10-09T22:51:49.328Z",
+  "provenance_recorded_at_utc": "2026-10-09T22:51:49.329Z",
+  "exact_command_used": "node [CHECKOUT]/examples/mcp-agent-demo/call-context.mjs baseline [CHECKOUT]/outputs/agent-baseline/mcp-tool-call.json",
+  "observed_tool_name": "get_meeting_context",
+  "model_id": "unavailable",
+  "generation_basis": "I generated the agenda from the actual MCP tool result received through the one-shot client bridge in this run, using only the meeting goal, meeting decisions, and agenda preference. Unrelated personal details were excluded.",
+  "protocol_trace": "mcp-tool-call.json",
+  "public_run_id": "mcp-meeting-20261009-before",
+  "publication_normalization": "Only absolute checkout-path prefixes were replaced with [CHECKOUT]; tool payload values and the final agenda are unchanged."
+}
