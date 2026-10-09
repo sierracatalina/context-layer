@@ -124,10 +124,28 @@ for (const mode of ["scope", "unknown-field", "approval", "retention"]) {
 
 test("workflow shell commands avoid unquoted YAML mapping separators", async () => {
   const workflow = await readFile(join(root, ".github/workflows/ci.yml"), "utf8");
-  for (const line of workflow.split("\n")) {
+  for (const line of workflow.split(/\r?\n/)) {
     const match = /^\s*run:\s+(.+)$/.exec(line);
     if (!match || /^[>|'"]/.test(match[1])) continue;
     assert.doesNotMatch(match[1], /:\s/, "quote or block-format shell command: " + line);
   }
-  assert.match(workflow, /run: >-\n\s+python -m pip install[^\n]*--only-binary=:all:/);
+  assert.match(workflow, /run: >-\r?\n\s+python -m pip install[^\n]*--only-binary=:all:/);
+});
+
+
+test("Git checkout protects every hash-bound artifact from CRLF conversion", async () => {
+  const paths = new Set();
+  const kitManifest = await json(join(kit, "manifest.json"));
+  for (const item of kitManifest.files) paths.add("conformance/v0.2.0-draft.1/" + item.path);
+  const pythonManifest = await json(join(root, "implementations/python/artifact-manifest.json"));
+  for (const item of pythonManifest.files) paths.add("implementations/python/" + item.path);
+  const expected = await json(join(kit, "local-profile-expectations.json"));
+  for (const path of Object.keys(expected.reference_runtime_sha256)) paths.add(path);
+  const catalog = await json(join(root, "protocol/schemas/schema-catalog.json"));
+  for (const item of catalog.schemas) { paths.add("protocol/schemas/" + item.path); paths.add("site/context-layer/schemas/" + item.path); }
+  for (const path of paths) {
+    const result = spawnSync("git", ["check-attr", "text", "eol", "--", path], { cwd: root, encoding: "utf8" });
+    assert.equal(result.status, 0, result.stderr);
+    assert.ok(result.stdout.includes(": text: unset") || result.stdout.includes(": eol: lf"), path + " can be rewritten by core.autocrlf");
+  }
 });

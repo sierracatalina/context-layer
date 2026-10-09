@@ -1,2 +1,13 @@
 # Keep SHA-bound protocol vectors byte-identical on every checkout.
 test-vectors/v0.2/*.json text eol=lf
+
+# Content-addressed kit and clean-room packets must retain exact committed bytes.
+conformance/** -text
+implementations/python/** -text
+
+# Source and publication counterparts used by byte-level conformance assertions.
+packages/local-core/*.mjs text eol=lf
+protocol/fixtures/*.json text eol=lf
+protocol/profiles/*.md text eol=lf
+protocol/schemas/** text eol=lf
+site/context-layer/schemas/** text eol=lf
