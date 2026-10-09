@@ -13,7 +13,7 @@ npm run release:hygiene
 git diff --check
 ```
 
-The overview check is `scripts/verify-context-layer-overview.mjs`; its regression tests are `tests/overview.test.mjs`. No new dependencies are used. The generated sentence-case page is a narrow exception to the site's lowercase prose contract. `OVERVIEW.md` is its content source; the home page supplies the existing site shell.
+The overview check is `scripts/verify-context-layer-overview.mjs`; its regression tests are `tests/overview.test.mjs`. No new dependencies are used. Text inputs are normalized from Windows CRLF to LF before parsing & comparing; a regression test checks platform parity. The generated sentence-case page is a narrow exception to the site's lowercase prose contract. `OVERVIEW.md` is its content source; the home page supplies the existing site shell.
 
 ## Automated checks
 
@@ -31,7 +31,7 @@ Checks also compare the generated page & published glossary with their source, r
 - Rendered page: 518 visible words; estimated article reading ease 69.53.
 - README TL;DR: 107 words; estimated Flesch reading ease 79.94.
 - Glossary: 119 one-line entries; 81 distinct source terms across 96 source references checked.
-- Automated suites: 109 tests passed [23 contract, 13 site, 62 local-core, 11 proof].
+- Automated suites: 110 tests passed [23 contract, 14 site, 62 local-core, 11 proof].
 - Lint, editorial verification, release hygiene & whitespace checks passed.
 
 ## Human comprehension gate

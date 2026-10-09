@@ -9,12 +9,13 @@ const corePath = "protocol/spec/context-layer-technical-specification.md";
 const companionPath = "protocol/companions/0.3-draft/spec.md";
 const overviewPath = "site/context-layer/_pages/overview.html";
 const glossaryPath = "site/context-layer/source/glossary.md";
-const source = (path) => readFile(resolve(root, path), "utf8");
+const lf = (text) => text.replace(/\r\n?/g, "\n");
+const source = async (path) => lf(await readFile(resolve(root, path), "utf8"));
 const normalize = (text) => text.toLowerCase().replace(/[^a-z0-9]+/g, "");
 const escape = (text) => text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 
 export function markdownText(markdown) {
-  return markdown.replace(/\[([^\]]+)\]\([^)]+\)/g, "$1").replace(/^```[^\n]*$/gm, "").replace(/^[#>]+\s*/gm, "").replace(/^\d+\.\s*/gm, "").replace(/[*`]/g, "").replace(/&/g, " and ");
+  return lf(markdown).replace(/\[([^\]]+)\]\([^)]+\)/g, "$1").replace(/^```[^\n]*$/gm, "").replace(/^[#>]+\s*/gm, "").replace(/^\d+\.\s*/gm, "").replace(/[*`]/g, "").replace(/&/g, " and ");
 }
 
 export function words(text) {
@@ -51,7 +52,7 @@ export function verifyReadable(markdown, maximum, label) {
 }
 
 function section(text, heading) {
-  const lines = text.split("\n");
+  const lines = lf(text).split("\n");
   const start = lines.findIndex((line) => line === heading);
   assert(start >= 0, `source section not found: ${heading}`);
   const depth = heading.match(/^#+/)[0].length;
@@ -82,6 +83,7 @@ export function glossaryInventory(core, companion, guide) {
 }
 
 export function verifyGlossary(glossary, inventory) {
+  glossary = lf(glossary);
   const entries = glossary.split("\n").filter((line) => line.startsWith("- **"));
   const labels = new Set();
   for (const line of entries) {
@@ -111,6 +113,8 @@ function inline(markdown) {
 }
 
 export function renderOverview(markdown, index) {
+  markdown = lf(markdown);
+  index = lf(index);
   const title = markdown.match(/^# (.+)$/m)?.[1];
   assert(title, "overview title missing");
   const blocks = markdown.replace(/^# .+\n+/, "").trim().split(/\n\n+/);

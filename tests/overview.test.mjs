@@ -72,3 +72,18 @@ test("offline link checks reject missing files, missing anchors and traversal", 
   await assert.rejects(verifyLocalLinks('<a href="#missing">Bad</a>', "site/context-layer/_pages/overview.html", config), /broken fragment/);
   await assert.rejects(verifyLocalLinks('[Bad](../missing.md)', "OVERVIEW.md", config), /escapes repository/);
 });
+
+
+test("Markdown inputs and site rendering are identical with Windows CRLF line endings", async () => {
+  const [overview, index, core, companion, guide, glossary] = await Promise.all([
+    "OVERVIEW.md", "site/context-layer/_pages/index.html",
+    "protocol/spec/context-layer-technical-specification.md",
+    "protocol/companions/0.3-draft/spec.md",
+    "protocol/spec/context-layer-implementation-and-interoperability.md", "GLOSSARY.md",
+  ].map(read));
+  const crlf = (text) => text.replace(/\r?\n/g, "\r\n");
+  assert.equal(renderOverview(crlf(overview), crlf(index)), renderOverview(overview, index));
+  assert.deepEqual(readability(crlf(overview)), readability(overview));
+  assert.deepEqual(glossaryInventory(crlf(core), crlf(companion), crlf(guide)), glossaryInventory(core, companion, guide));
+  assert.deepEqual(verifyGlossary(crlf(glossary), glossaryInventory(core, companion, guide)), verifyGlossary(glossary, glossaryInventory(core, companion, guide)));
+});
