@@ -91,9 +91,38 @@ not controlled. [Machine-readable timing](evidence/fresh-clone.json) ·
 
 That measurement establishes the protocol quick-start target under the stated
 prerequisites. It excludes installing Git/Node and starting/authenticating a model
-host. No complete clone-to-model-output timing is claimed. This evidence was added
-in a documentation-only follow-up; the measured implementation revision is pinned
-above rather than relabeled as a later commit.
+host. A second complete bridge/model measurement follows below. Both evidence
+updates are documentation-only; each measured implementation revision is pinned
+rather than relabeled as a later commit.
+
+## Same-clock fresh clone through actual model output
+
+A second run at immutable revision
+`f50e9684533229e707fc6ec6a5e541c8e79d785e` finished in **73.98 seconds**.
+One monotonic stopwatch remained running from before the new public Git clone,
+through empty-cache install, all 8 tests, the real MCP protocol run, a fresh native
+model-agent context calling the installed scoped bridge, writing its own agenda,
+and verification of that result. Orchestration and verification time are included;
+this is not a sum of unrelated runs. Protocol setup took 12.12 seconds of the total.
+
+Prerequisites were Git, Node/npm, public npm network access, and an **already
+available, authorized shell-capable native model-agent runtime**. The clock does
+not include acquiring, installing, or signing in to that runtime. There was no
+new credential, persistent MCP configuration, paid API setup, or external business
+action. This is a reproducible bridge workflow under stated prerequisites, not a
+credential-free model or proof that a fresh machine can install every host in this
+time.
+
+- [Single-clock timing](evidence/fresh-clone-model.json)
+- [Clone, install, test and protocol transcript](evidence/fresh-clone-model-transcript.txt)
+- [Actual fresh agent MCP trace](evidence/fresh-clone-agent/mcp-tool-call.json)
+- [Unedited fresh model agenda](evidence/fresh-clone-agent/agenda.txt)
+- [Agent provenance](evidence/fresh-clone-agent/provenance.json)
+- [Result-verification marker that stopped the clock](evidence/fresh-clone-agent/completed.json)
+
+The fresh context received only three allowed fields. Its own agenda again covered
+scope, owner, and Friday check-in. It was not shown earlier agendas or source
+fixtures. The model identifier remains unavailable.
 
 ## Direct host blocker
 

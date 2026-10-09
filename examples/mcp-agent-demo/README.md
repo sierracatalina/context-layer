@@ -32,7 +32,7 @@ From a fresh clone of the revision containing this example:
 ```sh
 git clone --single-branch --branch improve/mcp-disclosure-demo https://github.com/sierracatalina/context-layer.git
 cd context-layer
-git checkout --detach 12bdad60bb34ac0bc47bd1e6b322d032c14a8110
+git checkout --detach f50e9684533229e707fc6ec6a5e541c8e79d785e
 npm --prefix examples/mcp-agent-demo ci --ignore-scripts --no-audit --no-fund
 npm --prefix examples/mcp-agent-demo test
 node examples/mcp-agent-demo/protocol-demo.mjs outputs/mcp-protocol-demo
@@ -45,14 +45,21 @@ Do not present a protocol-only timing as a complete model-host setup timing.
 
 ## Use the real tool from an existing model agent
 
-Give an existing shell-capable agent the task in `TASK_PROMPT` from `fixture.mjs`
-and offer this command as its `get_meeting_context` tool bridge:
+Give an existing authorized shell-capable agent this task: “Prepare a three-bullet
+agenda for fictional Jordan's Atlas kickoff. Use get_meeting_context to learn the
+meeting facts. End each bullet with a decision to make. Use no other data source
+and do not repeat unrelated personal details. All data is synthetic.” Do not show
+the agent source fixtures, old agendas, or the other run's artifacts. Offer this
+command as its `get_meeting_context` tool bridge:
 
 ```sh
 node examples/mcp-agent-demo/call-context.mjs scoped outputs/agent-scoped/mcp-tool-call.json
 ```
 
 The agent should choose to call it, read its actual output, and generate an agenda.
+With an already available authorized native agent, a same-clock fresh-clone-through-
+model-result run took **73.98 seconds**; see the exact prerequisite and timing scope
+in the evidence record.
 Use a fresh, independent agent context for the baseline comparison, changing
 `scoped` to `baseline`. Do not show baseline results to the scoped agent. This
 bridge works with the agent's existing authorized shell; it grants no ongoing
