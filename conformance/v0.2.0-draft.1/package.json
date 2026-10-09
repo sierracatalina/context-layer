@@ -1,0 +1,27 @@
+{
+  "name": "@context-layer/conformance",
+  "version": "0.2.0-draft.1",
+  "private": true,
+  "type": "module",
+  "description": "Exportable experimental Context Layer conformance kit; not registry-published or certification.",
+  "license": "Apache-2.0",
+  "engines": {
+    "node": ">=22.13.0"
+  },
+  "scripts": {
+    "test": "node run.mjs"
+  },
+  "files": [
+    "run.mjs",
+    "adapter-contract.md",
+    "vectors",
+    "schemas",
+    "fixtures",
+    "profiles",
+    "manifest.json",
+    "README.md",
+    "LICENSE",
+    "LICENSE-DOCS",
+    "local-profile-expectations.json"
+  ]
+}

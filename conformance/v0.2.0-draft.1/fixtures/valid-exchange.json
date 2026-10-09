@@ -1,0 +1,126 @@
+{
+  "request": {
+    "spec_version": "context-layer/0.2-draft",
+    "type": "context_request",
+    "id": "urn:cl:request:req_701",
+    "created_at": "2026-08-12T14:33:00Z",
+    "issuer": {
+      "id": "urn:agent:reply-drafter"
+    },
+    "subject_ref": "vault://subjects/primary",
+    "requester": {
+      "principal": "urn:agent:reply-drafter",
+      "authenticated_by": "oauth2",
+      "client_instance": "urn:device:local-workstation"
+    },
+    "recipient": {
+      "principal": "urn:model:configured-drafting-model",
+      "onward_disclosure": "allowed"
+    },
+    "purpose_code": "draft.response",
+    "purpose": "draft a response to the launch timeline request",
+    "task": {
+      "kind": "draft_only",
+      "user_visible": true
+    },
+    "selectors": [
+      {
+        "predicate": "requested_delivery_date"
+      },
+      {
+        "predicate": "requesting_stakeholder"
+      },
+      {
+        "predicate": "budget_delta"
+      }
+    ],
+    "requested_actions": [
+      "model.generate_text",
+      "email.create_draft",
+      "email.send"
+    ],
+    "retention": {
+      "mode": "ephemeral",
+      "max_seconds": 7200
+    },
+    "receipt_requirement": {
+      "level": "operation",
+      "required": true
+    },
+    "expires_at": "2026-08-12T16:33:00Z"
+  },
+  "policy": {
+    "id": "urn:cl:policy:personal-42",
+    "version": "personal-policy/42",
+    "issuer": "urn:cl:policy-engine:local",
+    "allowed_purpose_codes": [
+      "draft.response"
+    ],
+    "allowed_selectors": [
+      "requested_delivery_date",
+      "requesting_stakeholder"
+    ],
+    "denied_selectors": [
+      "budget_delta"
+    ],
+    "allowed_actions": [
+      "model.generate_text",
+      "email.create_draft"
+    ],
+    "max_retention_seconds": 3600,
+    "allow_onward_disclosure": false,
+    "transform_requirements": [
+      "redact:budget_delta",
+      "compress:task-facts"
+    ]
+  },
+  "claims": [
+    {
+      "claim": "the launch timeline was requested by Friday.",
+      "predicate": "requested_delivery_date",
+      "value": "2026-08-14",
+      "confidence": 0.93,
+      "provenance_handles": [
+        "prov_delivery"
+      ]
+    },
+    {
+      "claim": "the request came from the launch lead.",
+      "predicate": "requesting_stakeholder",
+      "value": "launch lead",
+      "confidence": 0.98,
+      "provenance_handles": [
+        "prov_stakeholder"
+      ]
+    },
+    {
+      "claim": "the internal budget delta is restricted.",
+      "predicate": "budget_delta",
+      "value": "synthetic restricted amount",
+      "confidence": 0.99,
+      "provenance_handles": [
+        "prov_budget"
+      ]
+    }
+  ],
+  "issuer": "urn:cl:bundle-issuer:local",
+  "expected": {
+    "decision": "allow_with_reductions",
+    "granted_selectors": [
+      "requested_delivery_date",
+      "requesting_stakeholder"
+    ],
+    "denied_selectors": [
+      "budget_delta"
+    ],
+    "granted_actions": [
+      "model.generate_text",
+      "email.create_draft"
+    ],
+    "denied_actions": [
+      "email.send"
+    ],
+    "retention_seconds": 3600,
+    "onward_disclosure": "forbidden"
+  }
+}
