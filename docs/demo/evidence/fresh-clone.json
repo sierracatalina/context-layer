@@ -1,0 +1,88 @@
+{
+  "run_id": "mcp-protocol-public-freshclone-20261009",
+  "scope": "public Git clone plus locked protocol-demo installation, tests and actual MCP run; excludes prerequisite installation and real model-host session/setup",
+  "expected_source_revision": "12bdad60bb34ac0bc47bd1e6b322d032c14a8110",
+  "platform": "Linux",
+  "node": "v24.19.0",
+  "npm": "11.9.0",
+  "npm_cache": "new empty directory; shared network/proxy caches not controlled",
+  "steps": [
+    {
+      "command": [
+        "git",
+        "clone",
+        "--single-branch",
+        "--branch",
+        "improve/mcp-disclosure-demo",
+        "https://github.com/sierracatalina/context-layer.git",
+        "[FRESH_CLONE]"
+      ],
+      "elapsed_seconds": 7.032181290000153,
+      "exit_code": 0
+    },
+    {
+      "command": [
+        "git",
+        "checkout",
+        "--detach",
+        "12bdad60bb34ac0bc47bd1e6b322d032c14a8110"
+      ],
+      "elapsed_seconds": 0.010341221000999212,
+      "exit_code": 0
+    },
+    {
+      "command": [
+        "npm",
+        "--prefix",
+        "examples/mcp-agent-demo",
+        "ci",
+        "--ignore-scripts",
+        "--no-audit",
+        "--no-fund"
+      ],
+      "elapsed_seconds": 4.939335406001192,
+      "exit_code": 0
+    },
+    {
+      "command": [
+        "npm",
+        "--prefix",
+        "examples/mcp-agent-demo",
+        "test"
+      ],
+      "elapsed_seconds": 1.4340129119991616,
+      "exit_code": 0
+    },
+    {
+      "command": [
+        "node",
+        "examples/mcp-agent-demo/protocol-demo.mjs",
+        "outputs/mcp-protocol-demo"
+      ],
+      "elapsed_seconds": 0.7417396290002216,
+      "exit_code": 0
+    }
+  ],
+  "elapsed_seconds": 14.257035526999971,
+  "passed": true,
+  "observed_source_revision": "12bdad60bb34ac0bc47bd1e6b322d032c14a8110",
+  "observed_tree": "f630c5565583e5de8653011c0d1d1b50fd7cec5d",
+  "protocol_report": {
+    "recorded_at": "2026-10-09T23:03:01.918Z",
+    "scope": "official-sdk-protocol-client; no model generation in this command",
+    "node": "v24.19.0",
+    "sdk": "@modelcontextprotocol/sdk@1.32.1",
+    "protocol_version": "2025-11-25",
+    "baseline_fields": 6,
+    "scoped_fields": 3,
+    "unrelated_values_disclosed_after": 0,
+    "receipt_operations": [
+      "bundle.issue",
+      "bundle.consume",
+      "context.disclose"
+    ],
+    "negative_result": "deny",
+    "elapsed_seconds": 0.5818508830000001
+  },
+  "under_ten_minutes": true
+}

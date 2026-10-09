@@ -81,8 +81,19 @@ MCP transport and policy tests; it does not start a model. Repeating the model-a
 comparison needs an existing authorized model-agent session with shell access.
 Model availability, plan limits, and provider costs are outside this local demo.
 
-A measured public fresh-clone result will be added after the candidate branch is
-published. No complete clone-to-model-output timing is claimed by this artifact.
+Measured public fresh clone at immutable revision
+`12bdad60bb34ac0bc47bd1e6b322d032c14a8110`: **14.26 seconds** total on
+Linux / Node 24.19.0 / npm 11.9.0, using a new empty npm cache. This includes Git
+clone [7.03 s], checkout [0.01 s], locked install [4.94 s], 8 passing tests
+[1.43 s], and the actual MCP demonstration [0.74 s]. Network/proxy caches were
+not controlled. [Machine-readable timing](evidence/fresh-clone.json) ·
+[Actual command transcript](evidence/fresh-clone-transcript.txt).
+
+That measurement establishes the protocol quick-start target under the stated
+prerequisites. It excludes installing Git/Node and starting/authenticating a model
+host. No complete clone-to-model-output timing is claimed. This evidence was added
+in a documentation-only follow-up; the measured implementation revision is pinned
+above rather than relabeled as a later commit.
 
 ## Direct host blocker
 

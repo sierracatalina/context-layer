@@ -30,8 +30,9 @@ optional real-agent paths below; it may have its own plan or usage costs.
 From a fresh clone of the revision containing this example:
 
 ```sh
-git clone https://github.com/sierracatalina/context-layer.git
+git clone --single-branch --branch improve/mcp-disclosure-demo https://github.com/sierracatalina/context-layer.git
 cd context-layer
+git checkout --detach 12bdad60bb34ac0bc47bd1e6b322d032c14a8110
 npm --prefix examples/mcp-agent-demo ci --ignore-scripts --no-audit --no-fund
 npm --prefix examples/mcp-agent-demo test
 node examples/mcp-agent-demo/protocol-demo.mjs outputs/mcp-protocol-demo
