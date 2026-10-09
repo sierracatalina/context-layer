@@ -3,7 +3,8 @@
 | Field | Value |
 | --- | --- |
 | Status | Working Draft - informative companion to the technical specification |
-| Date | 2026-08-12 |
+| Original date | 2026-08-12 |
+| Status review | 2026-10-09 |
 | Applies to | `context-layer/0.2-draft` |
 | Primary audience | Application architects, adapter authors, agent developers, mobile and web teams, security reviewers |
 
@@ -17,7 +18,7 @@ It uses **adapter compatibility** as a precise term:
 
 Adapter compatibility does not imply that an adapter exists in this repository, that two vendors have tested interoperability, or that the Context Layer is part of the external protocol's official specification.
 
-The current repository contains the draft specification, five schemas, a dependency-free reference runtime, and an experimental single-user local core with synthetic data. The profiles below define broader implementation targets; website publication and deployment source are maintained separately.
+The current repository contains the draft specification, five core schemas, a dependency-free reference runtime, an experimental single-user local core with synthetic data, and documentation site source under `site/context-layer/`. Broader adapter, platform and interoperability profiles below are proposed implementation targets, not evidence that those integrations exist.
 
 ## 2. Where the Context Layer fits
 
@@ -43,6 +44,8 @@ receipts + proposed memory updates
 Existing protocols remain authoritative for transport, native identity, signatures, federation, and domain behavior. The Context Layer adds a user-owned decision about what private context may cross into those systems.
 
 ## 3. Deployment profiles
+
+**Proposed profiles.** The controls below describe intended implementations. Only the named local-core artifacts and tests establish implemented behavior; organization, federation, production identity and recovery remain untested here.
 
 ### 3.1 Personal local-first profile
 
@@ -488,6 +491,8 @@ context disclosure authorized != payment action authorized
 Payment credentials, wallet keys, and transaction secrets must not be included in context bundles. Only minimal payment status and receipt references should cross the boundary.
 
 ## 10. End-to-end integration recipes
+
+**Proposed, untested recipes.** These walkthroughs are design scenarios. They are not records of a deployed integration or successful vendor interoperability. See the [claim ledger](https://github.com/sierracatalina/context-layer/blob/main/docs/CLAIM-EVIDENCE.md) for exact implementation and test scope.
 
 ### 10.1 Email source to drafting agent
 
