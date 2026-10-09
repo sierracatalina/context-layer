@@ -1,0 +1,55 @@
+{
+  "spec_version": "context-layer/0.2-draft",
+  "type": "policy_decision",
+  "id": "urn:cl:decision:synthetic-valid-decision",
+  "created_at": "2026-08-12T14:33:01Z",
+  "issuer": {
+    "id": "urn:cl:policy-engine:local"
+  },
+  "request_ref": "urn:cl:request:req_701",
+  "decision": "allow_with_reductions",
+  "policy_snapshot": {
+    "version": "personal-policy/42",
+    "digest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  },
+  "granted_selectors": [
+    {
+      "predicate": "requested_delivery_date"
+    },
+    {
+      "predicate": "requesting_stakeholder"
+    }
+  ],
+  "denied_selectors": [
+    {
+      "predicate": "budget_delta"
+    }
+  ],
+  "granted_actions": [
+    "model.generate_text",
+    "email.create_draft"
+  ],
+  "denied_actions": [
+    "email.send"
+  ],
+  "transform_requirements": [
+    "redact:budget_delta",
+    "compress:task-facts"
+  ],
+  "retention": {
+    "mode": "ephemeral",
+    "max_seconds": 3600
+  },
+  "onward_disclosure": "forbidden",
+  "receipt_requirement": {
+    "level": "operation",
+    "required": true
+  },
+  "expires_at": "2026-08-12T16:33:00Z",
+  "reason_codes": [
+    "SCOPE_REDUCED",
+    "ACTION_REDUCED",
+    "RETENTION_REDUCED",
+    "ONWARD_DISCLOSURE_DENIED"
+  ]
+}

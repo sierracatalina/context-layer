@@ -1,0 +1,24 @@
+{
+  "date_utc": "2026-10-09",
+  "python": "3.12.14",
+  "os_tested": "Linux",
+  "unique_unit_tests": 92,
+  "unit_test_result": "pass",
+  "standalone_public_assertions": 52,
+  "standalone_public_result": "pass",
+  "original_vector_files": 4,
+  "separate_contract_fixtures": 6,
+  "source_files_verified": 23,
+  "profile_sha256": "c0103260c0fcff84bb9f0565c7b2c03139e251f4a165c35300b8dca93d45094a",
+  "windows_execution": "not yet run; wheel availability verified; CI separate",
+  "conformance_claim": false,
+  "hash_locked_fresh_dependency_environment": "passed on CPython 3.12 Linux",
+  "review_regressions_fixed": [
+    "malformed signature metadata",
+    "RFC3339 offset bounds",
+    "binary64 large JSON integers",
+    "LF-only signed JSONL framing",
+    "pending denial-array formatting",
+    "integer-valued JSON decimal fields with boolean exclusion"
+  ]
+}

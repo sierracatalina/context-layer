@@ -1,0 +1,444 @@
+{
+  "format": "context-layer-independent-results/1",
+  "implementation": "clean-room Python",
+  "core_version": "context-layer/0.2-draft",
+  "profile": "REVIEWED PROPOSED local-core-0.2-draft.1",
+  "reference_commit": "0a8d016c822f38e8fc857422e133d0699c42a21f",
+  "vector_sets": 4,
+  "separate_contract_fixtures": 6,
+  "passed": 52,
+  "failed": 0,
+  "conformance_claim": false,
+  "unexercised_or_unsupported": [
+    "Version-1 receipt-anchor migration is not implemented.",
+    "Not all RFC 8785 binary64 values, all schema instances, all core roles, network authentication, key custody, or discovery are exercised."
+  ],
+  "checks": [
+    {
+      "id": "manifest/original-vector-file-count",
+      "status": "pass",
+      "actual": 4,
+      "expected": 4
+    },
+    {
+      "id": "manifest/canonicalization.json",
+      "status": "pass",
+      "actual": "1f0899a693e51985c1affe5a456b90f7224fc875a1d615f372df8a3b057a9314",
+      "expected": "1f0899a693e51985c1affe5a456b90f7224fc875a1d615f372df8a3b057a9314"
+    },
+    {
+      "id": "manifest/policy-cases.json",
+      "status": "pass",
+      "actual": "45d4ce69f415eb7d48a937d042ae4f1d72cd1221f0b7b34cb946ae782cc05528",
+      "expected": "45d4ce69f415eb7d48a937d042ae4f1d72cd1221f0b7b34cb946ae782cc05528"
+    },
+    {
+      "id": "manifest/exchange-security.json",
+      "status": "pass",
+      "actual": "b5a023c98947e07f8637486c00a64b877b4a43548556d60b20ee73724d5a964d",
+      "expected": "b5a023c98947e07f8637486c00a64b877b4a43548556d60b20ee73724d5a964d"
+    },
+    {
+      "id": "manifest/receipt-memory-isolation.json",
+      "status": "pass",
+      "actual": "40397701a45f284b9911d987916bc65a25c562ca726ead3117467ece505d47d9",
+      "expected": "40397701a45f284b9911d987916bc65a25c562ca726ead3117467ece505d47d9"
+    },
+    {
+      "id": "canonicalization/nested-key-order",
+      "status": "pass",
+      "actual": {
+        "canonical_json": "{\"a\":{\"b\":2,\"y\":[true,null,\"synthetic-test-only\"]},\"z\":1}",
+        "digest": "sha256:3c0ed4c1b2d9481bcec977543f4831d33992bc754dccceeb56a322f3a048f341"
+      },
+      "expected": {
+        "canonical_json": "{\"a\":{\"b\":2,\"y\":[true,null,\"synthetic-test-only\"]},\"z\":1}",
+        "digest": "sha256:3c0ed4c1b2d9481bcec977543f4831d33992bc754dccceeb56a322f3a048f341"
+      }
+    },
+    {
+      "id": "canonicalization/unicode-number-array",
+      "status": "pass",
+      "actual": {
+        "canonical_json": "{\"array\":[3,2,1],\"number\":42.5,\"unicode\":\"caf\u00e9\"}",
+        "digest": "sha256:14a88ab9140f4cdaeb1fa0c73df8a5168f6ebf843db986115560d70e3a877512"
+      },
+      "expected": {
+        "canonical_json": "{\"array\":[3,2,1],\"number\":42.5,\"unicode\":\"caf\u00e9\"}",
+        "digest": "sha256:14a88ab9140f4cdaeb1fa0c73df8a5168f6ebf843db986115560d70e3a877512"
+      }
+    },
+    {
+      "id": "canonicalization/record-id",
+      "status": "pass",
+      "actual": "urn:cl:test-vector:eb0ed6325bbc9d869e7559e6d9900d9c9e3a3b067d82e45c0bb29612adc62f74",
+      "expected": "urn:cl:test-vector:eb0ed6325bbc9d869e7559e6d9900d9c9e3a3b067d82e45c0bb29612adc62f74"
+    },
+    {
+      "id": "canonicalization/record-digest",
+      "status": "pass",
+      "actual": "sha256:eb0ed6325bbc9d869e7559e6d9900d9c9e3a3b067d82e45c0bb29612adc62f74",
+      "expected": "sha256:eb0ed6325bbc9d869e7559e6d9900d9c9e3a3b067d82e45c0bb29612adc62f74"
+    },
+    {
+      "id": "canonicalization/record-preimage",
+      "status": "pass",
+      "actual": "{\"classification\":\"synthetic-test-only\",\"created_at\":\"2030-01-01T12:00:00.000Z\",\"spec_version\":\"context-layer/0.2-draft\",\"type\":\"test_vector\"}",
+      "expected": "{\"classification\":\"synthetic-test-only\",\"created_at\":\"2030-01-01T12:00:00.000Z\",\"spec_version\":\"context-layer/0.2-draft\",\"type\":\"test_vector\"}"
+    },
+    {
+      "id": "policy/purpose-0",
+      "status": "pass",
+      "actual": true,
+      "expected": true
+    },
+    {
+      "id": "policy/purpose-1",
+      "status": "pass",
+      "actual": true,
+      "expected": true
+    },
+    {
+      "id": "policy/purpose-2",
+      "status": "pass",
+      "actual": true,
+      "expected": true
+    },
+    {
+      "id": "policy/purpose-3",
+      "status": "pass",
+      "actual": false,
+      "expected": false
+    },
+    {
+      "id": "policy/purpose-4",
+      "status": "pass",
+      "actual": false,
+      "expected": false
+    },
+    {
+      "id": "policy/purpose-5",
+      "status": "pass",
+      "actual": false,
+      "expected": false
+    },
+    {
+      "id": "policy/state-allow",
+      "status": "pass",
+      "actual": {
+        "decision": "allow",
+        "reason_codes": [
+          "REQUEST_ALLOWED"
+        ],
+        "retention_seconds": 120,
+        "approval_verification": "not_required"
+      },
+      "expected": {
+        "decision": "allow",
+        "reason_codes": [
+          "REQUEST_ALLOWED"
+        ],
+        "retention_seconds": 120,
+        "approval_verification": "not_required"
+      }
+    },
+    {
+      "id": "policy/state-allow-with-reductions",
+      "status": "pass",
+      "actual": {
+        "decision": "allow_with_reductions",
+        "reason_codes": [
+          "SCOPE_REDUCED",
+          "SELECTORS_WITHHELD",
+          "ACTIONS_WITHHELD",
+          "RETENTION_REDUCED"
+        ],
+        "retention_seconds": 300,
+        "approval_verification": "not_required"
+      },
+      "expected": {
+        "decision": "allow_with_reductions",
+        "reason_codes": [
+          "SCOPE_REDUCED",
+          "SELECTORS_WITHHELD",
+          "ACTIONS_WITHHELD",
+          "RETENTION_REDUCED"
+        ],
+        "retention_seconds": 300,
+        "approval_verification": "not_required"
+      }
+    },
+    {
+      "id": "policy/state-needs-approval",
+      "status": "pass",
+      "actual": {
+        "decision": "needs_approval",
+        "reason_codes": [
+          "APPROVAL_REQUIRED"
+        ],
+        "retention_seconds": 0,
+        "approval_verification": "not_provided"
+      },
+      "expected": {
+        "decision": "needs_approval",
+        "reason_codes": [
+          "APPROVAL_REQUIRED"
+        ],
+        "retention_seconds": 0,
+        "approval_verification": "not_provided"
+      }
+    },
+    {
+      "id": "policy/state-deny-unauthorized-recipient",
+      "status": "pass",
+      "actual": {
+        "decision": "deny",
+        "reason_codes": [
+          "RECIPIENT_NOT_AUTHORIZED"
+        ],
+        "retention_seconds": 0,
+        "approval_verification": "not_required"
+      },
+      "expected": {
+        "decision": "deny",
+        "reason_codes": [
+          "RECIPIENT_NOT_AUTHORIZED"
+        ],
+        "retention_seconds": 0,
+        "approval_verification": "not_required"
+      }
+    },
+    {
+      "id": "policy/approval-unverified",
+      "status": "pass",
+      "actual": {
+        "decision": "needs_approval",
+        "reason": "APPROVAL_UNVERIFIED",
+        "verification": "verifier_missing"
+      },
+      "expected": {
+        "decision": "needs_approval",
+        "reason": "APPROVAL_UNVERIFIED",
+        "verification": "verifier_missing"
+      }
+    },
+    {
+      "id": "policy/approval-authenticated-and-bound",
+      "status": "pass",
+      "actual": {
+        "decision": "allow",
+        "reason": "REQUEST_ALLOWED",
+        "verification": "verified",
+        "expires_at": "2030-01-01T12:02:00.000Z"
+      },
+      "expected": {
+        "decision": "allow",
+        "reason": "REQUEST_ALLOWED",
+        "verification": "verified",
+        "expires_at": "2030-01-01T12:02:00.000Z"
+      }
+    },
+    {
+      "id": "policy/approval-expired",
+      "status": "pass",
+      "actual": {
+        "decision": "needs_approval",
+        "reason": "APPROVAL_EXPIRED",
+        "verification": "expired"
+      },
+      "expected": {
+        "decision": "needs_approval",
+        "reason": "APPROVAL_EXPIRED",
+        "verification": "expired"
+      }
+    },
+    {
+      "id": "exchange/decision",
+      "status": "pass",
+      "actual": "allow_with_reductions",
+      "expected": "allow_with_reductions"
+    },
+    {
+      "id": "exchange/bundle_expires_at",
+      "status": "pass",
+      "actual": "2030-01-01T12:01:00.000Z",
+      "expected": "2030-01-01T12:01:00.000Z"
+    },
+    {
+      "id": "exchange/envelope_version",
+      "status": "pass",
+      "actual": 1,
+      "expected": 1
+    },
+    {
+      "id": "exchange/authentication_algorithm",
+      "status": "pass",
+      "actual": "Ed25519",
+      "expected": "Ed25519"
+    },
+    {
+      "id": "exchange/valid-envelope",
+      "status": "pass",
+      "actual": {
+        "accepted": true
+      },
+      "expected": {
+        "accepted": true
+      }
+    },
+    {
+      "id": "exchange/forbidden-fragment-0",
+      "status": "pass",
+      "actual": false,
+      "expected": false
+    },
+    {
+      "id": "exchange/forbidden-fragment-1",
+      "status": "pass",
+      "actual": false,
+      "expected": false
+    },
+    {
+      "id": "exchange/forbidden-fragment-2",
+      "status": "pass",
+      "actual": false,
+      "expected": false
+    },
+    {
+      "id": "exchange/forbidden-fragment-3",
+      "status": "pass",
+      "actual": false,
+      "expected": false
+    },
+    {
+      "id": "exchange/inner-auth-forbidden",
+      "status": "pass",
+      "actual": false,
+      "expected": false
+    },
+    {
+      "id": "exchange/tamper",
+      "status": "pass",
+      "actual": "RECORD_INTEGRITY_MISMATCH",
+      "expected": "RECORD_INTEGRITY_MISMATCH"
+    },
+    {
+      "id": "exchange/forged-capability",
+      "status": "pass",
+      "actual": "BUNDLE_AUTHENTICATION_FAILED",
+      "expected": "BUNDLE_AUTHENTICATION_FAILED"
+    },
+    {
+      "id": "exchange/forged-signature",
+      "status": "pass",
+      "actual": "BUNDLE_AUTHENTICATION_FAILED",
+      "expected": "BUNDLE_AUTHENTICATION_FAILED"
+    },
+    {
+      "id": "exchange/raw-material",
+      "status": "pass",
+      "actual": "BUNDLE_CONTAINS_FORBIDDEN_MATERIAL",
+      "expected": "BUNDLE_CONTAINS_FORBIDDEN_MATERIAL"
+    },
+    {
+      "id": "exchange/legacy-disabled",
+      "status": "pass",
+      "actual": "INVALID_BUNDLE_AUTHENTICATION",
+      "expected": "INVALID_BUNDLE_AUTHENTICATION"
+    },
+    {
+      "id": "exchange/legacy-explicit-opt-in",
+      "status": "pass",
+      "actual": {
+        "accepted": true
+      },
+      "expected": {
+        "accepted": true
+      }
+    },
+    {
+      "id": "receipt/missing_anchor_error",
+      "status": "pass",
+      "actual": "RECEIPT_ANCHOR_REQUIRED",
+      "expected": "RECEIPT_ANCHOR_REQUIRED"
+    },
+    {
+      "id": "receipt/rollback_error",
+      "status": "pass",
+      "actual": "RECEIPT_LOG_ROLLBACK",
+      "expected": "RECEIPT_LOG_ROLLBACK"
+    },
+    {
+      "id": "receipt/payload-minimized",
+      "status": "pass",
+      "actual": true,
+      "expected": true
+    },
+    {
+      "id": "memory/status",
+      "status": "pass",
+      "actual": "pending_validation",
+      "expected": "pending_validation"
+    },
+    {
+      "id": "memory/approval-requirements",
+      "status": "pass",
+      "actual": [
+        "source_required",
+        "user_confirm"
+      ],
+      "expected": [
+        "source_required",
+        "user_confirm"
+      ]
+    },
+    {
+      "id": "memory/consumer-surface",
+      "status": "pass",
+      "actual": false,
+      "expected": false
+    },
+    {
+      "id": "memory/direct-write",
+      "status": "pass",
+      "actual": "MEMORY_PROPOSAL_CONTAINS_FORBIDDEN_MATERIAL",
+      "expected": "MEMORY_PROPOSAL_CONTAINS_FORBIDDEN_MATERIAL"
+    },
+    {
+      "id": "fixture/valid-exchange",
+      "status": "pass",
+      "actual": true,
+      "expected": true
+    },
+    {
+      "id": "fixture/valid-policy-decision",
+      "status": "pass",
+      "actual": true,
+      "expected": true
+    },
+    {
+      "id": "fixture/invalid-policy-decision",
+      "status": "pass",
+      "actual": false,
+      "expected": false
+    },
+    {
+      "id": "fixture/valid-memory-update-proposal",
+      "status": "pass",
+      "actual": true,
+      "expected": true
+    },
+    {
+      "id": "fixture/invalid-memory-update-proposal",
+      "status": "pass",
+      "actual": false,
+      "expected": false
+    },
+    {
+      "id": "fixture/invalid-secret-receipt",
+      "status": "pass",
+      "actual": false,
+      "expected": false
+    }
+  ]
+}

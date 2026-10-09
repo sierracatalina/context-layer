@@ -1,7 +1,7 @@
 # Context Layer v0.2-draft threat model
 
 **Status:** provisional repository-grounded review for the experimental single-user profile
-**Review date:** 2026-08-21
+**Review date:** 2026-10-09 (repository-grounded update; outside review still pending)
 
 ## Executive summary
 
@@ -16,10 +16,12 @@ In scope:
 - `protocol/reference/`, `protocol/schemas/`, and `protocol/fixtures/`: dependency-free reference runtime, strict object contracts, and synthetic examples.
 - `examples/`, `test-vectors/v0.2/`, and `tests/`: synthetic proof and security regressions.
 - `.github/workflows/ci.yml`, `package.json`, and `package-lock.json`: release integrity and dependency boundary.
+- `site/context-layer/` and `site/vercel.json`: the canonical public documentation site source and repository-owned routing.
+- `conformance/`, versioned schema snapshots, and security fuzz/property tests: reproducibility and integrity of the declared test scope.
 
 Out of scope:
 
-- Website application, hosting, routing, and deployment source, which are intentionally maintained outside this protocol repository.
+- Hosting account configuration, deployed infrastructure, and unrelated website source outside this repository. The included Context Layer site source remains in scope.
 - A production identity provider, approval service, key-management service, multi-tenant vault, or remote MCP server.
 - Operating-system, hypervisor, kernel, or cryptographic primitive compromise.
 - Recovery from an attacker who can replace both a receipt log and its authenticated anchor with an older valid pair.
@@ -33,7 +35,7 @@ Material assumptions:
 - Requests, files, source instructions, claims, bundles, and handler output may be attacker-controlled.
 - A deployment stores the receipt anchor on a boundary at least independent from accidental log damage. A same-filesystem attacker can still coordinate rollback.
 
-These assumptions were presented during the working session and no corrections were received before this provisional report. Risk rankings are conditional on them.
+These are required deployment assumptions, not independently verified operating conditions or owner acceptance. Risk rankings are conditional on them.
 
 Open questions that would materially change risk:
 
@@ -187,3 +189,7 @@ flowchart LR
 - [x] Separated local runtime, portable protocol artifacts, CI/release, and tests/examples; website and deployment source are outside this repository's scope.
 - [x] Recorded that the assumption-validation questions received no correction before this provisional report.
 - [x] Kept production identity, key custody, remote multi-tenancy, hostile administrator, and real-data use as explicit open questions rather than implied controls.
+
+## Reproducible evidence and unresolved boundaries
+
+See [security testing](security-testing.md) for deterministic seeds, corpus bounds, invocation, and limitations; see [outside review status](security-review-status.md) for the separate, unperformed external review gate. The [proposed local profile](../protocol/profiles/local-core-0.2-draft.1.md) records baseline differences rather than presenting them as conforming relaxations: duplicate-name JSON parsing, permissive date paths, stricter schema validation than some local runtime paths, absence of signature domain separation, and path-bound anchors. These require explicit review before production claims. A fuzz pass means the tested mutations were rejected; it does not prove those unresolved issues absent.
