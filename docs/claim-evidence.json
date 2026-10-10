@@ -570,9 +570,9 @@
     {
       "id": "C24",
       "claim": "An independently authored Python experiment passes its own tests and the shared local-profile transcript.",
-      "scope": "Python 3.12 experiment with 95 unit tests, 52 standalone public-vector assertions, 45 common-kit assertions and nine cross-implementation byte/parity/bidirectional checks.",
+      "scope": "Python 3.12 experiment with 105 unit tests, 52 standalone public-vector assertions, 45 common-kit assertions and nine cross-implementation byte/parity/bidirectional checks.",
       "status": "implemented-tested",
-      "revision": "901926973115a428db5ad8207f0ca1bff17174f4",
+      "revision": "b35e25cf1e83d7c3b7dc16b66686dde5625be11c",
       "date": "2026-10-10",
       "evidence": [
         {
@@ -606,9 +606,28 @@
         },
         {
           "path": "implementations/python/reports/windows-lock-fix/REVIEW-NOTE.md"
+        },
+        {
+          "path": "implementations/python/tests/test_core.py",
+          "test": "test_authority_rejects_malformed_authorizing_collections_at_construction"
+        },
+        {
+          "path": "implementations/python/tests/test_profile.py",
+          "test": "test_profile_malformed_transform_containers_never_reach_signing"
+        },
+        {
+          "path": "implementations/python/tests/test_profile.py",
+          "test": "test_profile_supported_transform_families_preserve_their_effects"
+        },
+        {
+          "path": "implementations/python/tests/test_profile.py",
+          "test": "test_profile_unsupported_transform_fails_before_bundle_signing"
+        },
+        {
+          "path": "implementations/python/reports/python-policy-review/REVIEW-NOTE.md"
         }
       ],
-      "limits": "The implementation author used a source-only packet plus separately authored profile prose. The profile author inspected JavaScript; the implementer did not. This is project-produced implementation-process independence, not outside maintenance, adoption or security audit. Python does not implement version-1 receipt-anchor migration, a production vault or every core role. The previous combined Windows head hit receipt-lock contention; this source correction passed local Linux tests and independent review. Fresh exact-head hosted Windows/Ubuntu results are still required; prior source-branch CI is historical evidence only.",
+      "limits": "The implementation author used a source-only packet plus separately authored profile prose. The profile author inspected JavaScript; the implementer did not. This is project-produced implementation-process independence, not outside maintenance, adoption or security audit. Python does not implement version-1 receipt-anchor migration, a production vault or every core role. Receipt-lock and policy-container corrections passed local Linux tests and independent exact-patch review. The malformed allowlist/transform-container failures were reproduced; unsupported-identifier disclosure and IndexError were not, and their actual fail-closed behavior is documented. Fresh exact-head hosted Windows/Ubuntu results are required; earlier hosted CI and configured code/security review apply only to their recorded prior heads.",
       "next_evidence": "Run final combined hosted Linux/Windows checks and preserve exact source/clarification provenance; resolve recorded general-core ambiguities and obtain consenting outside implementation evidence separately."
     }
   ]
