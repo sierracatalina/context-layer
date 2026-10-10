@@ -27,11 +27,11 @@ Checks also compare the generated page & published glossary with their source, r
 
 ## Results for this draft
 
-- Overview: 470 words; estimated Flesch reading ease 69.47.
-- Rendered page: 522 visible words; estimated article reading ease 69.75.
+- Overview: 470 words; estimated Flesch reading ease 68.90.
+- Rendered page: 522 visible words; estimated article reading ease 69.19.
 - README TL;DR: 107 words; estimated Flesch reading ease 79.94.
 - Glossary: 119 one-line entries; 81 distinct source terms across 96 source references checked.
-- Integrated documentation suites: 130 tests passed [28 contract, 14 site, 62 local-core, 11 proof, 15 specification documentation]. Additional implementation work must be checked again on the final integrated candidate.
+- Focused site suites: 14 tests passed, including the canonical PCP name/citation checks, optionality, generated mirrors & existing navigation regressions. Full aggregate & exact-head hosted CI are recorded separately in the integration PR.
 - Lint, editorial verification, release hygiene & whitespace checks passed.
 
 ## Human comprehension gate

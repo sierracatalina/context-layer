@@ -32,7 +32,7 @@ Proposed memory
 
 ## What it is not
 
-This is not a new AI model, a finished app or a way to give agents free access to your files. It does not replace sign-in, encryption or the rules of a source service. Access to context alone does not authorize real-world actions. When PCP [Personal Context Protocol] is used, it uses a separate user- or principal-signed grant for acting authority. It cannot make a false fact true, ensure an AI gives a correct answer or pull back data after a recipient has seen it.
+This is not a new AI model, a finished app or a way to give agents free access to your files. It does not replace sign-in, encryption or the rules of a source service. Access to context alone does not authorize real-world actions. When [PCP](https://github.com/sierracatalina/PCP/blob/cc84982fb57c9a8f4d3a90a023fde10747a2662b/README.md) [Purpose-bound Capability Protocol] is used, it uses a separate user- or principal-signed grant for acting authority. It cannot make a false fact true, ensure an AI gives a correct answer or pull back data after a recipient has seen it.
 
 ## Status
 

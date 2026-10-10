@@ -38,7 +38,7 @@ Coverage includes both terminology sections, all named components, trust zones, 
 ## Supporting terms
 
 - **Context**: Facts, notes or preferences that help an app or agent carry out a task.
-- **Personal Context Protocol** [`PCP`]: An optional, separate protocol using a user- or principal-signed grant for acting authority, distinct from context disclosure.
+- **Purpose-bound Capability Protocol** [`PCP`]: An optional, separate protocol using a user- or principal-signed grant for acting authority, distinct from context disclosure. [Public source](https://github.com/sierracatalina/PCP/blob/cc84982fb57c9a8f4d3a90a023fde10747a2662b/README.md).
 - **Protocol**: Shared rules for what systems exchange & how they must handle it.
 - **Profile**: A named set of protocol requirements for a particular role or deployment.
 - **Principal**: The identified person, app or service taking part in a request.

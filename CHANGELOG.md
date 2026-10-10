@@ -6,6 +6,8 @@ This file records material changes to the Context Layer working draft and its pu
 
 ### Overview, navigation & requirement review
 
+- Correct the stale PCP expansion in the overview, glossary & experimental adapter copy to Purpose-bound Capability Protocol, with a pinned [public source](https://github.com/sierracatalina/PCP/blob/cc84982fb57c9a8f4d3a90a023fde10747a2662b/README.md). The public PCP repository [renamed the same protocol on 2026-10-07](https://github.com/sierracatalina/PCP/commit/329ac5275a5cb11f80ab60049961bb56ac0c1e84); its abbreviation, wire/schema identifiers & validation rules were unchanged. Preserve optional PCP use & separate acting authority; this copy correction changes no Context Layer runtime or schema.
+
 - Add a plain-language overview, one-line glossary, deterministic readability/coverage checks & synchronized site mirrors. Keep the overview's sentence-case exception; human comprehension remains unmeasured.
 - Add progressive mobile navigation with repeated-toggle, dismissal, history & responsive-state regressions. Rendered device/browser checks remain a separate release gate.
 - Add core section anchors, a one-page topic summary, a complete linked requirement index & primary-source prior-art comparisons. Preserve existing requirement passages & fenced examples; the complete requirement text is not claimed to fit on one page. Clarify section 13 as an informative role overview under section 1's uppercase-only convention.

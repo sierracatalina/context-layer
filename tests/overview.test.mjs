@@ -21,6 +21,12 @@ test("overview, TLDR, glossary, rendered page and local links satisfy the G1 con
   assert(result.overview.readingEase >= 50);
   assert(result.tldr.readingEase >= 50);
   assert(result.glossary.sourceTerms > 80);
+  const pcpSource = "https://github.com/sierracatalina/PCP/blob/cc84982fb57c9a8f4d3a90a023fde10747a2662b/README.md";
+  const [overview, glossary] = await Promise.all(["OVERVIEW.md", "GLOSSARY.md"].map(read));
+  assert(overview.includes(`When [PCP](${pcpSource}) [Purpose-bound Capability Protocol] is used`));
+  assert(glossary.includes("**Purpose-bound Capability Protocol** [`PCP`]: An optional, separate protocol"));
+  assert(glossary.includes(`[Public source](${pcpSource})`));
+  for (const source of [overview, glossary]) assert(!source.includes("Personal Context Protocol"));
 });
 
 test("readability counts visible link labels, ampersands and headings, but excludes diagram from prose", () => {
