@@ -1,0 +1,14 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "context-layer-independent"
+version = "0.1.0"
+description = "Spec-only experimental Context Layer v0.2 implementation"
+requires-python = ">=3.11"
+dependencies = ["jsonschema==4.26.0", "rfc8785==0.1.4", "cryptography==50.0.0"]
+license = "Apache-2.0"
+
+[tool.setuptools]
+packages = ["context_layer_independent"]

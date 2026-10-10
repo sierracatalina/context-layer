@@ -1,0 +1,242 @@
+{
+  "captured_at": "2026-10-09T22:55:06.439Z",
+  "duration_seconds": 87.222855242,
+  "recording_type": "actual timed stdout capture; model artifacts from earlier independently recorded agent sessions",
+  "events": [
+    {
+      "seconds": 3.363000000000227e-05,
+      "stage": "01 / THE TASK",
+      "kind": "stage",
+      "text": "01 / THE TASK\n"
+    },
+    {
+      "seconds": 0.0007329369999999997,
+      "stage": "01 / THE TASK",
+      "kind": "output",
+      "text": "Prepare a three-bullet Atlas kickoff agenda.\nAll personal data is invented. Nothing is sent to another person.\n\nTwo independent model agents used a shell bridge to a real MCP tool.\nThe transport is real; native MCP host integration is not claimed.\n"
+    },
+    {
+      "seconds": 10.002120986,
+      "stage": "02 / LIVE PROTOCOL RUN",
+      "kind": "stage",
+      "text": "02 / LIVE PROTOCOL RUN\n"
+    },
+    {
+      "seconds": 10.002380712,
+      "stage": "02 / LIVE PROTOCOL RUN",
+      "kind": "command",
+      "text": "$ node examples/mcp-agent-demo/protocol-demo.mjs outputs/walkthrough/protocol\n"
+    },
+    {
+      "seconds": 10.194313467999999,
+      "stage": "02 / LIVE PROTOCOL RUN",
+      "kind": "output",
+      "text": "CONTEXT LAYER / real MCP stdio / synthetic data only\nThis automated protocol client is not itself an AI agent.\n"
+    },
+    {
+      "seconds": 10.368567199,
+      "stage": "02 / LIVE PROTOCOL RUN",
+      "kind": "output",
+      "text": "BEFORE: 6 fields disclosed, including 3 unrelated personal fields.\n"
+    },
+    {
+      "seconds": 10.589017152999999,
+      "stage": "02 / LIVE PROTOCOL RUN",
+      "kind": "output",
+      "text": "AFTER: 3 fields disclosed; allow_with_reductions.\n"
+    },
+    {
+      "seconds": 10.782583884,
+      "stage": "02 / LIVE PROTOCOL RUN",
+      "kind": "output",
+      "text": "NEGATIVE: private.journal-only request -> deny; 0 fields.\n"
+    },
+    {
+      "seconds": 10.785095305999999,
+      "stage": "02 / LIVE PROTOCOL RUN",
+      "kind": "output",
+      "text": "MCP 2025-11-25; Ed25519 verified; receipts: bundle.issue, bundle.consume, context.disclose.\n"
+    },
+    {
+      "seconds": 10.785259319,
+      "stage": "02 / LIVE PROTOCOL RUN",
+      "kind": "output",
+      "text": "PASS in 0.59s. Evidence: [CHECKOUT]/outputs/walkthrough/protocol\n"
+    },
+    {
+      "seconds": 10.792638611,
+      "stage": "02 / LIVE PROTOCOL RUN",
+      "kind": "output",
+      "text": "[observed exit code: 0]\n"
+    },
+    {
+      "seconds": 25.793882876,
+      "stage": "03 / BEFORE: RECORDED AGENT RESULT",
+      "kind": "stage",
+      "text": "03 / BEFORE: RECORDED AGENT RESULT\n"
+    },
+    {
+      "seconds": 25.796925593,
+      "stage": "03 / BEFORE: RECORDED AGENT RESULT",
+      "kind": "output",
+      "text": "Actual MCP payload: 6 fields.\n"
+    },
+    {
+      "seconds": 25.796982728,
+      "stage": "03 / BEFORE: RECORDED AGENT RESULT",
+      "kind": "output",
+      "text": "Delivered: meeting.goal, meeting.decisions, collaboration.preference, health.note, finance.balance, private.journal\n"
+    },
+    {
+      "seconds": 25.796991890999998,
+      "stage": "03 / BEFORE: RECORDED AGENT RESULT",
+      "kind": "output",
+      "text": "\nAgent-generated agenda, captured 2026-10-09T22:51:49.328Z:\n"
+    },
+    {
+      "seconds": 25.798232902,
+      "stage": "03 / BEFORE: RECORDED AGENT RESULT",
+      "kind": "output",
+      "text": "- Define the two-week Atlas pilot for the fictional community library. Decision: agree on pilot scope.\n- Clarify responsibility for coordinating the pilot. Decision: choose one owner.\n- Plan the Friday progress review. Decision: set the Friday check-in time.\n"
+    },
+    {
+      "seconds": 25.798256075999998,
+      "stage": "03 / BEFORE: RECORDED AGENT RESULT",
+      "kind": "output",
+      "text": "\nThe answer need not repeat private data for disclosure to have occurred.\n"
+    },
+    {
+      "seconds": 43.802026217000005,
+      "stage": "04 / AFTER: RECORDED AGENT RESULT",
+      "kind": "stage",
+      "text": "04 / AFTER: RECORDED AGENT RESULT\n"
+    },
+    {
+      "seconds": 43.802945135,
+      "stage": "04 / AFTER: RECORDED AGENT RESULT",
+      "kind": "output",
+      "text": "Actual MCP payload: 3 fields.\n"
+    },
+    {
+      "seconds": 43.802976321,
+      "stage": "04 / AFTER: RECORDED AGENT RESULT",
+      "kind": "output",
+      "text": "Delivered: meeting.goal, meeting.decisions, collaboration.preference\n"
+    },
+    {
+      "seconds": 43.802982079,
+      "stage": "04 / AFTER: RECORDED AGENT RESULT",
+      "kind": "output",
+      "text": "Personal sentinel values absent from the entire client trace.\n"
+    },
+    {
+      "seconds": 43.802984723,
+      "stage": "04 / AFTER: RECORDED AGENT RESULT",
+      "kind": "output",
+      "text": "\nAgent-generated agenda, captured 2026-10-09T22:52:03.991Z:\n"
+    },
+    {
+      "seconds": 43.803215185,
+      "stage": "04 / AFTER: RECORDED AGENT RESULT",
+      "kind": "output",
+      "text": "- Define Atlas\u2019s two-week pilot for the fictional community library. Decision: agree on the pilot scope.\n- Clarify responsibility for delivering the pilot. Decision: choose one owner.\n- Plan the Friday progress review. Decision: set the Friday check-in time.\n"
+    },
+    {
+      "seconds": 43.803234143000005,
+      "stage": "04 / AFTER: RECORDED AGENT RESULT",
+      "kind": "output",
+      "text": "\nThe answer need not repeat private data for disclosure to have occurred.\n"
+    },
+    {
+      "seconds": 63.810272249,
+      "stage": "05 / LIVE NEGATIVE + REGRESSION TESTS",
+      "kind": "stage",
+      "text": "05 / LIVE NEGATIVE + REGRESSION TESTS\n"
+    },
+    {
+      "seconds": 63.81038170200001,
+      "stage": "05 / LIVE NEGATIVE + REGRESSION TESTS",
+      "kind": "command",
+      "text": "$ node --test examples/mcp-agent-demo/demo.test.mjs\n"
+    },
+    {
+      "seconds": 64.254924797,
+      "stage": "05 / LIVE NEGATIVE + REGRESSION TESTS",
+      "kind": "output",
+      "text": "\u2714 official MCP client negotiates stdio and invokes discoverable tool (202.593243ms)\n"
+    },
+    {
+      "seconds": 64.477144033,
+      "stage": "05 / LIVE NEGATIVE + REGRESSION TESTS",
+      "kind": "output",
+      "text": "\u2714 scoped MCP payload removes unrelated values before the client receives them (222.565074ms)\n"
+    },
+    {
+      "seconds": 64.678506139,
+      "stage": "05 / LIVE NEGATIVE + REGRESSION TESTS",
+      "kind": "output",
+      "text": "\u2714 private-only selector is denied through actual MCP transport (201.094925ms)\n"
+    },
+    {
+      "seconds": 64.902851329,
+      "stage": "05 / LIVE NEGATIVE + REGRESSION TESTS",
+      "kind": "output",
+      "text": "\u2714 agent-controlled selectors cannot override policy (222.971256ms)\n"
+    },
+    {
+      "seconds": 65.09270363600001,
+      "stage": "05 / LIVE NEGATIVE + REGRESSION TESTS",
+      "kind": "output",
+      "text": "\u2714 wildcard request fails closed (192.505714ms)\n"
+    },
+    {
+      "seconds": 65.13923713700001,
+      "stage": "05 / LIVE NEGATIVE + REGRESSION TESTS",
+      "kind": "output",
+      "text": "\u2714 verified bundle cannot be consumed twice (46.451976ms)\n"
+    },
+    {
+      "seconds": 65.167029063,
+      "stage": "05 / LIVE NEGATIVE + REGRESSION TESTS",
+      "kind": "output",
+      "text": "\u2714 changing signed context is rejected before reconsumption (28.794894ms)\n"
+    },
+    {
+      "seconds": 65.196268511,
+      "stage": "05 / LIVE NEGATIVE + REGRESSION TESTS",
+      "kind": "output",
+      "text": "\u2714 expired session cannot perform another disclosure (29.28466ms)\n"
+    },
+    {
+      "seconds": 65.208211217,
+      "stage": "05 / LIVE NEGATIVE + REGRESSION TESTS",
+      "kind": "output",
+      "text": "\u2139 tests 8\n"
+    },
+    {
+      "seconds": 65.208328221,
+      "stage": "05 / LIVE NEGATIVE + REGRESSION TESTS",
+      "kind": "output",
+      "text": "\u2139 suites 0\n\u2139 pass 8\n\u2139 fail 0\n\u2139 cancelled 0\n\u2139 skipped 0\n\u2139 todo 0\n\u2139 duration_ms 1339.345598\n"
+    },
+    {
+      "seconds": 65.214213616,
+      "stage": "05 / LIVE NEGATIVE + REGRESSION TESTS",
+      "kind": "output",
+      "text": "[observed exit code: 0]\n"
+    },
+    {
+      "seconds": 77.218512124,
+      "stage": "06 / WHAT THIS PROVES",
+      "kind": "stage",
+      "text": "06 / WHAT THIS PROVES\n"
+    },
+    {
+      "seconds": 77.218572143,
+      "stage": "06 / WHAT THIS PROVES",
+      "kind": "output",
+      "text": "Observed: real MCP stdio + actual model agents through a bridge.\nSame useful meeting facts; 6 fields before, 3 after.\n\nNot claimed: native host integration, provider deletion, remote identity,\nproduction security, or a general model-quality result.\n\nReproduce: examples/mcp-agent-demo/README.md\nEvidence: docs/demo/README.md\n"
+    }
+  ],
+  "publication_normalization": "Absolute checkout-path prefixes replaced with [CHECKOUT]; command output otherwise unchanged."
+}

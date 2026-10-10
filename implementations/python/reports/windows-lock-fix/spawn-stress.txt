@@ -1,0 +1,100 @@
+
+Spawn contention/cleanup repetition 1
+test_profile_multiple_processes_serialize_append (test_profile.ProfileTests.test_profile_multiple_processes_serialize_append) ... ok
+test_profile_multiple_processes_single_consume (test_profile.ProfileTests.test_profile_multiple_processes_single_consume) ... ok
+test_profile_process_harness_reaps_children_before_failure_escapes (test_profile.ProfileTests.test_profile_process_harness_reaps_children_before_failure_escapes) ... ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 2.082s
+
+OK
+
+Spawn contention/cleanup repetition 2
+test_profile_multiple_processes_serialize_append (test_profile.ProfileTests.test_profile_multiple_processes_serialize_append) ... ok
+test_profile_multiple_processes_single_consume (test_profile.ProfileTests.test_profile_multiple_processes_single_consume) ... ok
+test_profile_process_harness_reaps_children_before_failure_escapes (test_profile.ProfileTests.test_profile_process_harness_reaps_children_before_failure_escapes) ... ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 1.885s
+
+OK
+
+Spawn contention/cleanup repetition 3
+test_profile_multiple_processes_serialize_append (test_profile.ProfileTests.test_profile_multiple_processes_serialize_append) ... ok
+test_profile_multiple_processes_single_consume (test_profile.ProfileTests.test_profile_multiple_processes_single_consume) ... ok
+test_profile_process_harness_reaps_children_before_failure_escapes (test_profile.ProfileTests.test_profile_process_harness_reaps_children_before_failure_escapes) ... ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 1.909s
+
+OK
+
+Spawn contention/cleanup repetition 4
+test_profile_multiple_processes_serialize_append (test_profile.ProfileTests.test_profile_multiple_processes_serialize_append) ... ok
+test_profile_multiple_processes_single_consume (test_profile.ProfileTests.test_profile_multiple_processes_single_consume) ... ok
+test_profile_process_harness_reaps_children_before_failure_escapes (test_profile.ProfileTests.test_profile_process_harness_reaps_children_before_failure_escapes) ... ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 1.883s
+
+OK
+
+Spawn contention/cleanup repetition 5
+test_profile_multiple_processes_serialize_append (test_profile.ProfileTests.test_profile_multiple_processes_serialize_append) ... ok
+test_profile_multiple_processes_single_consume (test_profile.ProfileTests.test_profile_multiple_processes_single_consume) ... ok
+test_profile_process_harness_reaps_children_before_failure_escapes (test_profile.ProfileTests.test_profile_process_harness_reaps_children_before_failure_escapes) ... ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 1.979s
+
+OK
+
+Spawn contention/cleanup repetition 6
+test_profile_multiple_processes_serialize_append (test_profile.ProfileTests.test_profile_multiple_processes_serialize_append) ... ok
+test_profile_multiple_processes_single_consume (test_profile.ProfileTests.test_profile_multiple_processes_single_consume) ... ok
+test_profile_process_harness_reaps_children_before_failure_escapes (test_profile.ProfileTests.test_profile_process_harness_reaps_children_before_failure_escapes) ... ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 1.882s
+
+OK
+
+Spawn contention/cleanup repetition 7
+test_profile_multiple_processes_serialize_append (test_profile.ProfileTests.test_profile_multiple_processes_serialize_append) ... ok
+test_profile_multiple_processes_single_consume (test_profile.ProfileTests.test_profile_multiple_processes_single_consume) ... ok
+test_profile_process_harness_reaps_children_before_failure_escapes (test_profile.ProfileTests.test_profile_process_harness_reaps_children_before_failure_escapes) ... ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 1.814s
+
+OK
+
+Spawn contention/cleanup repetition 8
+test_profile_multiple_processes_serialize_append (test_profile.ProfileTests.test_profile_multiple_processes_serialize_append) ... ok
+test_profile_multiple_processes_single_consume (test_profile.ProfileTests.test_profile_multiple_processes_single_consume) ... ok
+test_profile_process_harness_reaps_children_before_failure_escapes (test_profile.ProfileTests.test_profile_process_harness_reaps_children_before_failure_escapes) ... ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 1.845s
+
+OK
+
+Spawn contention/cleanup repetition 9
+test_profile_multiple_processes_serialize_append (test_profile.ProfileTests.test_profile_multiple_processes_serialize_append) ... ok
+test_profile_multiple_processes_single_consume (test_profile.ProfileTests.test_profile_multiple_processes_single_consume) ... ok
+test_profile_process_harness_reaps_children_before_failure_escapes (test_profile.ProfileTests.test_profile_process_harness_reaps_children_before_failure_escapes) ... ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 1.843s
+
+OK
+
+Spawn contention/cleanup repetition 10
+test_profile_multiple_processes_serialize_append (test_profile.ProfileTests.test_profile_multiple_processes_serialize_append) ... ok
+test_profile_multiple_processes_single_consume (test_profile.ProfileTests.test_profile_multiple_processes_single_consume) ... ok
+test_profile_process_harness_reaps_children_before_failure_escapes (test_profile.ProfileTests.test_profile_process_harness_reaps_children_before_failure_escapes) ... ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 1.869s
+
+OK

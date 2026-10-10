@@ -1,0 +1,39 @@
+{
+  "host": "codex exec",
+  "recorded_at": "2026-10-09T22:52:52.755Z",
+  "verified": false,
+  "runs": [
+    {
+      "mode": "baseline",
+      "command": [
+        "codex",
+        "exec",
+        "--ephemeral",
+        "--ignore-user-config",
+        "--sandbox",
+        "read-only",
+        "--json",
+        "-C",
+        "[CHECKOUT]/",
+        "-c",
+        "features.shell_tool=false",
+        "-c",
+        "features.apps=false",
+        "-c",
+        "features.in_app_browser=false",
+        "-c",
+        "web_search=\"disabled\"",
+        "-c",
+        "mcp_servers.context_demo.command=\"[NODE_EXECUTABLE]\"",
+        "-c",
+        "mcp_servers.context_demo.args=[\"[CHECKOUT]/examples/mcp-agent-demo/server.mjs\",\"baseline\"]",
+        "-o",
+        "[CHECKOUT]/outputs/codex-host-attempt/baseline-agenda.txt",
+        "Prepare a three-bullet agenda for fictional Jordan's Atlas kickoff. Use the available get_meeting_context tool to learn the meeting facts. End each bullet with a decision to make. Do not use any other data source, send messages, or make changes. Do not repeat unrelated personal details. All data in this exercise is synthetic."
+      ],
+      "exit_code": 1,
+      "review_required": true
+    }
+  ],
+  "blocker": "WARNING: proceeding, even though we could not create PATH aliases: Read-only file system (os error 30)\nReading additional input from stdin...\nError: failed to initialize in-process app-server client: Read-only file system (os error 30)"
+}
