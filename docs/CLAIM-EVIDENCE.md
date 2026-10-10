@@ -330,16 +330,16 @@ Private disclosure has a documented GitHub destination; form availability requir
 
 A plain-language overview and one-line glossary satisfy documented automated readability and coverage checks.
 
-- Status: **implemented-tested**. Reviewed 2026-10-09.
+- Status: **implemented-tested**. Reviewed 2026-10-10.
 - Scope: Five-section overview, README TL;DR, 119 glossary entries, 81 distinct extracted source terms and generated site mirrors.
-- Evidence revision: `378aab9cf48c5148c8ffce1f5fca17bcbee08f18`.
-- [OVERVIEW.md](https://github.com/sierracatalina/context-layer/blob/378aab9cf48c5148c8ffce1f5fca17bcbee08f18/OVERVIEW.md).
-- [GLOSSARY.md](https://github.com/sierracatalina/context-layer/blob/378aab9cf48c5148c8ffce1f5fca17bcbee08f18/GLOSSARY.md).
-- [docs/overview-validation.md](https://github.com/sierracatalina/context-layer/blob/378aab9cf48c5148c8ffce1f5fca17bcbee08f18/docs/overview-validation.md).
-- [tests/overview.test.mjs](https://github.com/sierracatalina/context-layer/blob/378aab9cf48c5148c8ffce1f5fca17bcbee08f18/tests/overview.test.mjs): “overview, TLDR, glossary, rendered page and local links satisfy the G1 contract”.
-- [tests/overview.test.mjs](https://github.com/sierracatalina/context-layer/blob/378aab9cf48c5148c8ffce1f5fca17bcbee08f18/tests/overview.test.mjs): “glossary derives coverage from both specifications and fails on an omitted term”.
-- Limits: Flesch estimates use a deterministic heuristic and are not observed human comprehension. The integrated optional-PCP wording passes the same automated contract; no nontechnical explain-back study is claimed.
-- Next evidence: Rerun source/rendered checks on the integrated commit, review protected browser rendering and record consented human explain-back results.
+- Evidence revision: `1828876991f82a6b53b2c938ffec0ede35b2b350`.
+- [OVERVIEW.md](https://github.com/sierracatalina/context-layer/blob/1828876991f82a6b53b2c938ffec0ede35b2b350/OVERVIEW.md).
+- [GLOSSARY.md](https://github.com/sierracatalina/context-layer/blob/1828876991f82a6b53b2c938ffec0ede35b2b350/GLOSSARY.md).
+- [docs/overview-validation.md](https://github.com/sierracatalina/context-layer/blob/1828876991f82a6b53b2c938ffec0ede35b2b350/docs/overview-validation.md).
+- [tests/overview.test.mjs](https://github.com/sierracatalina/context-layer/blob/1828876991f82a6b53b2c938ffec0ede35b2b350/tests/overview.test.mjs): “overview, TLDR, glossary, rendered page and local links satisfy the G1 contract”.
+- [tests/overview.test.mjs](https://github.com/sierracatalina/context-layer/blob/1828876991f82a6b53b2c938ffec0ede35b2b350/tests/overview.test.mjs): “glossary derives coverage from both specifications and fails on an omitted term”.
+- Limits: Flesch estimates use a deterministic heuristic and are not observed human comprehension. The canonical PCP name and pinned public citation preserve optional use and separate acting authority; source/rendered checks and the full local aggregate pass. No nontechnical explain-back study or new-head hosted CI result is claimed.
+- Next evidence: Verify exact-head hosted CI and protected browser rendering, then record consented human explain-back results.
 
 ### C22
 

@@ -473,8 +473,8 @@
       "claim": "A plain-language overview and one-line glossary satisfy documented automated readability and coverage checks.",
       "scope": "Five-section overview, README TL;DR, 119 glossary entries, 81 distinct extracted source terms and generated site mirrors.",
       "status": "implemented-tested",
-      "revision": "378aab9cf48c5148c8ffce1f5fca17bcbee08f18",
-      "date": "2026-10-09",
+      "revision": "1828876991f82a6b53b2c938ffec0ede35b2b350",
+      "date": "2026-10-10",
       "evidence": [
         {
           "path": "OVERVIEW.md"
@@ -494,8 +494,8 @@
           "test": "glossary derives coverage from both specifications and fails on an omitted term"
         }
       ],
-      "limits": "Flesch estimates use a deterministic heuristic and are not observed human comprehension. The integrated optional-PCP wording passes the same automated contract; no nontechnical explain-back study is claimed.",
-      "next_evidence": "Rerun source/rendered checks on the integrated commit, review protected browser rendering and record consented human explain-back results."
+      "limits": "Flesch estimates use a deterministic heuristic and are not observed human comprehension. The canonical PCP name and pinned public citation preserve optional use and separate acting authority; source/rendered checks and the full local aggregate pass. No nontechnical explain-back study or new-head hosted CI result is claimed.",
+      "next_evidence": "Verify exact-head hosted CI and protected browser rendering, then record consented human explain-back results."
     },
     {
       "id": "C22",
