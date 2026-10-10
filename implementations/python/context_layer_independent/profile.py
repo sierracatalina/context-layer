@@ -410,6 +410,9 @@ class AnchoredReceiptLog:
             self.key = Ed25519PrivateKey.from_private_bytes(seed)
         except ValueError:
             raise ProtocolError("INVALID_KEY_MATERIAL") from None
+        # Compile the immutable schema set once per store, before contending for
+        # its lock. Every receipt is still validated on every replay/append.
+        self._validator = SchemaValidator()
         with self.lock():
             self._state(initialize=True)
 
@@ -481,7 +484,7 @@ class AnchoredReceiptLog:
             if digest(body) != entry.get("entry_digest"):
                 raise ProtocolError("RECEIPT_LOG_INTEGRITY")
             verify_record(entry["receipt"], "urn:cl:receipt:")
-            SchemaValidator().validate(entry["receipt"])
+            self._validator.validate(entry["receipt"])
             entries.append(entry)
             previous = entry["entry_digest"]
         return entries, previous
@@ -547,7 +550,7 @@ class AnchoredReceiptLog:
 
     def append(self, receipt):
         verify_record(receipt, "urn:cl:receipt:")
-        SchemaValidator().validate(receipt)
+        self._validator.validate(receipt)
         with self.lock():
             raw, entries, anchors = self._state()
             if receipt["operation"] == "bundle.consume" and receipt["outcome"] == "success":

@@ -4,6 +4,10 @@ import hmac
 import hashlib
 import json
 import multiprocessing
+import queue as queue_module
+import time
+from contextlib import contextmanager
+from unittest.mock import patch
 import tempfile
 import unittest
 from datetime import timedelta
@@ -16,7 +20,7 @@ from context_layer_independent.core import ProtocolError, digest, finalize_recor
 from context_layer_independent.profile import (
     AnchoredReceiptLog, MemoryReceiptStore, ProfileConsumer, canonical_json,
     evaluate_policy, issue_bundle, make_receipt, strict_loads, validate_proposal,
-    verify_record, b64,
+    verify_record, b64, SchemaValidator,
 )
 import test_core
 
@@ -232,38 +236,166 @@ class ProfileTests(unittest.TestCase):
         # Both old files are authentic. This MUST NOT be claimed as protected.
         self.assertEqual(len(self.log().export()), 1)
 
+    def test_profile_log_reuses_validator_without_skipping_receipt_checks(self):
+        receipts = [self.receipt(f"test.cache_{i}") for i in range(3)]
+        original_lock = AnchoredReceiptLog.lock
+        initialized_before_lock = []
+        @contextmanager
+        def observed_lock(store):
+            initialized_before_lock.append(hasattr(store, "_validator"))
+            with original_lock(store):
+                yield
+        with patch("context_layer_independent.profile.SchemaValidator", wraps=SchemaValidator) as factory:
+            with patch.object(AnchoredReceiptLog, "lock", observed_lock):
+                log = self.log()
+                for receipt in receipts:
+                    log.append(receipt)
+                self.assertEqual(log.export(), receipts)
+            self.assertEqual(factory.call_count, 1)
+            self.assertTrue(all(initialized_before_lock))
+            invalid = {key: value for key, value in receipts[0].items() if key not in ("id", "integrity")}
+            invalid["not_an_allowed_receipt_field"] = True
+            invalid = finalize_record(invalid, "urn:cl:receipt:")
+            self.assertCode("SCHEMA_INVALID", lambda: log.append(invalid))
+            self.assertEqual(log.export(), receipts)
+            self.assertEqual(factory.call_count, 1)
+
+    def test_profile_lock_timeout_keeps_owner_and_receipts_unchanged(self):
+        log = self.log()
+        before_anchor = log.anchor_path.read_bytes()
+        lock_path = Path(str(log.path) + ".lock")
+        lock_path.write_bytes(b"another-writer")
+        try:
+            with patch("context_layer_independent.profile.time.monotonic", side_effect=[0.0, 5.001]):
+                self.assertCode("RECEIPT_LOCK_TIMEOUT", log.check_available)
+            self.assertEqual(lock_path.read_bytes(), b"another-writer")
+            self.assertEqual(log.anchor_path.read_bytes(), before_anchor)
+            self.assertFalse(log.path.exists())
+        finally:
+            lock_path.unlink()
+
     def test_profile_multiple_processes_serialize_append(self):
         log = self.log()
-        jobs = [multiprocessing.Process(target=_append, args=(str(log.path),str(log.anchor_path),self.seed,self.receipt(f"test.op_{i}"))) for i in range(6)]
-        for job in jobs: job.start()
-        for job in jobs:
-            job.join(8); self.assertEqual(job.exitcode, 0)
-        self.assertEqual(len(log.export()), 6)
+        context = multiprocessing.get_context("spawn")
+        ready, start = context.Queue(), context.Event()
+        jobs = [context.Process(target=_append, args=(str(log.path), str(log.anchor_path), self.seed, self.receipt(f"test.op_{i}"), ready, start)) for i in range(6)]
+        _run_ready_workers(jobs, ready, start)
+        receipts = log.export()
+        self.assertEqual(len(receipts), 6)
+        self.assertEqual({receipt["operation"] for receipt in receipts}, {f"test.op_{i}" for i in range(6)})
 
     def test_profile_multiple_processes_single_consume(self):
         log = self.log(); envelope = json.dumps(self.envelope())
-        queue = multiprocessing.Queue()
-        jobs = [multiprocessing.Process(target=_consume, args=(str(log.path), str(log.anchor_path), self.seed, self.key_id, self.public, stamp(self.now), envelope, queue)) for _ in range(4)]
-        for job in jobs: job.start()
-        for job in jobs:
-            job.join(8); self.assertEqual(job.exitcode, 0)
-        results = [queue.get(timeout=1) for _ in jobs]
-        self.assertEqual(results.count("accepted"), 1)
-        self.assertEqual(results.count("BUNDLE_REPLAY"), 3)
+        context = multiprocessing.get_context("spawn")
+        results, ready, start = context.Queue(), context.Queue(), context.Event()
+        jobs = [context.Process(target=_consume, args=(str(log.path), str(log.anchor_path), self.seed, self.key_id, self.public, stamp(self.now), envelope, results, ready, start)) for _ in range(4)]
+        try:
+            _run_ready_workers(jobs, ready, start)
+            outcomes = [results.get(timeout=5) for _ in jobs]
+            self.assertEqual(outcomes.count("accepted"), 1)
+            self.assertEqual(outcomes.count("BUNDLE_REPLAY"), 3)
+        finally:
+            results.close()
+            results.join_thread()
+
+    def test_profile_process_harness_reaps_children_before_failure_escapes(self):
+        context = multiprocessing.get_context("spawn")
+        ready, start = context.Queue(), context.Event()
+        jobs = [context.Process(target=_ready_then_fail, args=(ready, start)),
+                context.Process(target=_ready_then_wait, args=(ready, start))]
+        with self.assertRaisesRegex(AssertionError, "worker"):
+            _run_ready_workers(jobs, ready, start, completion_timeout=1.0)
+        self.assertTrue(all(not job.is_alive() for job in jobs))
+        self.assertTrue(all(job.exitcode is not None for job in jobs))
 
 
-def _append(log_path, anchor_path, seed, receipt):
-    AnchoredReceiptLog(log_path, anchor_path, seed).append(receipt)
+def _run_ready_workers(jobs, ready, start, *, startup_timeout=30.0, completion_timeout=30.0):
+    """Bound import/startup separately and reap every child before test teardown.
 
-
-def _consume(log_path, anchor_path, seed, key_id, public, clock, envelope, queue):
+    These test-cohort budgets do not change the production five-second lock
+    acquisition limit. A readiness barrier makes append contention explicit on
+    every OS, including Linux, which would otherwise default to fork.
+    """
+    started = []
     try:
-        store = AnchoredReceiptLog(log_path, anchor_path, seed)
+        for job in jobs:
+            job.start()
+            started.append(job)
+        deadline = time.monotonic() + startup_timeout
+        ready_count = 0
+        while ready_count < len(jobs):
+            if any(job.exitcode is not None and job.exitcode != 0 for job in started):
+                raise AssertionError("worker failed during startup")
+            remaining = deadline - time.monotonic()
+            if remaining <= 0:
+                raise AssertionError("worker startup exceeded test-cohort budget")
+            try:
+                ready.get(timeout=min(0.1, remaining))
+                ready_count += 1
+            except queue_module.Empty:
+                pass
+        start.set()
+        deadline = time.monotonic() + completion_timeout
+        while any(job.is_alive() for job in started):
+            if any(job.exitcode is not None and job.exitcode != 0 for job in started):
+                raise AssertionError("worker failed during concurrent operation")
+            remaining = deadline - time.monotonic()
+            if remaining <= 0:
+                raise AssertionError("worker completion exceeded test-cohort budget")
+            for job in started:
+                job.join(timeout=min(0.05, max(0.0, deadline - time.monotonic())))
+        if any(job.exitcode != 0 for job in started):
+            raise AssertionError("worker exited unsuccessfully")
+    finally:
+        # A failed assertion must never remove files under a surviving child.
+        for job in started:
+            if job.is_alive():
+                job.terminate()
+        unreaped = []
+        for job in started:
+            job.join(timeout=5)
+            if job.is_alive():
+                job.kill()
+                job.join(timeout=5)
+            if job.is_alive():
+                unreaped.append(job.name)
+        ready.close()
+        ready.join_thread()
+        if unreaped:
+            raise AssertionError("worker could not be reaped: " + ", ".join(unreaped))
+
+
+def _ready(ready, start):
+    ready.put(True)
+    if not start.wait(35):
+        raise AssertionError("worker start barrier was not released")
+
+
+def _append(log_path, anchor_path, seed, receipt, ready, start):
+    store = AnchoredReceiptLog(log_path, anchor_path, seed)
+    _ready(ready, start)
+    store.append(receipt)
+
+
+def _consume(log_path, anchor_path, seed, key_id, public, clock, envelope, results, ready, start):
+    store = AnchoredReceiptLog(log_path, anchor_path, seed)
+    _ready(ready, start)
+    try:
         consumer = ProfileConsumer(recipient="urn:test:recipient", key_id=key_id, public_key_hex=public, clock=clock, receipts=store)
         consumer.open(envelope)
-        queue.put("accepted")
+        results.put("accepted")
     except ProtocolError as error:
-        queue.put(error.code)
+        results.put(error.code)
+
+
+def _ready_then_fail(ready, start):
+    _ready(ready, start)
+    raise SystemExit(7)
+
+
+def _ready_then_wait(ready, start):
+    _ready(ready, start)
+    time.sleep(60)
 
 
 if __name__ == "__main__": unittest.main()

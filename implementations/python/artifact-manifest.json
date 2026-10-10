@@ -17,8 +17,8 @@
     },
     {
       "path": "LINEAGE.md",
-      "sha256": "dae7a8674e82f771ee69e2da08ac53e8c421994b35f5b393d7b085579eb9d3b6",
-      "bytes": 4772
+      "sha256": "3821237b0c2aa28dc2f6b5dbd50b812f0fccf9846ad3d578fa450144de027589",
+      "bytes": 5540
     },
     {
       "path": "README.md",
@@ -47,8 +47,8 @@
     },
     {
       "path": "context_layer_independent/profile.py",
-      "sha256": "2309b3cf0ba29c6caf832aed6b9be952349ed6bc76f7e154b8386e7b80f1e21c",
-      "bytes": 30509
+      "sha256": "1d0055152d846dcd65b4894d3382f7ff7e1848c9fbcda5a2c1bc1e9ccdde112d",
+      "bytes": 30707
     },
     {
       "path": "dependency-provenance.json",
@@ -67,13 +67,33 @@
     },
     {
       "path": "reports/unit-tests.txt",
-      "sha256": "723496436bdb925ce53d63c7a09b25cc2032ca9a29e0fccf9afecac944175cc3",
-      "bytes": 10772
+      "sha256": "02c4ef2a014cd7aacc1b45dd286b73c3e8b0d0a77b19271f89a60a3580acd4d7",
+      "bytes": 11265
     },
     {
       "path": "reports/verification-summary.json",
-      "sha256": "790817347c3d96774fed9d2e2aca6e8493da2d21a2d372672218030d9223aeba",
-      "bytes": 860
+      "sha256": "7ba2e0b887349bb742081403d2ff31208712088ff896df6ba003531a7bc1cf04",
+      "bytes": 1208
+    },
+    {
+      "path": "reports/windows-lock-fix/REVIEW-NOTE.md",
+      "sha256": "60df083af84783ac2297a0689d23e1ce9b88615065637a2c89e3417324841ed3",
+      "bytes": 3535
+    },
+    {
+      "path": "reports/windows-lock-fix/baseline-timing.json",
+      "sha256": "cd230f1ca3114ce8cb365b0bf992134beb841d1ba581f3a4a568afc19f184093",
+      "bytes": 586
+    },
+    {
+      "path": "reports/windows-lock-fix/fixed-timing.json",
+      "sha256": "23ae0c566e2c020c6beaa66bc9e4eb693652b54dce3afa979be2fbe07d564716",
+      "bytes": 683
+    },
+    {
+      "path": "reports/windows-lock-fix/spawn-stress.txt",
+      "sha256": "8ffd75a9dc70da116a3077ab15f0da076afb26d6edf29038944f29935b58dd54",
+      "bytes": 5681
     },
     {
       "path": "requirements.lock",
@@ -227,8 +247,8 @@
     },
     {
       "path": "tests/test_profile.py",
-      "sha256": "afa786e114f7cc69cc932c59f15067c9b891783acf273139e9b8d68c7f706a96",
-      "bytes": 16041
+      "sha256": "54260479a97b6502184af52eecf0a0a0d76944106817ee6744b53c75dc8dfc68",
+      "bytes": 21941
     }
   ]
 }

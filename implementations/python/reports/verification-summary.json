@@ -1,8 +1,8 @@
 {
-  "date_utc": "2026-10-09",
+  "date_utc": "2026-10-10",
   "python": "3.12.14",
   "os_tested": "Linux",
-  "unique_unit_tests": 92,
+  "unique_unit_tests": 95,
   "unit_test_result": "pass",
   "standalone_public_assertions": 52,
   "standalone_public_result": "pass",
@@ -10,7 +10,7 @@
   "separate_contract_fixtures": 6,
   "source_files_verified": 23,
   "profile_sha256": "c0103260c0fcff84bb9f0565c7b2c03139e251f4a165c35300b8dca93d45094a",
-  "windows_execution": "not yet run; wheel availability verified; CI separate",
+  "windows_execution": "baseline PR19 head fc326de8f12f3e539e757144942d9d6d9b6c454a failed lock-contention test; corrected patch awaits reviewed hosted Windows CI",
   "conformance_claim": false,
   "hash_locked_fresh_dependency_environment": "passed on CPython 3.12 Linux",
   "review_regressions_fixed": [
@@ -20,5 +20,9 @@
     "LF-only signed JSONL framing",
     "pending denial-array formatting",
     "integer-valued JSON decimal fields with boolean exclusion"
-  ]
+  ],
+  "spawn_stress_repetitions": 10,
+  "runtime_lock_timeout_seconds": 5,
+  "runtime_lock_retry_seconds": 0.01,
+  "windows_lock_correction": "one immutable validator per store outside lock; spawn barrier and guaranteed child reaping; all integrity checks retained"
 }

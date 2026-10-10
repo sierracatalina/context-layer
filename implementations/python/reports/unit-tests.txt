@@ -73,6 +73,8 @@ test_profile_integer_valued_policy_numbers_accept_decimal_spelling (test_profile
 test_profile_json_parser_has_binary64_number_semantics (test_profile.ProfileTests.test_profile_json_parser_has_binary64_number_semantics) ... ok
 test_profile_jsonl_splits_only_lf_bytes_inside_valid_unicode_strings (test_profile.ProfileTests.test_profile_jsonl_splits_only_lf_bytes_inside_valid_unicode_strings) ... ok
 test_profile_legacy_hmac_requires_explicit_opt_in (test_profile.ProfileTests.test_profile_legacy_hmac_requires_explicit_opt_in) ... ok
+test_profile_lock_timeout_keeps_owner_and_receipts_unchanged (test_profile.ProfileTests.test_profile_lock_timeout_keeps_owner_and_receipts_unchanged) ... ok
+test_profile_log_reuses_validator_without_skipping_receipt_checks (test_profile.ProfileTests.test_profile_log_reuses_validator_without_skipping_receipt_checks) ... ok
 test_profile_malformed_signature_metadata_classified_before_crypto (test_profile.ProfileTests.test_profile_malformed_signature_metadata_classified_before_crypto) ... ok
 test_profile_missing_anchor_never_bootstraps_nonempty_log (test_profile.ProfileTests.test_profile_missing_anchor_never_bootstraps_nonempty_log) ... ok
 test_profile_missing_source_keeps_proposal_pending (test_profile.ProfileTests.test_profile_missing_source_keeps_proposal_pending) ... ok
@@ -81,6 +83,7 @@ test_profile_multiple_processes_single_consume (test_profile.ProfileTests.test_p
 test_profile_no_privileged_surface (test_profile.ProfileTests.test_profile_no_privileged_surface) ... ok
 test_profile_numeric_envelope_version_accepts_one_point_zero_not_boolean (test_profile.ProfileTests.test_profile_numeric_envelope_version_accepts_one_point_zero_not_boolean) ... ok
 test_profile_pending_denials_omit_ordinary_scope_and_preserve_groups (test_profile.ProfileTests.test_profile_pending_denials_omit_ordinary_scope_and_preserve_groups) ... ok
+test_profile_process_harness_reaps_children_before_failure_escapes (test_profile.ProfileTests.test_profile_process_harness_reaps_children_before_failure_escapes) ... ok
 test_profile_rehashed_forgery_rejected (test_profile.ProfileTests.test_profile_rehashed_forgery_rejected) ... ok
 test_profile_replay_survives_fresh_consumer (test_profile.ProfileTests.test_profile_replay_survives_fresh_consumer) ... ok
 test_profile_revocation_errors_fail_closed (test_profile.ProfileTests.test_profile_revocation_errors_fail_closed) ... ok
@@ -92,6 +95,6 @@ test_profile_unknown_authority_rejected (test_profile.ProfileTests.test_profile_
 test_profile_wrong_signature_rejected (test_profile.ProfileTests.test_profile_wrong_signature_rejected) ... ok
 
 ----------------------------------------------------------------------
-Ran 92 tests in 22.301s
+Ran 95 tests in 17.463s
 
 OK

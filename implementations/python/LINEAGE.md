@@ -83,3 +83,16 @@ SHA-256. `dependency-provenance.json` lists every wheel and target. Dependencies
 are installed from the normal package registry, not copied from another Context
 Layer implementation. Downloading Windows wheels is not evidence of Windows
 execution; OS-matrix execution belongs to separately reported CI.
+
+## Windows CI correction, UTC 2026-10-10
+
+The integration owner supplied a Windows lock-timeout trace from head
+`fc326de8f12f3e539e757144942d9d6d9b6c454a` and verified the two Python baseline
+file hashes. Only independent Python implementation/test files were inspected.
+Measurements identified repeated five-schema setup inside the receipt-log lock;
+one immutable validator per store now moves that setup outside the critical
+section without skipping receipt validation. The five-second runtime timeout and
+all integrity checks remain unchanged. Spawn-based tests now separate startup
+from contention and deterministically reap all children before fixture cleanup.
+The evidence and Windows-rerun limitation are recorded in
+`reports/windows-lock-fix/REVIEW-NOTE.md`.
