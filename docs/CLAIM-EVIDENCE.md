@@ -1,6 +1,6 @@
 # Claims and evidence
 
-Evidence review date: 2026-10-09. Baseline revision: `0a8d016c822f38e8fc857422e133d0699c42a21f`.
+Evidence review date: 2026-10-10. Baseline revision: `0a8d016c822f38e8fc857422e133d0699c42a21f`.
 
 This is a repository-wide inventory of material capability claims, not a security
 score, certification, exhaustive proof, or record of every normative obligation.
@@ -379,16 +379,19 @@ Proposed measurable goals, user stories, release gates and private-report routin
 
 An independently authored Python experiment passes its own tests and the shared local-profile transcript.
 
-- Status: **implemented-tested**. Reviewed 2026-10-09.
-- Scope: Python 3.12 experiment with 92 unit tests, 52 standalone public-vector assertions, 45 common-kit assertions and nine cross-implementation byte/parity/bidirectional checks.
-- Evidence revision: `af610f6e39ee0b8dbc3db49f098676bb1fd729c1`.
-- CI evidence: [recorded workflow run](https://github.com/sierracatalina/context-layer/actions/runs/38006012587). This is evidence for the pinned source revision, not the final integrated candidate or deployment.
-- [implementations/python/LINEAGE.md](https://github.com/sierracatalina/context-layer/blob/af610f6e39ee0b8dbc3db49f098676bb1fd729c1/implementations/python/LINEAGE.md).
-- [implementations/python/reports/verification-summary.json](https://github.com/sierracatalina/context-layer/blob/af610f6e39ee0b8dbc3db49f098676bb1fd729c1/implementations/python/reports/verification-summary.json).
-- [implementations/python/tests/test_profile.py](https://github.com/sierracatalina/context-layer/blob/af610f6e39ee0b8dbc3db49f098676bb1fd729c1/implementations/python/tests/test_profile.py): “test_profile_signature_verified_with_only_public_key”.
-- [implementations/python/tests/test_profile.py](https://github.com/sierracatalina/context-layer/blob/af610f6e39ee0b8dbc3db49f098676bb1fd729c1/implementations/python/tests/test_profile.py): “test_profile_bound_approval_transcript”.
-- [scripts/check-independent-conformance.mjs](https://github.com/sierracatalina/context-layer/blob/af610f6e39ee0b8dbc3db49f098676bb1fd729c1/scripts/check-independent-conformance.mjs).
-- Limits: The implementation author used a source-only packet plus separately authored profile prose. The profile author inspected JavaScript; the implementer did not. This is project-produced implementation-process independence, not outside maintenance, adoption or security audit. Python does not implement version-1 receipt-anchor migration, a production vault or every core role.
+- Status: **implemented-tested**. Reviewed 2026-10-10.
+- Scope: Python 3.12 experiment with 95 unit tests, 52 standalone public-vector assertions, 45 common-kit assertions and nine cross-implementation byte/parity/bidirectional checks.
+- Evidence revision: `901926973115a428db5ad8207f0ca1bff17174f4`.
+- [implementations/python/LINEAGE.md](https://github.com/sierracatalina/context-layer/blob/901926973115a428db5ad8207f0ca1bff17174f4/implementations/python/LINEAGE.md).
+- [implementations/python/reports/verification-summary.json](https://github.com/sierracatalina/context-layer/blob/901926973115a428db5ad8207f0ca1bff17174f4/implementations/python/reports/verification-summary.json).
+- [implementations/python/tests/test_profile.py](https://github.com/sierracatalina/context-layer/blob/901926973115a428db5ad8207f0ca1bff17174f4/implementations/python/tests/test_profile.py): “test_profile_signature_verified_with_only_public_key”.
+- [implementations/python/tests/test_profile.py](https://github.com/sierracatalina/context-layer/blob/901926973115a428db5ad8207f0ca1bff17174f4/implementations/python/tests/test_profile.py): “test_profile_bound_approval_transcript”.
+- [scripts/check-independent-conformance.mjs](https://github.com/sierracatalina/context-layer/blob/901926973115a428db5ad8207f0ca1bff17174f4/scripts/check-independent-conformance.mjs).
+- [implementations/python/tests/test_profile.py](https://github.com/sierracatalina/context-layer/blob/901926973115a428db5ad8207f0ca1bff17174f4/implementations/python/tests/test_profile.py): “test_profile_log_reuses_validator_without_skipping_receipt_checks”.
+- [implementations/python/tests/test_profile.py](https://github.com/sierracatalina/context-layer/blob/901926973115a428db5ad8207f0ca1bff17174f4/implementations/python/tests/test_profile.py): “test_profile_lock_timeout_keeps_owner_and_receipts_unchanged”.
+- [implementations/python/tests/test_profile.py](https://github.com/sierracatalina/context-layer/blob/901926973115a428db5ad8207f0ca1bff17174f4/implementations/python/tests/test_profile.py): “test_profile_process_harness_reaps_children_before_failure_escapes”.
+- [implementations/python/reports/windows-lock-fix/REVIEW-NOTE.md](https://github.com/sierracatalina/context-layer/blob/901926973115a428db5ad8207f0ca1bff17174f4/implementations/python/reports/windows-lock-fix/REVIEW-NOTE.md).
+- Limits: The implementation author used a source-only packet plus separately authored profile prose. The profile author inspected JavaScript; the implementer did not. This is project-produced implementation-process independence, not outside maintenance, adoption or security audit. Python does not implement version-1 receipt-anchor migration, a production vault or every core role. The previous combined Windows head hit receipt-lock contention; this source correction passed local Linux tests and independent review. Fresh exact-head hosted Windows/Ubuntu results are still required; prior source-branch CI is historical evidence only.
 - Next evidence: Run final combined hosted Linux/Windows checks and preserve exact source/clarification provenance; resolve recorded general-core ambiguities and obtain consenting outside implementation evidence separately.
 
 ## Keeping claims honest
