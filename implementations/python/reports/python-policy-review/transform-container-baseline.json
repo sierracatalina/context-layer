@@ -1,0 +1,83 @@
+[
+  {
+    "case": "null",
+    "result": "rejected",
+    "error_type": "AttributeError",
+    "code": "'NoneType' object has no attribute 'get'"
+  },
+  {
+    "case": "top-level-list",
+    "result": "rejected",
+    "error_type": "AttributeError",
+    "code": "'list' object has no attribute 'get'"
+  },
+  {
+    "case": "string",
+    "result": "rejected",
+    "error_type": "AttributeError",
+    "code": "'str' object has no attribute 'get'"
+  },
+  {
+    "case": "empty-dict-entry",
+    "result": "signed-envelope-returned",
+    "context": [
+      {
+        "claim": "Synthetic project is due next week.",
+        "predicate": "project.deadline",
+        "value": "2032-04-12",
+        "confidence": 0.9,
+        "provenance_handles": [
+          "prov_25faaceac4ffb4b12e4f62c6a21be8ad32bbb6a2f727011d1b3e4fda699cffa7"
+        ]
+      }
+    ]
+  },
+  {
+    "case": "nonempty-dict-entry",
+    "result": "signed-envelope-returned",
+    "context": [
+      {
+        "claim": "Synth",
+        "predicate": "project.deadline",
+        "value": "2032-",
+        "confidence": 0.9,
+        "provenance_handles": [
+          "prov_25faaceac4ffb4b12e4f62c6a21be8ad32bbb6a2f727011d1b3e4fda699cffa7"
+        ]
+      }
+    ]
+  },
+  {
+    "case": "string-entry",
+    "result": "rejected",
+    "error_type": "ProtocolError",
+    "code": "SCHEMA_INVALID"
+  },
+  {
+    "case": "null-entry",
+    "result": "rejected",
+    "error_type": "TypeError",
+    "code": "'NoneType' object is not iterable"
+  },
+  {
+    "case": "numeric-item",
+    "result": "rejected",
+    "error_type": "AttributeError",
+    "code": "'int' object has no attribute 'encode'"
+  },
+  {
+    "case": "unused-invalid-entry",
+    "result": "signed-envelope-returned",
+    "context": [
+      {
+        "claim": "Synthetic project is due next week.",
+        "predicate": "project.deadline",
+        "value": "2032-04-12",
+        "confidence": 0.9,
+        "provenance_handles": [
+          "prov_25faaceac4ffb4b12e4f62c6a21be8ad32bbb6a2f727011d1b3e4fda699cffa7"
+        ]
+      }
+    ]
+  }
+]

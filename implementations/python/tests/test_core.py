@@ -133,6 +133,39 @@ class CoreTests(unittest.TestCase):
         self.now += timedelta(minutes=6)
         self.assertCode("REQUEST_EXPIRED", self.decide)
 
+    def test_authority_rejects_malformed_authorizing_collections_at_construction(self):
+        fields = ("allowed_subjects", "allowed_requesters", "allowed_clients", "allowed_authentication_methods", "allowed_recipients", "allowed_onward_disclosure", "allowed_purpose_codes", "allowed_tasks", "allowed_selectors", "allowed_actions", "approval_required_selectors", "approval_required_actions")
+        for field in fields:
+            for invalid in ("test-channel", "deployment-bound-test-channel-process", {"test-channel": True}, None, True, 42, [""], [None], [42]):
+                with self.subTest(field=field, value=invalid):
+                    policy = copy.deepcopy(self.policy); policy[field] = invalid
+                    self.assertCode("INVALID_POLICY", lambda: Authority(policy, clock=lambda: self.now, receipts=self.store))
+        self.assertEqual(self.store.export(), [])
+
+    def test_authority_keeps_exact_empty_and_omitted_authorization_semantics(self):
+        for field, invalid_exact in (("allowed_authentication_methods", "deployment-bound-test-channel-process"), ("allowed_onward_disclosure", "not-forbidden")):
+            for value in ([invalid_exact], []):
+                with self.subTest(field=field, value=value):
+                    policy = copy.deepcopy(self.policy); policy[field] = value
+                    authority = Authority(policy, clock=lambda: self.now, receipts=self.store)
+                    self.assertEqual(authority.evaluate(self.request, authenticated_identity=self.request["requester"])["decision"], "deny")
+        policy = copy.deepcopy(self.policy)
+        del policy["allowed_authentication_methods"]
+        del policy["allowed_onward_disclosure"]
+        del policy["approval_required_selectors"]
+        del policy["approval_required_actions"]
+        authority = Authority(policy, clock=lambda: self.now, receipts=self.store)
+        self.assertEqual(authority.evaluate(self.request, authenticated_identity=self.request["requester"])["decision"], "allow")
+        del policy["allowed_subjects"]
+        authority = Authority(policy, clock=lambda: self.now, receipts=self.store)
+        self.assertEqual(authority.evaluate(self.request, authenticated_identity=self.request["requester"])["decision"], "deny")
+
+    def test_authority_rejects_malformed_transform_collections(self):
+        for invalid in (None, [], "redact:project.deadline", {"project.deadline": {}}, {"project.deadline": None}, {"project.deadline": "redact:project.deadline"}, {"project.deadline": [42]}, {"": []}, {42: []}):
+            with self.subTest(value=invalid):
+                policy = copy.deepcopy(self.policy); policy["transforms"] = invalid
+                self.assertCode("INVALID_POLICY", lambda: Authority(policy, clock=lambda: self.now, receipts=self.store))
+
     def test_request_cannot_authenticate_itself(self):
         self.assertEqual(self.authority.evaluate(self.request)["decision"], "deny")
 

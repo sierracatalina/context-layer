@@ -9,6 +9,9 @@ test_reject_nonfinite_and_unsupported_numbers (test_core.CanonicalTests.test_rej
 test_reject_surrogates (test_core.CanonicalTests.test_reject_surrogates) ... ok
 test_utf16_key_order (test_core.CanonicalTests.test_utf16_key_order) ... ok
 test_approval_authenticated_and_exactly_bound (test_core.CoreTests.test_approval_authenticated_and_exactly_bound) ... ok
+test_authority_keeps_exact_empty_and_omitted_authorization_semantics (test_core.CoreTests.test_authority_keeps_exact_empty_and_omitted_authorization_semantics) ... ok
+test_authority_rejects_malformed_authorizing_collections_at_construction (test_core.CoreTests.test_authority_rejects_malformed_authorizing_collections_at_construction) ... ok
+test_authority_rejects_malformed_transform_collections (test_core.CoreTests.test_authority_rejects_malformed_transform_collections) ... ok
 test_bundle_contains_only_granted_source (test_core.CoreTests.test_bundle_contains_only_granted_source) ... ok
 test_bundle_minimum_expiry (test_core.CoreTests.test_bundle_minimum_expiry) ... ok
 test_bundle_replay_rejected (test_core.CoreTests.test_bundle_replay_rejected) ... ok
@@ -58,10 +61,12 @@ test_verifier_failure_is_closed (test_core.CoreTests.test_verifier_failure_is_cl
 test_version_rejected (test_core.CoreTests.test_version_rejected) ... ok
 test_wrong_client_denied (test_core.CoreTests.test_wrong_client_denied) ... ok
 test_wrong_recipient_rejected (test_core.CoreTests.test_wrong_recipient_rejected) ... ok
+test_profile_all_authorizing_collection_shapes_match_core_boundary (test_profile.ProfileTests.test_profile_all_authorizing_collection_shapes_match_core_boundary) ... ok
 test_profile_anchor_detects_log_rollback (test_profile.ProfileTests.test_profile_anchor_detects_log_rollback) ... ok
 test_profile_anchor_required (test_profile.ProfileTests.test_profile_anchor_required) ... ok
 test_profile_anchor_signature_tamper_rejected (test_profile.ProfileTests.test_profile_anchor_signature_tamper_rejected) ... ok
 test_profile_authentication_forbidden_inside_bundle (test_profile.ProfileTests.test_profile_authentication_forbidden_inside_bundle) ... ok
+test_profile_blank_or_malformed_anchor_is_invalid_without_mutation (test_profile.ProfileTests.test_profile_blank_or_malformed_anchor_is_invalid_without_mutation) ... ok
 test_profile_bound_approval_transcript (test_profile.ProfileTests.test_profile_bound_approval_transcript) ... ok
 test_profile_coordinated_rollback_is_explicit_limitation (test_profile.ProfileTests.test_profile_coordinated_rollback_is_explicit_limitation) ... ok
 test_profile_crash_suffix_fails_closed (test_profile.ProfileTests.test_profile_crash_suffix_fails_closed) ... ok
@@ -76,12 +81,15 @@ test_profile_legacy_hmac_requires_explicit_opt_in (test_profile.ProfileTests.tes
 test_profile_lock_timeout_keeps_owner_and_receipts_unchanged (test_profile.ProfileTests.test_profile_lock_timeout_keeps_owner_and_receipts_unchanged) ... ok
 test_profile_log_reuses_validator_without_skipping_receipt_checks (test_profile.ProfileTests.test_profile_log_reuses_validator_without_skipping_receipt_checks) ... ok
 test_profile_malformed_signature_metadata_classified_before_crypto (test_profile.ProfileTests.test_profile_malformed_signature_metadata_classified_before_crypto) ... ok
+test_profile_malformed_transform_containers_never_reach_signing (test_profile.ProfileTests.test_profile_malformed_transform_containers_never_reach_signing) ... ok
 test_profile_missing_anchor_never_bootstraps_nonempty_log (test_profile.ProfileTests.test_profile_missing_anchor_never_bootstraps_nonempty_log) ... ok
 test_profile_missing_source_keeps_proposal_pending (test_profile.ProfileTests.test_profile_missing_source_keeps_proposal_pending) ... ok
 test_profile_multiple_processes_serialize_append (test_profile.ProfileTests.test_profile_multiple_processes_serialize_append) ... ok
 test_profile_multiple_processes_single_consume (test_profile.ProfileTests.test_profile_multiple_processes_single_consume) ... ok
 test_profile_no_privileged_surface (test_profile.ProfileTests.test_profile_no_privileged_surface) ... ok
 test_profile_numeric_envelope_version_accepts_one_point_zero_not_boolean (test_profile.ProfileTests.test_profile_numeric_envelope_version_accepts_one_point_zero_not_boolean) ... ok
+test_profile_optional_allowlists_keep_exact_match_and_absence_semantics (test_profile.ProfileTests.test_profile_optional_allowlists_keep_exact_match_and_absence_semantics) ... ok
+test_profile_optional_allowlists_reject_malformed_containers_and_entries (test_profile.ProfileTests.test_profile_optional_allowlists_reject_malformed_containers_and_entries) ... ok
 test_profile_pending_denials_omit_ordinary_scope_and_preserve_groups (test_profile.ProfileTests.test_profile_pending_denials_omit_ordinary_scope_and_preserve_groups) ... ok
 test_profile_process_harness_reaps_children_before_failure_escapes (test_profile.ProfileTests.test_profile_process_harness_reaps_children_before_failure_escapes) ... ok
 test_profile_rehashed_forgery_rejected (test_profile.ProfileTests.test_profile_rehashed_forgery_rejected) ... ok
@@ -90,11 +98,13 @@ test_profile_revocation_errors_fail_closed (test_profile.ProfileTests.test_profi
 test_profile_rewrite_same_semantics_detected_by_exact_byte_hash (test_profile.ProfileTests.test_profile_rewrite_same_semantics_detected_by_exact_byte_hash) ... ok
 test_profile_session_expiry_rechecked (test_profile.ProfileTests.test_profile_session_expiry_rechecked) ... ok
 test_profile_signature_verified_with_only_public_key (test_profile.ProfileTests.test_profile_signature_verified_with_only_public_key) ... ok
+test_profile_supported_transform_families_preserve_their_effects (test_profile.ProfileTests.test_profile_supported_transform_families_preserve_their_effects) ... ok
 test_profile_tampered_record_precedes_signature (test_profile.ProfileTests.test_profile_tampered_record_precedes_signature) ... ok
 test_profile_unknown_authority_rejected (test_profile.ProfileTests.test_profile_unknown_authority_rejected) ... ok
+test_profile_unsupported_transform_fails_before_bundle_signing (test_profile.ProfileTests.test_profile_unsupported_transform_fails_before_bundle_signing) ... ok
 test_profile_wrong_signature_rejected (test_profile.ProfileTests.test_profile_wrong_signature_rejected) ... ok
 
 ----------------------------------------------------------------------
-Ran 95 tests in 17.463s
+Ran 105 tests in 20.814s
 
 OK

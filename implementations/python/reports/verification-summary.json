@@ -2,7 +2,7 @@
   "date_utc": "2026-10-10",
   "python": "3.12.14",
   "os_tested": "Linux",
-  "unique_unit_tests": 95,
+  "unique_unit_tests": 105,
   "unit_test_result": "pass",
   "standalone_public_assertions": 52,
   "standalone_public_result": "pass",
@@ -10,7 +10,7 @@
   "separate_contract_fixtures": 6,
   "source_files_verified": 23,
   "profile_sha256": "c0103260c0fcff84bb9f0565c7b2c03139e251f4a165c35300b8dca93d45094a",
-  "windows_execution": "baseline PR19 head fc326de8f12f3e539e757144942d9d6d9b6c454a failed lock-contention test; corrected patch awaits reviewed hosted Windows CI",
+  "windows_execution": "prior corrected PR19 head76ada6e passed Windows/Ubuntu as reported by integration owner; this policy-review correction awaits new hosted CI",
   "conformance_claim": false,
   "hash_locked_fresh_dependency_environment": "passed on CPython 3.12 Linux",
   "review_regressions_fixed": [
@@ -24,5 +24,7 @@
   "spawn_stress_repetitions": 10,
   "runtime_lock_timeout_seconds": 5,
   "runtime_lock_retry_seconds": 0.01,
-  "windows_lock_correction": "one immutable validator per store outside lock; spawn barrier and guaranteed child reaping; all integrity checks retained"
+  "windows_lock_correction": "one immutable validator per store outside lock; spawn barrier and guaranteed child reaping; all integrity checks retained",
+  "policy_review_correction": "shared collection validation in Authority/profile; malformed transform-container rejection; existing unsupported-transform schema rejection preserved; anchor parse classification normalized",
+  "security_review": "prior head76ada6e review completed with no additional finding visible as reported by integration owner; this new patch is pending exact-patch independent review and new hosted CI"
 }

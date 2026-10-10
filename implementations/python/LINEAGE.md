@@ -96,3 +96,22 @@ all integrity checks remain unchanged. Spawn-based tests now separate startup
 from contention and deterministically reap all children before fixture cleanup.
 The evidence and Windows-rerun limitation are recorded in
 `reports/windows-lock-fix/REVIEW-NOTE.md`.
+
+## Python policy review correction, UTC 2026-10-10
+
+After the integration owner reported Ubuntu and Windows success at PR 19 head
+`76ada6e`, supplied automated-review descriptions were independently reproduced
+against Python only. String/dict authorization containers were confirmed across
+core and profile paths; present authorizing collections now require lists of
+nonempty exact strings. Malformed transform containers were separately reproduced
+and now reject before issuance. The originally alleged unsupported `encrypt`
+identifier disclosure did not reproduce: existing schema validation already
+prevented signing, and new regressions preserve that behavior. Blank anchors
+already rejected without mutation but now use the existing anchor-corruption
+error family consistently. The claimed IndexError did not reproduce. Full
+reproduction details, verified fixes, and pending hosted-review limits appear in
+`reports/python-policy-review/REVIEW-NOTE.md`. No reference code was inspected.
+
+The integration owner subsequently reported that the prior `76ada6e` Security
+Review completed with no additional finding visible. That earlier result does
+not cover this new correction; exact-patch review and new hosted CI are pending.

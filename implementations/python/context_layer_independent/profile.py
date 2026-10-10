@@ -26,6 +26,7 @@ from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey,
 from .core import (
     Authority, ProtocolError, SchemaValidator, VERSION, canonical_json, digest,
     finalize_record, parse_time, scan_forbidden, stamp, binary64_values,
+    validate_policy_collections,
 )
 
 GENESIS_DIGEST = "sha256:" + "0" * 64
@@ -183,6 +184,7 @@ def evaluate_policy(request, policy, clock, approval=None, approval_verifier="ab
 
 
 def check_policy(policy):
+    validate_policy_collections(policy)
     mandatory = ("allowed_subjects", "allowed_requesters", "allowed_clients", "allowed_recipients", "allowed_purpose_codes", "allowed_tasks", "allowed_selectors", "allowed_actions")
     for name in mandatory:
         values = policy.get(name)
@@ -514,8 +516,13 @@ class AnchoredReceiptLog:
             lines = [line.decode("utf-8") for line in anchor_raw.split(b"\n")[:-1]]
         except UnicodeError:
             raise ProtocolError("RECEIPT_ANCHOR_INVALID") from None
+        if not lines:
+            raise ProtocolError("RECEIPT_ANCHOR_INVALID")
         for index, line in enumerate(lines):
-            anchor = strict_loads(line)
+            try:
+                anchor = strict_loads(line)
+            except ProtocolError:
+                raise ProtocolError("RECEIPT_ANCHOR_INVALID") from None
             fields = {"anchor_version", "log_id", "anchor_sequence", "entries", "tail_digest", "byte_length", "file_digest", "previous_sig", "sig"}
             if not isinstance(anchor, dict) or set(anchor) != fields or anchor["anchor_version"] != 2 or anchor["log_id"] != self.log_id or anchor["anchor_sequence"] != index or anchor["entries"] != index or anchor["previous_sig"] != expected_previous:
                 raise ProtocolError("RECEIPT_ANCHOR_INVALID")

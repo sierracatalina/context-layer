@@ -48,6 +48,75 @@ class ProfileTests(unittest.TestCase):
     def receipt(self, operation="test.first"):
         return make_receipt(operation=operation, actor="urn:test:actor", subject_ref="urn:cl:alias:test", clock=stamp(self.now), summary="Independent synthetic receipt.")
 
+    def test_profile_optional_allowlists_reject_malformed_containers_and_entries(self):
+        malformed = ("test-channel", "deployment-bound-test-channel-process", "not-forbidden", "", None, True, 42, {"test-channel": True}, [""], [None], [42])
+        for field in ("allowed_authentication_methods", "allowed_onward_disclosure"):
+            for value in malformed:
+                with self.subTest(field=field, value=value):
+                    policy = copy.deepcopy(self.policy); policy[field] = value
+                    self.assertCode("INVALID_POLICY", lambda: evaluate_policy(self.request, policy, stamp(self.now), receipt_preflight="available"))
+                    with patch("context_layer_independent.profile.Ed25519PrivateKey") as signing_key:
+                        self.assertCode("INVALID_POLICY", lambda: issue_bundle(self.request, policy, self.claims, stamp(self.now), self.key_id, self.seed.hex()))
+                        signing_key.from_private_bytes.assert_not_called()
+
+    def test_profile_optional_allowlists_keep_exact_match_and_absence_semantics(self):
+        self.assertEqual(evaluate_policy(self.request, self.policy, stamp(self.now), receipt_preflight="available")["decision"], "allow")
+        for field, value in (("allowed_authentication_methods", ["deployment-bound-test-channel-process"]), ("allowed_onward_disclosure", ["not-forbidden"])):
+            with self.subTest(field=field):
+                policy = copy.deepcopy(self.policy); policy[field] = value
+                self.assertEqual(evaluate_policy(self.request, policy, stamp(self.now), receipt_preflight="available")["decision"], "deny")
+                policy[field] = []
+                self.assertEqual(evaluate_policy(self.request, policy, stamp(self.now), receipt_preflight="available")["decision"], "deny")
+        policy = copy.deepcopy(self.policy)
+        del policy["allowed_authentication_methods"]
+        del policy["allowed_onward_disclosure"]
+        self.assertEqual(evaluate_policy(self.request, policy, stamp(self.now), receipt_preflight="available")["decision"], "allow")
+
+    def test_profile_unsupported_transform_fails_before_bundle_signing(self):
+        for transform in ("encrypt:project.deadline", "unknown:project.deadline", "truncate:project.deadline:0"):
+            with self.subTest(transform=transform):
+                policy = copy.deepcopy(self.policy)
+                policy["transforms"] = {"project.deadline": [transform]}
+                self.assertCode("SCHEMA_INVALID", lambda: evaluate_policy(self.request, policy, stamp(self.now), receipt_preflight="available"))
+                with patch("context_layer_independent.profile.Ed25519PrivateKey") as signing_key:
+                    self.assertCode("SCHEMA_INVALID", lambda: issue_bundle(self.request, policy, self.claims, stamp(self.now), self.key_id, self.seed.hex()))
+                    signing_key.from_private_bytes.assert_not_called()
+
+    def test_profile_all_authorizing_collection_shapes_match_core_boundary(self):
+        fields = ("allowed_subjects", "allowed_requesters", "allowed_clients", "allowed_authentication_methods", "allowed_recipients", "allowed_onward_disclosure", "allowed_purpose_codes", "allowed_tasks", "allowed_selectors", "allowed_actions", "approval_required_selectors", "approval_required_actions")
+        for field in fields:
+            for invalid in ({"test-channel": True}, "test-channel", None, True, [42], [""]):
+                with self.subTest(field=field, value=invalid):
+                    policy = copy.deepcopy(self.policy); policy[field] = invalid
+                    self.assertCode("INVALID_POLICY", lambda: evaluate_policy(self.request, policy, stamp(self.now), receipt_preflight="available"))
+
+    def test_profile_malformed_transform_containers_never_reach_signing(self):
+        malformed = (None, [], "redact:project.deadline", {"project.deadline": {}}, {"project.deadline": {"truncate:project.deadline:5": False}}, {"project.deadline": None}, {"project.deadline": "compress:task-facts"}, {"project.deadline": [42]}, {"project.deadline": [None]}, {"project.deadline": [""]}, {"project.owner": {}}, {"": []}, {42: []})
+        for value in malformed:
+            with self.subTest(value=value):
+                policy = copy.deepcopy(self.policy); policy["transforms"] = value
+                with patch("context_layer_independent.profile.Ed25519PrivateKey") as signing_key:
+                    self.assertCode("INVALID_POLICY", lambda: issue_bundle(self.request, policy, self.claims, stamp(self.now), self.key_id, self.seed.hex()))
+                    signing_key.from_private_bytes.assert_not_called()
+
+    def test_profile_supported_transform_families_preserve_their_effects(self):
+        policy = copy.deepcopy(self.policy)
+        policy["transforms"] = {"project.deadline": ["truncate:project.deadline:10", "truncate:project.deadline:5"]}
+        bundle = issue_bundle(self.request, policy, self.claims, stamp(self.now), self.key_id, self.seed.hex())["bundle"]
+        self.assertEqual(bundle["context"][0]["claim"], self.claims[0]["claim"][:5])
+        self.assertEqual(bundle["context"][0]["value"], self.claims[0]["value"][:5])
+        policy["transforms"] = {"project.deadline": ["compress:task-facts"]}
+        claims = copy.deepcopy(self.claims); claims[0]["claim"] = "  Synthetic\t  context\n here  "
+        bundle = issue_bundle(self.request, policy, claims, stamp(self.now), self.key_id, self.seed.hex())["bundle"]
+        self.assertEqual(bundle["context"][0]["claim"], "Synthetic context here")
+        self.assertEqual(bundle["context"][0]["value"], claims[0]["value"])
+        request = copy.deepcopy(self.request); request["selectors"].append({"predicate": "project.owner"})
+        claims.append({"claim": "Approved owner", "predicate": "project.owner", "value": "synthetic owner", "confidence": 0.5, "provenance_refs": ["vault://independent/events/owner"]})
+        policy["transforms"] = {"project.deadline": ["redact:project.deadline"]}
+        bundle = issue_bundle(request, policy, claims, stamp(self.now), self.key_id, self.seed.hex())["bundle"]
+        self.assertEqual([claim["predicate"] for claim in bundle["context"]], ["project.owner"])
+        self.assertNotIn(self.claims[0]["value"], json.dumps(bundle))
+
     def test_profile_bound_approval_transcript(self):
         self.request["requested_actions"].append("email.send")
         candidate = self.approval()
@@ -212,6 +281,18 @@ class ProfileTests(unittest.TestCase):
     def test_profile_empty_existing_anchor_is_corrupt(self):
         log = self.log(); log.anchor_path.write_bytes(b"")
         self.assertCode("RECEIPT_ANCHOR_INVALID", self.log)
+
+    def test_profile_blank_or_malformed_anchor_is_invalid_without_mutation(self):
+        for index, raw in enumerate((b"\n", b"\n\n", b" \n", b"\t\r\n", b"{\n", b"null\n", b"[]\n")):
+            with self.subTest(raw=raw):
+                directory = Path(self.temp.name) / f"invalid-anchor-{index}"
+                directory.mkdir()
+                log_path, anchor_path = directory / "log.jsonl", directory / "anchor.jsonl"
+                anchor_path.write_bytes(raw)
+                self.assertCode("RECEIPT_ANCHOR_INVALID", lambda: AnchoredReceiptLog(log_path, anchor_path, self.seed))
+                self.assertEqual(anchor_path.read_bytes(), raw)
+                self.assertFalse(log_path.exists())
+                self.assertFalse(Path(str(log_path) + ".lock").exists())
 
     def test_profile_anchor_signature_tamper_rejected(self):
         log = self.log(); anchor = json.loads(log.anchor_path.read_text()); anchor["sig"] = "ed25519:" + "A" * 86

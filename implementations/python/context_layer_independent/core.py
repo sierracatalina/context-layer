@@ -303,6 +303,37 @@ def _receipt(operation: str, bundle: dict, actor: str, now: datetime, outcome: s
     }
 
 
+def validate_policy_collections(policy: dict) -> None:
+    """Reject ambiguous containers before membership can authorize anything.
+
+    Missing fields retain the caller's existing default/deny semantics. Present
+    authorization collections must be exact lists, never string/dict membership.
+    """
+    if not isinstance(policy, dict):
+        raise ProtocolError("INVALID_POLICY")
+    names = (
+        "allowed_subjects", "allowed_requesters", "allowed_clients",
+        "allowed_authentication_methods", "allowed_recipients",
+        "allowed_onward_disclosure", "allowed_purpose_codes", "allowed_tasks",
+        "allowed_selectors", "allowed_actions", "approval_required_selectors",
+        "approval_required_actions",
+    )
+    for name in names:
+        if name in policy:
+            values = policy[name]
+            if not isinstance(values, list) or any(not isinstance(value, str) or not value for value in values):
+                raise ProtocolError("INVALID_POLICY")
+    if "transforms" in policy:
+        transforms = policy["transforms"]
+        if not isinstance(transforms, dict):
+            raise ProtocolError("INVALID_POLICY")
+        for predicate, identifiers in transforms.items():
+            if not isinstance(predicate, str) or not predicate or not isinstance(identifiers, list):
+                raise ProtocolError("INVALID_POLICY")
+            if any(not isinstance(identifier, str) or not identifier for identifier in identifiers):
+                raise ProtocolError("INVALID_POLICY")
+
+
 class Authority:
     """Trusted authority side; never pass this object to an untrusted consumer.
 
@@ -313,6 +344,7 @@ class Authority:
     """
 
     def __init__(self, policy: dict, *, clock: Callable[[], datetime], receipts: ReceiptStore | None = None, validator: SchemaValidator | None = None):
+        validate_policy_collections(policy)
         self._policy = copy.deepcopy(policy)
         self._clock = clock
         self._receipts = receipts
