@@ -1,0 +1,16 @@
+{
+  "files": [
+    {
+      "path": "source-only/adapter-contract.md",
+      "sha256": "480b186966bba8f2c87b287f946bf0c15dc2aa7da8a15586c6477870b65a01a1",
+      "bytes": 5012,
+      "status": "agent-reviewed proposed prose, not adopted standard"
+    },
+    {
+      "path": "source-only/profiles/local-core-0.2-draft.1.md",
+      "sha256": "c0103260c0fcff84bb9f0565c7b2c03139e251f4a165c35300b8dca93d45094a",
+      "bytes": 24572,
+      "status": "agent-reviewed proposed prose, not adopted standard"
+    }
+  ]
+}

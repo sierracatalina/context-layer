@@ -1,0 +1,21 @@
+{
+  "scenario": "six new log instances and six serialized append transactions",
+  "schema_validator_initializations": 57,
+  "lock_hold_seconds": [
+    0.0008956880010373425,
+    0.0544026869974914,
+    0.05160442700071144,
+    0.14632080099909217,
+    0.09627976000047056,
+    0.23113855399788008,
+    0.13905170100042596,
+    0.3437023410006077,
+    0.19037618400034262,
+    0.42905894499926944,
+    0.23447903800115455,
+    0.5240673359985522
+  ],
+  "total_lock_hold_seconds": 2.4413774619970354,
+  "elapsed_seconds": 2.741105905999575,
+  "os": "Linux; not Windows CI reproduction"
+}

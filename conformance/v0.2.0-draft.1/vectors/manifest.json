@@ -1,0 +1,47 @@
+{
+  "format": "context-layer-test-vector-manifest/1",
+  "spec_version": "context-layer/0.2-draft",
+  "classification": "synthetic-test-only",
+  "runner": "tests/test-vectors.test.mjs",
+  "files": [
+    {
+      "path": "canonicalization.json",
+      "sha256": "1f0899a693e51985c1affe5a456b90f7224fc875a1d615f372df8a3b057a9314",
+      "coverage": [
+        "canonicalization",
+        "digests"
+      ]
+    },
+    {
+      "path": "policy-cases.json",
+      "sha256": "45d4ce69f415eb7d48a937d042ae4f1d72cd1221f0b7b34cb946ae782cc05528",
+      "coverage": [
+        "purpose_code",
+        "four_policy_states",
+        "approval_authentication",
+        "approval_expiry"
+      ]
+    },
+    {
+      "path": "exchange-security.json",
+      "sha256": "b5a023c98947e07f8637486c00a64b877b4a43548556d60b20ee73724d5a964d",
+      "coverage": [
+        "minimum_bundle_expiry",
+        "ed25519_tamper_rejection",
+        "ed25519_forgery_rejection",
+        "raw_vault_isolation",
+        "legacy_hmac_opt_in"
+      ]
+    },
+    {
+      "path": "receipt-memory-isolation.json",
+      "sha256": "40397701a45f284b9911d987916bc65a25c562ca726ead3117467ece505d47d9",
+      "coverage": [
+        "receipt_anchor_required",
+        "receipt_rollback_rejection",
+        "pending_memory_proposal",
+        "direct_write_rejection"
+      ]
+    }
+  ]
+}

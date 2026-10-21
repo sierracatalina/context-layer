@@ -1,0 +1,103 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sierracatalina.com/context-layer/schemas/0.3.0-draft.1/claim-annotation.schema.json",
+  "title": "claim annotation",
+  "description": "Companion envelope for evidence basis, visibility, memory category, and attribution. Not a patch to closed 0.2 Lite objects. Proposed native fields for context_claim in 0.3.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "spec_version",
+    "type",
+    "id",
+    "created_at",
+    "issuer",
+    "claim_ref",
+    "evidence_basis",
+    "visibility",
+    "category",
+    "attribution"
+  ],
+  "properties": {
+    "spec_version": {
+      "const": "context-layer/0.3-draft"
+    },
+    "type": {
+      "const": "claim_annotation"
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^urn:cl:annotation:[A-Za-z0-9._~-]+$"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "issuer": {
+      "$ref": "#/$defs/issuer"
+    },
+    "claim_ref": {
+      "type": "string",
+      "pattern": "^urn:cl:claim:[A-Za-z0-9._~-]+$"
+    },
+    "evidence_basis": {
+      "enum": [
+        "direct_user_save",
+        "stated_by_user",
+        "derived",
+        "inferred"
+      ]
+    },
+    "visibility": {
+      "enum": [
+        "vault",
+        "public_profile"
+      ]
+    },
+    "category": {
+      "$ref": "#/$defs/memory_category"
+    },
+    "attribution": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "via_principal",
+        "captured_at"
+      ],
+      "properties": {
+        "via_principal": {
+          "type": "string",
+          "minLength": 3,
+          "maxLength": 512
+        },
+        "captured_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    }
+  },
+  "$defs": {
+    "issuer": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 3,
+          "maxLength": 512
+        }
+      }
+    },
+    "memory_category": {
+      "enum": [
+        "preference",
+        "fact",
+        "project",
+        "instruction"
+      ]
+    }
+  }
+}

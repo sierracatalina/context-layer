@@ -1,0 +1,49 @@
+{
+  "vector_set": "context-layer-canonicalization/0.2",
+  "classification": "synthetic-test-only",
+  "cases": [
+    {
+      "id": "nested-key-order",
+      "value": {
+        "z": 1,
+        "a": {
+          "y": [
+            true,
+            null,
+            "synthetic-test-only"
+          ],
+          "b": 2
+        }
+      },
+      "expected_canonical_json": "{\"a\":{\"b\":2,\"y\":[true,null,\"synthetic-test-only\"]},\"z\":1}",
+      "expected_digest": "sha256:3c0ed4c1b2d9481bcec977543f4831d33992bc754dccceeb56a322f3a048f341"
+    },
+    {
+      "id": "unicode-number-array",
+      "value": {
+        "unicode": "café",
+        "number": 42.5,
+        "array": [
+          3,
+          2,
+          1
+        ]
+      },
+      "expected_canonical_json": "{\"array\":[3,2,1],\"number\":42.5,\"unicode\":\"café\"}",
+      "expected_digest": "sha256:14a88ab9140f4cdaeb1fa0c73df8a5168f6ebf843db986115560d70e3a877512"
+    }
+  ],
+  "record_case": {
+    "id": "canonical-record-finalization",
+    "id_prefix": "urn:cl:test-vector:",
+    "unsigned": {
+      "spec_version": "context-layer/0.2-draft",
+      "type": "test_vector",
+      "created_at": "2030-01-01T12:00:00.000Z",
+      "classification": "synthetic-test-only"
+    },
+    "expected_canonical_json": "{\"classification\":\"synthetic-test-only\",\"created_at\":\"2030-01-01T12:00:00.000Z\",\"spec_version\":\"context-layer/0.2-draft\",\"type\":\"test_vector\"}",
+    "expected_id": "urn:cl:test-vector:eb0ed6325bbc9d869e7559e6d9900d9c9e3a3b067d82e45c0bb29612adc62f74",
+    "expected_digest": "sha256:eb0ed6325bbc9d869e7559e6d9900d9c9e3a3b067d82e45c0bb29612adc62f74"
+  }
+}

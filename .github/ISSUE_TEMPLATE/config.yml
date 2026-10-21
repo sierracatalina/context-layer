@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Report a security vulnerability privately
+    url: https://github.com/sierracatalina/context-layer/security/advisories/new
+    about: Do not open a public issue or include secrets. If the private form is unavailable, wait for a private reporting channel.
+  - name: Security reporting policy and synthetic report template
+    url: https://github.com/sierracatalina/context-layer/blob/main/SECURITY.md
+    about: Read the reporting instructions and scope before sharing vulnerability details. No fallback email is advertised.

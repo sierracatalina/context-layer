@@ -17,11 +17,11 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&amp;family=DM+Mono:wght@400;500&amp;family=Lora:wght@400;500&amp;display=swap" rel="stylesheet">
   <link rel="manifest" href="/context-layer/demo/manifest.webmanifest">
-  <link rel="stylesheet" href="/context-layer/assets/context-layer-native.css?v=20260814a">
+  <link rel="stylesheet" href="/context-layer/assets/context-layer-native.css?v=20261009a">
   <link rel="stylesheet" href="/context-layer/demo/assets/context-layer.css">
   <link rel="stylesheet" href="/context-layer/demo/assets/context-layer-responsive.css">
   <script type="module" src="/context-layer/demo/assets/context-layer.js"></script>
-  <script src="/context-layer/assets/context-layer-native.js?v=20260821a" defer></script>
+  <script src="/context-layer/assets/context-layer-native.js?v=20261009a" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#main">skip to content</a>
@@ -29,8 +29,9 @@
   <header class="context-header">
     <div class="context-header__inner">
       <a class="context-wordmark" href="https://sierracatalina.com/">sierra catalina</a>
-      <nav aria-label="context layer navigation">
-        <a href="/context-layer">context index</a>
+      <button class="context-menu-toggle" type="button" aria-expanded="false" aria-controls="context-navigation" hidden>browse <span aria-hidden="true">+</span></button>
+<nav id="context-navigation" aria-label="context layer navigation">
+        <a href="/context-layer">overview</a>
         <a href="/signal/the-context-layer">essay</a>
         <a href="/context-layer/architecture">architecture</a>
         <a href="/context-layer/demo" aria-current="page">demo</a>
@@ -98,6 +99,23 @@
             <div><h3>status</h3><p>this is a working proposal &amp; synthetic demonstrator. it is not an adopted standard, production vault, or security certification.</p></div>
           </li>
         </ol>
+      </div>
+    </section>
+
+    <section class="section section--ruled" id="mcp-walkthrough" aria-labelledby="mcp-title">
+      <div class="shell">
+        <div class="section-heading">
+          <p class="eyebrow">recorded implementation evidence / synthetic data</p>
+          <h2 id="mcp-title">a real agent, a smaller disclosure.</h2>
+        </div>
+        <p>two independent model agents prepared the same fictional meeting agenda through an official MCP client bridge over stdio. the broad tool returned six fields; the scoped tool returned three task-relevant fields. both agents produced an agenda covering pilot scope, an owner &amp; a Friday check-in.</p>
+        <video controls preload="metadata" playsinline width="1280" height="720" style="display:block;width:100%;height:auto;border-radius:1rem;margin:1.5rem 0" poster="/context-layer/demo/media/mcp-agent-walkthrough.png" aria-label="recorded MCP client walkthrough with synthetic meeting data">
+          <source src="/context-layer/demo/media/mcp-agent-walkthrough.mp4" type="video/mp4">
+          <track kind="captions" src="/context-layer/demo/media/mcp-agent-walkthrough.vtt" srclang="en" label="english">
+          <p><a href="/context-layer/demo/media/mcp-agent-walkthrough.mp4">download the recorded walkthrough</a></p>
+        </video>
+        <p>the recording combines real command output with a labeled replay of captured agent results. the route is agent → shell bridge → MCP client → server. direct native-host integration, provider-side deletion &amp; production security remain unclaimed.</p>
+        <p><a href="https://github.com/sierracatalina/context-layer/tree/main/examples/mcp-agent-demo">run the MCP example</a> · <a href="https://github.com/sierracatalina/context-layer/tree/main/docs/demo">inspect the traces, agendas &amp; timing scope</a></p>
       </div>
     </section>
 
@@ -258,7 +276,7 @@
         </div>
         <div class="status-note">
           <span class="status-tag status-tag--proposal">working proposal</span>
-          <p>this site demonstrates intended behavior with fictional data. it does not claim standards adoption, production security, live vault access, or completed interoperability.</p>
+          <p>the browser simulation shows intended behavior. the recorded MCP example separately verifies one synthetic, local agent-through-bridge flow. neither establishes standards adoption, production security, live vault access, or general interoperability.</p>
         </div>
       </div>
     </section>

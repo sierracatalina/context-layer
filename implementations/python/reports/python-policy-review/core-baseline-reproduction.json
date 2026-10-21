@@ -1,0 +1,84 @@
+[
+  {
+    "field": "allowed_subjects",
+    "malformed_type": "dict",
+    "result": "allow"
+  },
+  {
+    "field": "allowed_requesters",
+    "malformed_type": "dict",
+    "result": "allow"
+  },
+  {
+    "field": "allowed_clients",
+    "malformed_type": "dict",
+    "result": "allow"
+  },
+  {
+    "field": "allowed_authentication_methods",
+    "malformed_type": "dict",
+    "result": "allow"
+  },
+  {
+    "field": "allowed_recipients",
+    "malformed_type": "dict",
+    "result": "allow"
+  },
+  {
+    "field": "allowed_onward_disclosure",
+    "malformed_type": "dict",
+    "result": "allow"
+  },
+  {
+    "field": "allowed_purpose_codes",
+    "malformed_type": "dict",
+    "result": "allow"
+  },
+  {
+    "field": "allowed_tasks",
+    "malformed_type": "dict",
+    "result": "allow"
+  },
+  {
+    "field": "allowed_selectors",
+    "malformed_type": "dict",
+    "result": "allow"
+  },
+  {
+    "field": "allowed_actions",
+    "malformed_type": "dict",
+    "result": "allow"
+  },
+  {
+    "field": "approval_required_selectors",
+    "malformed_type": "dict",
+    "result": "allow"
+  },
+  {
+    "field": "approval_required_actions",
+    "malformed_type": "dict",
+    "result": "allow"
+  },
+  {
+    "field": "allowed_authentication_methods",
+    "malformed_value": "deployment-bound-test-channel",
+    "result": "allow"
+  },
+  {
+    "field": "allowed_onward_disclosure",
+    "malformed_value": "not-forbidden",
+    "result": "allow"
+  },
+  {
+    "field": "allowed_authentication_methods",
+    "malformed_value": null,
+    "error_type": "TypeError",
+    "code": "argument of type 'NoneType' is not iterable"
+  },
+  {
+    "field": "allowed_onward_disclosure",
+    "malformed_value": true,
+    "error_type": "TypeError",
+    "code": "argument of type 'bool' is not iterable"
+  }
+]

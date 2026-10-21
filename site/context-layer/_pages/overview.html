@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en" data-sierra-theme="dark"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="/icon.svg" type="image/svg+xml">
+<meta name="theme-color" content="#0a0a0a">
+<meta name="description" content="A short guide to sharing useful context with an app or AI agent, with clear rules &amp; user control.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Context Layer overview">
+<meta property="og:description" content="A short guide to sharing useful context with an app or AI agent, with clear rules &amp; user control.">
+<meta property="og:image" content="https://sierracatalina.com/context-layer/og.png">
+<meta property="og:image:width" content="1731">
+<meta property="og:image:height" content="909">
+<meta property="og:image:alt" content="the context layer">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://sierracatalina.com/context-layer/og.png">
+<link rel="canonical" href="https://sierracatalina.com/context-layer/overview">
+<title>Context Layer overview | sierra catalina</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&amp;family=DM+Mono:wght@400;500&amp;family=Lora:wght@400;500&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/context-layer/assets/context-layer-native.css?v=20261009a">
+<script src="/context-layer/assets/context-layer-native.js?v=20261009a" defer></script>
+</head><body>
+<a class="skip-link" href="#main">skip to content</a>
+<header class="context-header"><div class="context-header__inner">
+<a class="context-wordmark" href="https://sierracatalina.com/">sierra catalina</a>
+<button class="context-menu-toggle" type="button" aria-expanded="false" aria-controls="context-navigation" hidden>browse <span aria-hidden="true">+</span></button>
+<nav id="context-navigation" aria-label="context layer navigation">
+<a href="/context-layer">overview</a>
+<a href="/signal/the-context-layer">essay</a>
+<a href="/context-layer/architecture">architecture</a>
+<a href="/context-layer/demo">demo</a>
+<a href="/context-layer/specification">specification</a>
+<a href="/context-layer/implementation">implementation</a>
+<a href="/context-layer/code">code</a>
+<button type="button" data-context-theme>light</button>
+</nav>
+</div></header>
+<main id="main" class="context-main document-main">
+<header class="document-hero shell"><p class="context-meta">a short introduction / v0.2 draft</p><h1>Context Layer overview</h1></header>
+<div class="document-layout shell"><aside class="document-rail"><nav class="document-toc" aria-label="Overview sections"><ol><li><a href="#what-it-is">What it is</a></li><li><a href="#the-problem">The problem</a></li><li><a href="#how-it-works">How it works</a></li><li><a href="#what-it-is-not">What it is not</a></li><li><a href="#status">Status</a></li></ol></nav></aside>
+<article class="document-body" data-overview-content>
+<h2 id="what-it-is">What it is</h2>
+<p>Context Layer is a draft set of rules for sharing useful context with an app or AI agent. Context means facts, notes or preferences that help with a task. The aim is to share only what that task needs, while the user controls the purpose, who receives it &amp; how long it may be used. The draft describes how to ask, check permission, share a small packet of context &amp; keep a record.</p>
+<h2 id="the-problem">The problem</h2>
+<p>When you switch tools, you often have to explain yourself again. Giving each tool your full history saves effort but may expose far more than it needs. A meeting-prep agent might need a project's due date, for example, without needing your private journal.</p>
+<h2 id="how-it-works">How it works</h2>
+<ol><li>Keep source notes &amp; facts in a vault, a store governed by the user. Keep links to where each fact came from.</li><li>An app asks for named facts for one task. It states the purpose, who will use them &amp; which actions it wants to take.</li><li>Rules check the request. They can allow it, share less, ask the user to approve it or deny it. A denied request or one waiting for approval gets no context.</li><li>The app gets an approved bundle, a small packet for the named recipient. In the core Lite profile, it expires &amp; can be opened only once. This can allow more than one action, but only those listed. Required receipts record the exchange without copying private source text.</li><li>If the app wants to save new memory, it submits a proposal. That change is checked inside the vault's boundary before it can become stored context.</li></ol>
+<figure aria-label="Context exchange flow"><pre>Vault
+  ↓
+Request
+  ↓
+Rules check
+  ↓
+Approved bundle
+  ↓
+Action + receipt
+  ↓
+Proposed memory</pre><figcaption>Context leaves the vault only after a rules check allows it.</figcaption></figure>
+<h2 id="what-it-is-not">What it is not</h2>
+<p>This is not a new AI model, a finished app or a way to give agents free access to your files. It does not replace sign-in, encryption or the rules of a source service. Access to context alone does not authorize real-world actions. When <a href="https://github.com/sierracatalina/PCP/blob/cc84982fb57c9a8f4d3a90a023fde10747a2662b/README.md">PCP</a> [Purpose-bound Capability Protocol] is used, it uses a separate user- or principal-signed grant for acting authority. It cannot make a false fact true, ensure an AI gives a correct answer or pull back data after a recipient has seen it.</p>
+<h2 id="status">Status</h2>
+<p>Version 0.2 is an experimental draft, not an adopted standard or a security certification. This repository has a working local proof for one user, with an encrypted vault, policy checks, signed bundles, receipts, a files adapter &amp; a local agent. Tests &amp; demos use made-up data. Production key management, a hardened shared service &amp; live use across vendors remain unproven.</p>
+<p>The separate 0.3 CL-Pass draft adds proposed rules for standing permission. It contains specifications, schemas &amp; examples, not a live service.</p>
+<p>Read the <a href="/context-layer/source/glossary.md">glossary</a>, inspect the <a href="/context-layer/specification">specification</a> or try the <a href="https://sierracatalina.com/context-layer/demo">synthetic demo</a>.</p>
+</article></div>
+</main>
+<footer class="context-footer"><div class="shell">
+<p><strong>context layer</strong> / public working proposal</p>
+<p><a href="https://sierracatalina.com/">sierra catalina</a> / 2026</p>
+</div></footer>
+</body></html>

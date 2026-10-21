@@ -51,6 +51,8 @@ The Context Layer does not solve these problems by building a bigger shared data
 
 ## A tour of the protocol
 
+**Proposed architecture.** This tour describes the intended system, including planned extraction, semantic redaction, discovery and review interfaces. It is not a list of shipped capabilities. The experimental local proof implements only the narrower behavior linked in the [claim ledger](https://github.com/sierracatalina/context-layer/blob/main/docs/CLAIM-EVIDENCE.md).
+
 The architecture has seven stages. They form a continuous path, but each stage has a distinct responsibility.
 
 ### 1. Capture source events
@@ -196,6 +198,8 @@ Open social, messaging, storage, and agent protocols move information across ind
 Private matching can support opportunities, collaborators, services, or communities without publishing a complete personal graph. The discovery profile is aimed at exactly this class of use case.
 
 ## What it can work with
+
+**Proposed integrations; untested unless explicitly evidenced.** The mappings below do not establish implemented adapters, outside adoption or official endorsement by the named protocols.
 
 The Context Layer is designed to sit above existing protocols, not compete with them.
 

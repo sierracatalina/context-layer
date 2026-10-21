@@ -14,7 +14,7 @@ import {
 const root = resolve(import.meta.dirname, "..");
 
 export async function verifyContextLayerEditorial() {
-  assert.equal(contextLayerPageNames.length, 7, "the editorial contract must cover all seven public pages");
+  assert.equal(contextLayerPageNames.length, 7, "the editorial contract must cover all seven lowercase public pages");
 
   const requiredFiles = [
     "docs/context-layer-ui-copy-boundary.md",

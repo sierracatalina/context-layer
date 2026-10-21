@@ -1,0 +1,103 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sierracatalina.com/context-layer/primitives/client-pairing.schema.json",
+  "title": "client pairing",
+  "description": "Exact client_instance admission for a subject. Pairing is not a context_pass and not a context grant.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "spec_version",
+    "type",
+    "id",
+    "created_at",
+    "issuer",
+    "subject_ref",
+    "client_instance",
+    "display_name",
+    "paired_at",
+    "status"
+  ],
+  "properties": {
+    "spec_version": {
+      "const": "context-layer/0.3-draft"
+    },
+    "type": {
+      "const": "client_pairing"
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^urn:cl:pairing:[A-Za-z0-9._~-]+$"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "issuer": {
+      "$ref": "#/$defs/issuer"
+    },
+    "subject_ref": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 512
+    },
+    "client_instance": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 512
+    },
+    "display_name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 120
+    },
+    "paired_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "status": {
+      "enum": [
+        "paired",
+        "revoked"
+      ]
+    },
+    "revoked_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "const": "revoked"
+          }
+        },
+        "required": [
+          "status"
+        ]
+      },
+      "then": {
+        "required": [
+          "revoked_at"
+        ]
+      }
+    }
+  ],
+  "$defs": {
+    "issuer": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 3,
+          "maxLength": 512
+        }
+      }
+    }
+  }
+}

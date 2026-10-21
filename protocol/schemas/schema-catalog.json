@@ -1,0 +1,84 @@
+{
+  "format": "context-layer-schema-catalog/1",
+  "status": "proposed-unreleased",
+  "publication_status": "prepared-not-deployment-verified",
+  "schemas": [
+    {
+      "snapshot_version": "0.2.0-draft.1",
+      "path": "0.2.0-draft.1/context-request.schema.json",
+      "id": "https://sierracatalina.com/context-layer/schemas/0.2.0-draft.1/context-request.schema.json",
+      "sha256": "0592799c09dd23d3c866b0a120f3ad69e37f88e2d46e32ae0bc92ae7ebdd6b24",
+      "legacy_alias_id": "https://sierracatalina.com/context-layer/implementation/context-request.schema.json"
+    },
+    {
+      "snapshot_version": "0.2.0-draft.1",
+      "path": "0.2.0-draft.1/memory-update-proposal.schema.json",
+      "id": "https://sierracatalina.com/context-layer/schemas/0.2.0-draft.1/memory-update-proposal.schema.json",
+      "sha256": "04b752e49ae8217900b35ef4900f34419ca88069581a2547fb60cd1d87a689cf",
+      "legacy_alias_id": "https://sierracatalina.com/context-layer/implementation/memory-update-proposal.schema.json"
+    },
+    {
+      "snapshot_version": "0.2.0-draft.1",
+      "path": "0.2.0-draft.1/policy-decision.schema.json",
+      "id": "https://sierracatalina.com/context-layer/schemas/0.2.0-draft.1/policy-decision.schema.json",
+      "sha256": "4a3cb895cd4da9ddc695dc99e0e7ec9561a0cab3557969978bf3ecb13adb767a",
+      "legacy_alias_id": "https://sierracatalina.com/context-layer/implementation/policy-decision.schema.json"
+    },
+    {
+      "snapshot_version": "0.2.0-draft.1",
+      "path": "0.2.0-draft.1/receipt.schema.json",
+      "id": "https://sierracatalina.com/context-layer/schemas/0.2.0-draft.1/receipt.schema.json",
+      "sha256": "3a76f370de8c9c21bba04dd5963aa630aecf483de644d9f8819978b598f8595e",
+      "legacy_alias_id": "https://sierracatalina.com/context-layer/implementation/receipt.schema.json"
+    },
+    {
+      "snapshot_version": "0.2.0-draft.1",
+      "path": "0.2.0-draft.1/scoped-context-bundle.schema.json",
+      "id": "https://sierracatalina.com/context-layer/schemas/0.2.0-draft.1/scoped-context-bundle.schema.json",
+      "sha256": "7e1a0f8034001ebc242883919f9ad5ad671dabb909426e76795276f0b0e93aba",
+      "legacy_alias_id": "https://sierracatalina.com/context-layer/implementation/scoped-context-bundle.schema.json"
+    },
+    {
+      "snapshot_version": "0.3.0-draft.1",
+      "path": "0.3.0-draft.1/approval-handle.schema.json",
+      "id": "https://sierracatalina.com/context-layer/schemas/0.3.0-draft.1/approval-handle.schema.json",
+      "sha256": "1da5be6513999c37acac9fd6a51da81c4c2a6c3b2b6667d9a6a55d39969bbb46",
+      "legacy_alias_id": "https://sierracatalina.com/context-layer/primitives/approval-handle.schema.json"
+    },
+    {
+      "snapshot_version": "0.3.0-draft.1",
+      "path": "0.3.0-draft.1/claim-annotation.schema.json",
+      "id": "https://sierracatalina.com/context-layer/schemas/0.3.0-draft.1/claim-annotation.schema.json",
+      "sha256": "88485c33572c4cc3066dd1bdb9ca4d82b2a6ddc9ad8b6de748ef965cb4a654f7",
+      "legacy_alias_id": "https://sierracatalina.com/context-layer/primitives/claim-annotation.schema.json"
+    },
+    {
+      "snapshot_version": "0.3.0-draft.1",
+      "path": "0.3.0-draft.1/client-pairing.schema.json",
+      "id": "https://sierracatalina.com/context-layer/schemas/0.3.0-draft.1/client-pairing.schema.json",
+      "sha256": "280dccb9e3d11d096940593791fcd0299b6358975346172c563018303bc51b17",
+      "legacy_alias_id": "https://sierracatalina.com/context-layer/primitives/client-pairing.schema.json"
+    },
+    {
+      "snapshot_version": "0.3.0-draft.1",
+      "path": "0.3.0-draft.1/context-pass.schema.json",
+      "id": "https://sierracatalina.com/context-layer/schemas/0.3.0-draft.1/context-pass.schema.json",
+      "sha256": "1df7768dd0cf1d0519475e97aee2b04e5e90192040a48cf3e39c7fa30468b475",
+      "legacy_alias_id": "https://sierracatalina.com/context-layer/primitives/context-pass.schema.json"
+    },
+    {
+      "snapshot_version": "0.3.0-draft.1",
+      "path": "0.3.0-draft.1/identity-assertion.schema.json",
+      "id": "https://sierracatalina.com/context-layer/schemas/0.3.0-draft.1/identity-assertion.schema.json",
+      "sha256": "fe08727b6b6589ed0a4c54a934020b4aa1a5c08b61ad3420acc8b6cd7e1db0b5",
+      "legacy_alias_id": "https://sierracatalina.com/context-layer/primitives/identity-assertion.schema.json"
+    },
+    {
+      "snapshot_version": "0.3.0-draft.1",
+      "path": "0.3.0-draft.1/lifecycle-event.schema.json",
+      "id": "https://sierracatalina.com/context-layer/schemas/0.3.0-draft.1/lifecycle-event.schema.json",
+      "sha256": "c0e8505b6acfa495813662c5db737d83b0aa71c50e5f4af4b14f9d68d11863f1",
+      "legacy_alias_id": "https://sierracatalina.com/context-layer/primitives/lifecycle-event.schema.json"
+    }
+  ]
+}

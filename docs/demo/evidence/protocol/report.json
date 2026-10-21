@@ -1,0 +1,17 @@
+{
+  "recorded_at": "2026-10-09T22:53:50.000Z",
+  "scope": "official-sdk-protocol-client; no model generation in this command",
+  "node": "v24.19.0",
+  "sdk": "@modelcontextprotocol/sdk@1.32.1",
+  "protocol_version": "2025-11-25",
+  "baseline_fields": 6,
+  "scoped_fields": 3,
+  "unrelated_values_disclosed_after": 0,
+  "receipt_operations": [
+    "bundle.issue",
+    "bundle.consume",
+    "context.disclose"
+  ],
+  "negative_result": "deny",
+  "elapsed_seconds": 0.592277712
+}

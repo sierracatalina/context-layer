@@ -4,10 +4,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="icon" href="/icon.svg" type="image/svg+xml">
 <meta name="theme-color" content="#0a0a0a">
-<meta name="description" content="a user-controlled contract for moving minimum useful context across models, agents &amp; applications.">
+<meta name="description" content="let AI use the context it needs while you control what gets shared, with whom &amp; for what purpose.">
 <meta property="og:type" content="article">
 <meta property="og:title" content="the context layer">
-<meta property="og:description" content="a user-controlled contract for moving minimum useful context across models, agents &amp; applications.">
+<meta property="og:description" content="let AI use the context it needs while you control what gets shared, with whom &amp; for what purpose.">
 <meta property="og:image" content="https://sierracatalina.com/context-layer/og.png">
 <meta property="og:image:width" content="1731">
 <meta property="og:image:height" content="909">
@@ -19,14 +19,15 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&amp;family=DM+Mono:wght@400;500&amp;family=Lora:wght@400;500&amp;display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/context-layer/assets/context-layer-native.css?v=20260814a">
-<script src="/context-layer/assets/context-layer-native.js?v=20260814a" defer></script>
+<link rel="stylesheet" href="/context-layer/assets/context-layer-native.css?v=20261009a">
+<script src="/context-layer/assets/context-layer-native.js?v=20261009a" defer></script>
 </head><body>
 <a class="skip-link" href="#main">skip to content</a>
 <header class="context-header"><div class="context-header__inner">
 <a class="context-wordmark" href="https://sierracatalina.com/">sierra catalina</a>
-<nav aria-label="context layer navigation">
-<a href="/context-layer">context index</a>
+<button class="context-menu-toggle" type="button" aria-expanded="false" aria-controls="context-navigation" hidden>browse <span aria-hidden="true">+</span></button>
+<nav id="context-navigation" aria-label="context layer navigation">
+<a href="/context-layer">overview</a>
 <a href="/signal/the-context-layer">essay</a>
 <a href="/context-layer/architecture">architecture</a>
 <a href="/context-layer/demo">demo</a>
@@ -39,26 +40,49 @@
 <main id="main" class="context-main">
 <header class="context-hero shell">
 <div class="context-hero__copy">
-<p class="context-meta">dossier 001 / public working proposal / 2026.08.21</p>
+<p class="context-meta">an open protocol / working draft</p>
 <h1>the <em>context layer</em>.</h1>
-<p class="context-deck">a user-controlled contract for moving the minimum useful context across models, agents & applications.</p>
+<p class="context-deck">useful context for your AI. control stays with you.</p>
+<p class="context-intro">your preferences, notes &amp; decisions help an agent do its job. the context layer proposes a way to share only what a task needs, with a clear purpose, a time limit &amp; a record of what happened.</p>
 <div class="context-actions">
-<a class="context-action context-action--primary" href="/signal/the-context-layer">read the essay</a>
-<a class="context-action" href="/context-layer/architecture">read the architecture</a>
-<a class="context-action" href="/context-layer/demo">run the interactive demo</a>
+<a class="context-action context-action--primary" href="/context-layer/overview">read the short overview</a>
+<a class="context-action" href="#everyday-example">see a simple example</a>
+<a class="context-action" href="/context-layer/demo">try the interactive demo</a>
 </div>
 </div>
 <aside class="context-hero__status" aria-label="protocol status">
 <span>status</span><strong>v0.2 draft</strong>
-<span>implementation</span><strong>local core + adapter proof</strong>
-<span>authority</span><strong>user-owned vault</strong>
+<span>try today</span><strong>local proof + synthetic demo</strong>
+<span>designed for</span><strong>user-controlled context</strong>
 </aside>
 </header>
+<nav class="context-jump shell" aria-label="overview sections">
+<a href="#why-context">why it matters</a><a href="#everyday-example">example</a><a href="#contract-heading">how it works</a><a href="#current-status">what exists</a><a href="#reading-heading">go deeper</a>
+</nav>
+<section class="context-explainer shell" id="why-context" aria-labelledby="why-heading">
+<header class="context-section-head"><p class="context-meta">the problem</p><h2 id="why-heading">remember more.<br>reveal less.</h2><p>switching tools can mean explaining yourself again, or handing over far more history than a task needs. useful memory should come with boundaries.</p></header>
+<div class="context-principles">
+<article><span class="context-meta">01 / keep the context</span><h3>stop starting from zero.</h3><p>retain useful facts &amp; where they came from in a vault controlled by the user.</p></article>
+<article><span class="context-meta">02 / choose the scope</span><h3>share for one purpose.</h3><p>check the task, recipient &amp; permissions before releasing a small, time-limited bundle.</p></article>
+<article><span class="context-meta">03 / leave a record</span><h3>see what happened.</h3><p>keep a minimized receipt of the decision &amp; action. review proposed memory changes separately.</p></article>
+</div>
+</section>
+<section class="context-example shell" id="everyday-example" aria-labelledby="example-heading">
+<header class="context-section-head"><p class="context-meta">a simple example</p><h2 id="example-heading">prepare for a meeting.</h2><p>an illustrative flow with fictional notes. the interactive demo uses synthetic data too.</p></header>
+<div class="example-request"><span class="context-meta">you ask your agent</span><p>‘help me prepare for the project meeting.’</p></div>
+<ol class="example-steps">
+<li><span class="context-meta">01 / request</span><h3>ask for the relevant notes.</h3><p>the agent names the project, the meeting-prep purpose &amp; the facts it needs.</p></li>
+<li><span class="context-meta">02 / decide</span><h3>check before sharing.</h3><p>policy can allow, reduce, ask for approval or deny. unrelated personal notes stay in the vault.</p></li>
+<li><span class="context-meta">03 / use &amp; record</span><h3>send only the approved context.</h3><p>the agent receives a bundle for this task &amp; recipient, with an expiry. a receipt records the exchange.</p></li>
+</ol>
+<details class="context-explain-detail"><summary>what does that mean in the protocol?</summary><p>a <code>ContextRequest</code> declares the purpose. policy produces a decision. a <code>ScopedContextBundle</code> carries only approved claims. capabilities limit the permitted action; a receipt records the result. any new memory is a proposal to review.</p><a href="/context-layer/specification">read the objects &amp; rules →</a></details>
+<a class="context-action" href="/context-layer/demo">try a request in the demo →</a>
+</section>
 <section class="context-contract shell" aria-labelledby="contract-heading">
 <header class="context-section-head">
-<p class="context-meta">protocol invariant</p>
+<p class="context-meta">how it works</p>
 <h2 id="contract-heading">one boundary. six recorded steps.</h2>
-<p>each exchange starts with a declared purpose & ends with a receipt. raw vault access never crosses the boundary.</p>
+<p>the six steps below explain the full flow. open any step for detail. raw vault access never crosses the boundary.</p>
 </header>
 <ol class="protocol-flow">
 <li><details class="protocol-step"><summary><span class="protocol-step__number">01</span><strong>capture</strong><span class="protocol-step__tagline">preserve origin</span></summary><div class="protocol-step__detail"><p>record the source event, time, identity &amp; payload digest before interpretation.</p></div></details></li>
@@ -70,26 +94,28 @@
 </ol>
 <div class="receipt-rail"><span>receipt rail</span><p>request → decision → disclosure → action → writeback</p></div>
 </section>
+<section class="context-status shell" id="current-status" aria-labelledby="status-heading">
+<header class="context-section-head"><p class="context-meta">what exists today</p><h2 id="status-heading">a working draft.<br>a testable starting point.</h2><p>the context layer is experimental. the public reference work &amp; new adapter research have different boundaries.</p></header>
+<div class="context-status__grid">
+<article><p class="context-meta">public reference work</p><h3>local core + proof</h3><p>the published proof covers v0.2 contract validation, an encrypted local vault, four-state policy, scoped bundles, anchored receipts, a files adapter &amp; a local-agent consumer.</p><p>production key custody &amp; end-to-end vendor interoperability are not established by this proof.</p><a href="/context-layer/code">inspect the public starter →</a></article>
+<article><p class="context-meta">experimental adapter research / 2026.10</p><h3>Poppy + context layer</h3><p>an offline prototype explores Poppy draft 0.1 discovery validation &amp; text-only conversation request preparation, with PCP consent checks &amp; separate context layer disclosure gates.</p><p>requests are prepared, not sent. live sign-in, session authentication, business actions &amp; external interoperability remain unimplemented.</p><a href="/context-layer/implementation#poppy-adapter">read the scope &amp; limits →</a></article>
+</div>
+</section>
 <section class="context-index shell" aria-labelledby="reading-heading">
 <header class="context-section-head">
-<p class="context-meta">reading order</p>
-<h2 id="reading-heading">from argument to implementation.</h2>
+<p class="context-meta">go deeper</p>
+<h2 id="reading-heading">choose your next step.</h2>
 </header>
 <div class="context-index__grid">
-<a href="/signal/the-context-layer"><span>01</span><strong>essay</strong><p>the argument in plain language</p></a>
-<a href="/context-layer/architecture"><span>02</span><strong>architecture</strong><p>the system as purpose-bound flows & trust zones</p></a>
-<a href="/context-layer/specification"><span>03</span><strong>specification</strong><p>objects, lifecycles, policy & conformance</p></a>
-<a href="/context-layer/implementation"><span>04</span><strong>implementation</strong><p>profiles, adapters & deployment sequence</p></a>
+<a href="/signal/the-context-layer"><span>01</span><strong>essay</strong><p>understand the idea &amp; why it matters</p></a>
+<a href="/context-layer/architecture"><span>02</span><strong>architecture</strong><p>see how data moves &amp; where authority stays</p></a>
+<a href="/context-layer/specification"><span>03</span><strong>specification</strong><p>inspect the objects, rules &amp; conformance requirements</p></a>
+<a href="/context-layer/implementation"><span>04</span><strong>implementation</strong><p>explore adapter profiles &amp; implementation limits</p></a>
 <a href="/context-layer/code"><span>05</span><strong>code</strong><p>tested v0.2 contracts & a local proof profile</p></a>
 <a href="/context-layer/demo"><span>06</span><strong>demo</strong><p>run one synthetic request through policy, disclosure & receipt</p></a>
 </div>
 </section>
-<section class="context-start shell" aria-labelledby="start-heading">
-<p class="context-meta">implementation boundary</p>
-<div><h2 id="start-heading">start with the contract.</h2>
-<p>the published proof covers v0.2 contract validation, an encrypted local vault, four-state policy, scoped bundles, anchored receipts, a files adapter & a local-agent consumer. it does not claim production key custody or a portable signing suite.</p></div>
-<a class="context-action" href="/context-layer/code">inspect the starter</a>
-</section>
+
 </main>
 <footer class="context-footer"><div class="shell">
 <p><strong>context layer</strong> / public working proposal</p>

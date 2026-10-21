@@ -10,6 +10,10 @@
       "destination": "/context-layer/_pages/index.html"
     },
     {
+      "source": "/context-layer/overview",
+      "destination": "/context-layer/_pages/overview.html"
+    },
+    {
       "source": "/context-layer/architecture",
       "destination": "/context-layer/_pages/architecture.html"
     },

@@ -1,0 +1,93 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sierracatalina.com/context-layer/primitives/identity-assertion.schema.json",
+  "title": "identity assertion",
+  "description": "Authentication of a principal. Not a context grant. MUST NOT carry vault claims, selectors, or bundle material.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "spec_version",
+    "type",
+    "id",
+    "created_at",
+    "issuer",
+    "subject_ref",
+    "principal",
+    "client_instance",
+    "authenticated_by",
+    "authenticated_at",
+    "expires_at",
+    "context_grant"
+  ],
+  "properties": {
+    "spec_version": {
+      "const": "context-layer/0.3-draft"
+    },
+    "type": {
+      "const": "identity_assertion"
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^urn:cl:identity:[A-Za-z0-9._~-]+$"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "issuer": {
+      "$ref": "#/$defs/issuer"
+    },
+    "subject_ref": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 512
+    },
+    "principal": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 512
+    },
+    "client_instance": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 512
+    },
+    "authenticated_by": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 120
+    },
+    "authenticated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "audience": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 512
+    },
+    "expires_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "context_grant": {
+      "const": false
+    }
+  },
+  "$defs": {
+    "issuer": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 3,
+          "maxLength": 512
+        }
+      }
+    }
+  }
+}

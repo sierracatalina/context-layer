@@ -1,0 +1,94 @@
+{
+  "run_id": "mcp-model-public-freshclone-20261009",
+  "scope": "public Git clone, empty-cache dependency install, protocol tests/run, then a fresh actual model-agent context calls the scoped MCP bridge and writes an agenda; prerequisites Git, Node/npm, public npm network, and existing authorized shell-capable native agent runtime; excludes initial installation/sign-in of that runtime",
+  "expected_source_revision": "f50e9684533229e707fc6ec6a5e541c8e79d785e",
+  "platform": "Linux",
+  "node": "v24.19.0",
+  "npm": "11.9.0",
+  "npm_cache": "new empty directory; shared network/proxy caches not controlled",
+  "steps": [
+    {
+      "command": [
+        "git",
+        "clone",
+        "--single-branch",
+        "--branch",
+        "improve/mcp-disclosure-demo",
+        "https://github.com/sierracatalina/context-layer.git",
+        "[FRESH_CLONE]"
+      ],
+      "elapsed_seconds": 4.614845715001138,
+      "exit_code": 0
+    },
+    {
+      "command": [
+        "git",
+        "checkout",
+        "--detach",
+        "f50e9684533229e707fc6ec6a5e541c8e79d785e"
+      ],
+      "elapsed_seconds": 0.012540687999717193,
+      "exit_code": 0
+    },
+    {
+      "command": [
+        "npm",
+        "--prefix",
+        "examples/mcp-agent-demo",
+        "ci",
+        "--ignore-scripts",
+        "--no-audit",
+        "--no-fund"
+      ],
+      "elapsed_seconds": 5.121478987999581,
+      "exit_code": 0
+    },
+    {
+      "command": [
+        "npm",
+        "--prefix",
+        "examples/mcp-agent-demo",
+        "test"
+      ],
+      "elapsed_seconds": 1.5434611060009047,
+      "exit_code": 0
+    },
+    {
+      "command": [
+        "node",
+        "examples/mcp-agent-demo/protocol-demo.mjs",
+        "outputs/mcp-protocol-demo"
+      ],
+      "elapsed_seconds": 0.7295423759969708,
+      "exit_code": 0
+    }
+  ],
+  "protocol_elapsed_seconds": 12.119041114998254,
+  "model_completed": true,
+  "elapsed_seconds": 73.97791586499807,
+  "passed": true,
+  "observed_source_revision": "f50e9684533229e707fc6ec6a5e541c8e79d785e",
+  "observed_tree": "661c1fc4d5188a93ac88b33a5c28827b81e5021f",
+  "protocol_report": {
+    "recorded_at": "2026-10-09T23:06:39.721Z",
+    "scope": "official-sdk-protocol-client; no model generation in this command",
+    "node": "v24.19.0",
+    "sdk": "@modelcontextprotocol/sdk@1.32.1",
+    "protocol_version": "2025-11-25",
+    "baseline_fields": 6,
+    "scoped_fields": 3,
+    "unrelated_values_disclosed_after": 0,
+    "receipt_operations": [
+      "bundle.issue",
+      "bundle.consume",
+      "context.disclose"
+    ],
+    "negative_result": "deny",
+    "elapsed_seconds": 0.565329092
+  },
+  "under_ten_minutes": true,
+  "timing_method": "One uninterrupted time.perf_counter stopwatch starts before clone and stops after the fresh model result is returned and verified. Coordination and verification time are included; this is not a sum of separate runs.",
+  "model_evidence_directory": "fresh-clone-agent",
+  "model_generation_recorded_at_utc": "2026-10-09T23:07:22.713Z",
+  "verified_at_utc": "2026-10-09T23:07:41.558842+00:00"
+}

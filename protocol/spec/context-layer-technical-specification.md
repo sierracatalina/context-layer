@@ -8,7 +8,7 @@
 | Version identifier | `context-layer/0.2-draft` |
 | Date | 2026-08-17 |
 | Editors' target | Reviewable core contract for implementation and interoperability experiments |
-| Canonical local context | [`../agent-navigation-manifest.json`](../agent-navigation-manifest.json) |
+| Canonical local context | [`agent-navigation-manifest.json`](../../site/context-layer/source/agent-navigation-manifest.json) |
 
 ## Change log
 
@@ -22,13 +22,93 @@ The protocol's central invariant is that a consumer receives an approved bundle 
 
 This document defines the target contract. The current project is an interactive demonstrator and does not yet implement the complete protocol.
 
+<!-- BEGIN GENERATED SPEC NAVIGATION -->
+## Contents
+
+[One-page normative summary](../../NORMATIVE-SUMMARY.md) · [Complete requirement index](../../NORMATIVE-INDEX.md) · [Prior art](../../PRIOR-ART.md)
+
+- [1. Requirements language](#cl-s-1)
+- [2. Status and scope](#cl-s-2)
+  - [2.1 In scope](#cl-s-2-1)
+  - [2.2 Protocol boundary](#cl-s-2-2)
+- [3. Design goals and invariants](#cl-s-3)
+- [4. Architecture](#cl-s-4)
+  - [4.1 Components](#cl-s-4-1)
+  - [4.2 Trust zones](#cl-s-4-2)
+  - [4.3 Core flow](#cl-s-4-3)
+- [5. Terminology](#cl-s-5)
+- [6. Common representation rules](#cl-s-6)
+  - [6.1 Serialization](#cl-s-6-1)
+  - [6.2 Media type](#cl-s-6-2)
+  - [6.3 Extension fields](#cl-s-6-3)
+  - [6.4 Integrity](#cl-s-6-4)
+- [7. Core data objects](#cl-s-7)
+  - [7.1 `source_event`](#cl-s-7-1)
+  - [7.2 `context_claim`](#cl-s-7-2)
+  - [7.3 `context_request`](#cl-s-7-3)
+    - [7.3.1 Purpose code registry](#cl-s-7-3-1)
+  - [7.4 `policy_decision`](#cl-s-7-4)
+  - [7.5 `scoped_context_bundle`](#cl-s-7-5)
+  - [7.6 `minimum_reveal_response`](#cl-s-7-6)
+  - [7.7 `memory_update_proposal`](#cl-s-7-7)
+  - [7.8 `receipt`](#cl-s-7-8)
+- [8. Protocol lifecycles](#cl-s-8)
+  - [8.1 Ingestion lifecycle](#cl-s-8-1)
+  - [8.2 Outbound context lifecycle](#cl-s-8-2)
+  - [8.3 Inbound discovery lifecycle](#cl-s-8-3)
+  - [8.4 Memory writeback lifecycle](#cl-s-8-4)
+- [9. Policy evaluation](#cl-s-9)
+  - [9.1 Mandatory policy inputs](#cl-s-9-1)
+  - [9.2 Decision properties](#cl-s-9-2)
+  - [9.3 Human approval](#cl-s-9-3)
+  - [9.4 Writeback isolation](#cl-s-9-4)
+- [10. Optional HTTP binding](#cl-s-10)
+  - [10.1 Transport requirements](#cl-s-10-1)
+  - [10.2 Capability document](#cl-s-10-2)
+  - [10.3 Suggested resource endpoints](#cl-s-10-3)
+  - [10.4 Status and error behavior](#cl-s-10-4)
+  - [10.5 `CL-Core-Lite` profile](#cl-s-10-5)
+- [11. Security and privacy requirements](#cl-s-11)
+  - [11.1 Authentication and authorization](#cl-s-11-1)
+  - [11.2 Secret handling](#cl-s-11-2)
+  - [11.3 Data minimization](#cl-s-11-3)
+  - [11.4 Prompt and content injection](#cl-s-11-4)
+  - [11.5 Semantic transformation risk](#cl-s-11-5)
+  - [11.6 Discovery inference](#cl-s-11-6)
+  - [11.7 Revocation and deletion](#cl-s-11-7)
+  - [11.8 Receipt privacy](#cl-s-11-8)
+  - [11.9 Availability and fail-closed behavior](#cl-s-11-9)
+- [12. Interoperability rules](#cl-s-12)
+- [13. Conformance profiles](#cl-s-13)
+  - [13.1 `CL-Core-Issuer`](#cl-s-13-1)
+  - [13.2 `CL-Core-Consumer`](#cl-s-13-2)
+  - [13.3 `CL-Discovery`](#cl-s-13-3)
+  - [13.4 `CL-Memory`](#cl-s-13-4)
+  - [13.5 `CL-Receipt-Store`](#cl-s-13-5)
+  - [13.6 `CL-Adapter`](#cl-s-13-6)
+- [14. Required conformance tests](#cl-s-14)
+- [15. Versioning](#cl-s-15)
+- [16. Implementation status of this repository](#cl-s-16)
+- [17. Open design questions](#cl-s-17)
+- [18. Normative and informative references](#cl-s-18)
+  - [18.1 Normative foundations for this draft](#cl-s-18-1)
+  - [18.2 Informative interoperability references](#cl-s-18-2)
+  - [18.3 Informative authorization and capability prior art](#cl-s-18-3)
+<!-- END GENERATED SPEC NAVIGATION -->
+
+<a id="cl-s-1"></a>
+
 ## 1. Requirements language
 
 The key words **MUST**, **MUST NOT**, **REQUIRED**, **SHALL**, **SHALL NOT**, **SHOULD**, **SHOULD NOT**, **RECOMMENDED**, **NOT RECOMMENDED**, **MAY**, and **OPTIONAL** in this document are to be interpreted as described in [BCP 14](https://www.rfc-editor.org/info/bcp14/) when, and only when, they appear in all capitals.
 
 Normative requirements apply only to an implementation claiming conformance with the named profile. Descriptive text and examples are informative unless explicitly labeled normative.
 
+<a id="cl-s-2"></a>
+
 ## 2. Status and scope
+
+<a id="cl-s-2-1"></a>
 
 ### 2.1 In scope
 
@@ -43,13 +123,25 @@ This draft specifies:
 - Conformance roles and failure behavior
 - Security and privacy requirements that are specific to context movement
 
+<a id="cl-s-2-2"></a>
+
 ### 2.2 Protocol boundary
 
 Context Layer governs the context exchange: purpose-bound requests, policy decisions, scoped bundles, receipts, and proposed writeback. It composes with deployment-selected transport, identity, authentication, cryptography, storage, source authorization, and payment systems.
 
+<a id="cl-r-2-2-01"></a>
+
 A conforming deployment MUST preserve source permissions and select identity, encryption, key-management, storage, audit, and redaction controls appropriate to its threat model. Conformance does not imply legal compliance or correct model output.
 
+**Relationship to existing work.** This paragraph is informative. Scoped and attenuated authority is established prior art: [UCAN](https://github.com/ucan-wg/spec), [macaroons](https://research.google/pubs/macaroons-cookies-with-contextual-caveats-for-decentralized-authorization-in-the-cloud/), [Biscuit](https://doc.biscuitsec.org/reference/specifications), and [zcap-ld](https://w3c-ccg.github.io/zcap-spec/v0.4.0/) address capability delegation and restriction. [GNAP, RFC 9635](https://www.rfc-editor.org/rfc/rfc9635.html) includes authorization negotiation and direct subject-information release; [OAuth 2.0, RFC 6749](https://www.rfc-editor.org/rfc/rfc6749.html) and [Token Exchange, RFC 8693](https://www.rfc-editor.org/rfc/rfc8693.html) provide authorization and token-exchange mechanisms. This draft proposes a context-specific contract for disclosure, provenance, receipts, and proposed memory updates; it does not claim to invent delegation, least privilege, contextual restrictions, or authorization negotiation.
+
+[MCP](https://modelcontextprotocol.io/specification/2025-11-25) and [A2A v1.0.0](https://a2a-protocol.org/v1.0.0/specification/) supply complementary tool/resource and agent-interaction protocols. A Context Layer mapping remains an application profile, not an extension adopted by either project. [Prior art and composition choices](../../PRIOR-ART.md) compares the overlap, differences, and when an existing mechanism alone is sufficient. These comparisons and references introduce no additional conformance requirements.
+
+<a id="cl-s-3"></a>
+
 ## 3. Design goals and invariants
+
+<a id="cl-r-3-01"></a>
 
 A conforming implementation MUST preserve these invariants:
 
@@ -64,7 +156,11 @@ A conforming implementation MUST preserve these invariants:
 9. **Minimum reveal for discovery.** External matching MUST return only policy-approved result fields and MUST NOT expose private match features or scores unless explicitly granted.
 10. **Native-protocol preservation.** Adapters MUST preserve security-relevant semantics from the source protocol rather than flattening them into unauthenticated text.
 
+<a id="cl-s-4"></a>
+
 ## 4. Architecture
+
+<a id="cl-s-4-1"></a>
 
 ### 4.1 Components
 
@@ -82,7 +178,11 @@ A conforming implementation MUST preserve these invariants:
 | Receipt store | Persist logically append-only operation evidence | Trusted evidence service; may be separately administered |
 | Approval surface | Obtain and record a person's approval when required | Trusted user-interaction boundary |
 
+<a id="cl-r-4-1-01"></a>
+
 One process MAY implement several components, but logical responsibilities and authorization checks MUST remain separable and testable.
+
+<a id="cl-s-4-2"></a>
 
 ### 4.2 Trust zones
 
@@ -93,6 +193,8 @@ The minimum deployment model contains three zones:
 3. **Consumer or untrusted zone:** external apps, remote agents, public discovery systems, relays, models, and UI plug-ins.
 
 The consumer MAY be locally operated and still be treated as a separate trust zone. Process locality is not proof of authorization.
+
+<a id="cl-s-4-3"></a>
 
 ### 4.3 Core flow
 
@@ -111,6 +213,8 @@ native source
   -> optional MemoryUpdateProposal
   -> validation + approval + commit receipt
 ```
+
+<a id="cl-s-5"></a>
 
 ## 5. Terminology
 
@@ -147,11 +251,17 @@ A logically append-only record of a request, decision, transform, disclosure, mo
 **Memory update proposal**
 A candidate addition, change, contradiction, or retraction that has not yet been committed as durable context.
 
+<a id="cl-s-6"></a>
+
 ## 6. Common representation rules
+
+<a id="cl-s-6-1"></a>
 
 ### 6.1 Serialization
 
 The core representation is [JSON](https://www.rfc-editor.org/info/rfc8259/) encoded as UTF-8.
+
+<a id="cl-r-6-1-01"></a>
 
 Every top-level object MUST contain:
 
@@ -163,29 +273,55 @@ Every top-level object MUST contain:
 | `created_at` | string | MUST be an RFC 3339 timestamp |
 | `issuer` | object | MUST identify the issuing component or authority |
 
+<a id="cl-r-6-1-02"></a>
+
 Identifiers SHOULD be opaque URIs such as `urn:cl:bundle:019...`. Identifiers MUST NOT embed email addresses, names, access tokens, raw content, or other unnecessary private data.
+
+<a id="cl-r-6-1-03"></a>
 
 Timestamps MUST use [RFC 3339](https://www.rfc-editor.org/info/rfc3339/) format and SHOULD be normalized to UTC. Implementations MUST preserve the original timestamp and timezone when they are material to the source.
 
+<a id="cl-s-6-2"></a>
+
 ### 6.2 Media type
+
+<a id="cl-r-6-2-01"></a>
 
 This draft uses `application/vnd.context-layer+json` as an experimental media-type string. It is not IANA registered. Production interoperability work MUST either register an appropriate media type or negotiate a deployment-specific type without misrepresenting registration status.
 
+<a id="cl-s-6-3"></a>
+
 ### 6.3 Extension fields
+
+<a id="cl-r-6-3-01"></a>
 
 The five CL-Core-Lite object schemas in this draft are closed: implementations MUST reject unknown top-level fields. Version `0.2-draft` does not define portable `extensions` or `required_extensions` members.
 
+<a id="cl-r-6-3-02"></a>
+
 An experimental profile MAY publish a derived schema with a collision-resistant namespace, but an object using that profile is not a core `0.2-draft` object unless the profile is explicitly negotiated. A future specification revision may define optional and required extension negotiation; implementations MUST NOT silently treat unknown fields as authorized extensions before then.
+
+<a id="cl-s-6-4"></a>
 
 ### 6.4 Integrity
 
+<a id="cl-r-6-4-01"></a>
+
 Objects MAY include an `integrity` object with a digest, canonicalization method, and signature reference. A signature MUST cover the protocol version, object type, identifier, issuer, timestamps, and all security-relevant fields.
 
+<a id="cl-r-6-4-02"></a>
+
 This draft does not mandate a signing suite. Deployments MUST define canonical serialization and key verification before claiming cryptographically verifiable receipts or bundles.
+
+Informative local-profile note: the [proposed local-core profile](https://github.com/sierracatalina/context-layer/blob/c16aa889620cd782e88d7750d8f6b729e4cc844f/protocol/profiles/local-core-0.2-draft.1.md) §§1–2 and 4 specifies one experimental canonical-value domain, record and digest preimages, and Ed25519 envelope contract. It does not select a universal core signing suite or relax core and schema requirements. Profile and compatibility questions are tracked in [issue #13](https://github.com/sierracatalina/context-layer/issues/13) and [issue #16](https://github.com/sierracatalina/context-layer/issues/16).
+
+<a id="cl-s-7"></a>
 
 ## 7. Core data objects
 
 The examples in this section use synthetic values and omit optional fields for readability.
+
+<a id="cl-s-7-1"></a>
 
 ### 7.1 `source_event`
 
@@ -226,7 +362,11 @@ Required fields:
 }
 ```
 
+<a id="cl-r-7-1-01"></a>
+
 The event envelope SHOULD reference raw payload stored inside the vault rather than duplicate sensitive payload into every index. A capture adapter MUST preserve native signatures, event identifiers, authorization context, and deletion markers when the source protocol provides them.
+
+<a id="cl-s-7-2"></a>
 
 ### 7.2 `context_claim`
 
@@ -259,7 +399,11 @@ Required fields:
 }
 ```
 
+<a id="cl-r-7-2-01"></a>
+
 Valid `status` values are `asserted`, `derived`, `disputed`, `superseded`, and `retracted`. A contradiction MUST NOT be resolved by silently deleting the losing branch. The resolution SHOULD identify which claim supersedes another and why.
+
+<a id="cl-s-7-3"></a>
 
 ### 7.3 `context_request`
 
@@ -309,9 +453,15 @@ Required fields:
 }
 ```
 
+<a id="cl-r-7-3-01"></a>
+
 In request and decision receipt requirements, `level` and `required` MUST agree: `none` requires `required: false`, while `decision` and `operation` require `required: true`. All other pairings are invalid.
 
+<a id="cl-r-7-3-02"></a>
+
 `purpose_code` is the normative policy input. Optional `purpose` text is informative and MUST NOT broaden authorization beyond the registered code. A request MUST NOT use wildcards for selectors or actions unless a separate policy explicitly permits that wildcard for the requester and subject.
+
+<a id="cl-s-7-3-1"></a>
 
 #### 7.3.1 Purpose code registry
 
@@ -327,7 +477,11 @@ The v0.2 core registry is deliberately small:
 | `discover.minimum_reveal` | Evaluate discovery while returning only approved fields |
 | `propose.memory_update` | Submit a proposal for later validation and approval |
 
+<a id="cl-r-7-3-1-01"></a>
+
 Core codes are lowercase dotted names. Deployment extensions MUST use a collision-resistant lowercase namespace beginning with `x.`, for example `x.example.review.contract`. An unknown code MUST be denied unless policy lists the exact code. Implementations MUST NOT authorize a purpose by prefix matching, semantic similarity, or inference from optional `purpose` text.
+
+<a id="cl-s-7-4"></a>
 
 ### 7.4 `policy_decision`
 
@@ -385,7 +539,11 @@ Valid decisions are:
 }
 ```
 
+<a id="cl-r-7-4-01"></a>
+
 A decision MUST reference the exact policy snapshot evaluated. A later policy change MUST NOT silently broaden an already-issued decision or bundle.
+
+<a id="cl-s-7-5"></a>
 
 ### 7.5 `scoped_context_bundle`
 
@@ -454,9 +612,15 @@ Required fields:
 }
 ```
 
+<a id="cl-r-7-5-01"></a>
+
 The bundle MUST NOT contain resolvable raw-vault credentials. A provenance handle exposed to a consumer SHOULD be opaque and SHOULD require a separate authorized request to resolve. Consumers MUST stop using a bundle after expiry and SHOULD delete cached material according to the retention contract.
 
+<a id="cl-r-7-5-02"></a>
+
 Bundles SHOULD be immutable. A change in scope, context, actions, or expiry SHOULD create a new bundle with a reference to the prior bundle.
+
+<a id="cl-s-7-6"></a>
 
 ### 7.6 `minimum_reveal_response`
 
@@ -490,7 +654,11 @@ Required fields:
 }
 ```
 
+<a id="cl-r-7-6-01"></a>
+
 The response MUST NOT expose private match features, raw similarity scores, or negative evidence unless policy explicitly grants them. Implementations MUST rate-limit and correlate semantically similar queries, not only byte-identical requests.
+
+<a id="cl-s-7-7"></a>
 
 ### 7.7 `memory_update_proposal`
 
@@ -533,7 +701,11 @@ Required fields:
 }
 ```
 
+<a id="cl-r-7-7-01"></a>
+
 An implementation MUST NOT commit a proposal lacking required provenance or approval. Rejection and expiry MUST be recorded without deleting the proposal's audit history when policy requires that history.
+
+<a id="cl-s-7-8"></a>
 
 ### 7.8 `receipt`
 
@@ -578,9 +750,17 @@ Required fields:
 }
 ```
 
+<a id="cl-r-7-8-01"></a>
+
 Receipts MUST NOT contain secrets, raw authorization headers, model API keys, full private prompts, or raw source payloads. The receipt contract exposes an optional nullable `supersedes_ref` field. A correction MUST be represented by a new receipt with `supersedes_ref` set to the exact receipt URN of the prior record. A non-correction receipt MAY omit `supersedes_ref` or set it to `null`.
 
+Informative local-profile note: [profile §§5–6](https://github.com/sierracatalina/context-layer/blob/c16aa889620cd782e88d7750d8f6b729e4cc844f/protocol/profiles/local-core-0.2-draft.1.md) describes the experimental receipt-log framing, entry chain, anchor version, synthetic setup and storage assumptions. Record and anchor versions are separate, and implementations declare their supported migration behavior. The profile's protection is limited to its stated failure model; [issue #15](https://github.com/sierracatalina/context-layer/issues/15) tracks the remaining receipt-format and portability clarification.
+
+<a id="cl-s-8"></a>
+
 ## 8. Protocol lifecycles
+
+<a id="cl-s-8-1"></a>
 
 ### 8.1 Ingestion lifecycle
 
@@ -594,7 +774,11 @@ Receipts MUST NOT contain secrets, raw authorization headers, model API keys, fu
 8. Store source and derived records under vault policy.
 9. Write ingestion receipts where policy requires them.
 
+<a id="cl-r-8-1-01"></a>
+
 An untrusted source MUST NOT be promoted to a trusted claim solely because a model summarized it confidently.
+
+<a id="cl-s-8-2"></a>
 
 ### 8.2 Outbound context lifecycle
 
@@ -609,7 +793,11 @@ An untrusted source MUST NOT be promoted to a trusted claim solely because a mod
 9. Receive operation receipts from the consumer or trusted gateway.
 10. Expire and revoke the bundle according to policy.
 
+<a id="cl-r-8-2-01"></a>
+
 Any change to recipient, purpose, action, or requested scope MUST trigger a new decision.
+
+<a id="cl-s-8-3"></a>
 
 ### 8.3 Inbound discovery lifecycle
 
@@ -622,7 +810,11 @@ Any change to recipient, purpose, action, or requested scope MUST trigger a new 
 7. Return an expiring response.
 8. Write a receipt including query class, requester, decision, and reveal class.
 
+<a id="cl-r-8-3-01"></a>
+
 Discovery systems SHOULD add noise, thresholds, batching, or other privacy defenses when repeated aggregate results could reveal private features. This draft does not mandate one privacy-preserving matching algorithm.
+
+<a id="cl-s-8-4"></a>
 
 ### 8.4 Memory writeback lifecycle
 
@@ -637,9 +829,15 @@ Discovery systems SHOULD add noise, thresholds, batching, or other privacy defen
 
 Automatic commit MAY be enabled only for narrowly defined, low-risk proposal classes with explicit policy and rollback behavior.
 
+<a id="cl-s-9"></a>
+
 ## 9. Policy evaluation
 
+<a id="cl-s-9-1"></a>
+
 ### 9.1 Mandatory policy inputs
+
+<a id="cl-r-9-1-01"></a>
 
 The policy engine MUST evaluate at least:
 
@@ -655,9 +853,15 @@ The policy engine MUST evaluate at least:
 - Receipt availability and required receipt level
 - Current rate limits and anomaly state
 
+<a id="cl-s-9-2"></a>
+
 ### 9.2 Decision properties
 
+<a id="cl-r-9-2-01"></a>
+
 Policy decisions MUST be deterministic with respect to their recorded inputs and policy snapshot, except for explicitly identified external signals such as risk scores. When nondeterministic or time-varying signals are used, the decision MUST record their values or stable references.
+
+<a id="cl-r-9-2-02"></a>
 
 Policies SHOULD deny by default when:
 
@@ -671,7 +875,11 @@ Policies SHOULD deny by default when:
 - The request or bundle has expired
 - An untrusted discovery requester exceeds its query budget
 
+<a id="cl-s-9-3"></a>
+
 ### 9.3 Human approval
+
+<a id="cl-r-9-3-01"></a>
 
 An approval surface MUST show, in user-readable form:
 
@@ -684,17 +892,31 @@ An approval surface MUST show, in user-readable form:
 - Whether onward disclosure is permitted
 - What evidence will be written
 
+<a id="cl-r-9-3-02"></a>
+
 Approval identifiers MUST be single-use or bound to the exact request digest. A changed request MUST invalidate the prior approval.
+
+Informative local-profile note: [profile §3](https://github.com/sierracatalina/context-layer/blob/c16aa889620cd782e88d7750d8f6b729e4cc844f/protocol/profiles/local-core-0.2-draft.1.md) defines bound request, policy, recipient, purpose and expiry inputs for a trusted host verifier in the local experiment. Its synthetic verifier modes do not establish actual user consent or a portable cryptographic approval format. [Issue #14](https://github.com/sierracatalina/context-layer/issues/14) tracks that boundary and the remaining portable-approval question.
+
+<a id="cl-s-9-4"></a>
 
 ### 9.4 Writeback isolation
 
+<a id="cl-r-9-4-01"></a>
+
 Consumer writeback MUST enter the authority boundary as a `memory_update_proposal`. A Core consumer MUST NOT receive a direct raw-vault mutation capability. Validation, contradiction handling, approval, commit, and the resulting receipt remain distinct authority-side operations. A future companion profile MAY define those authority-side operations, but it MUST preserve proposal-only submission at the consumer boundary.
+
+<a id="cl-s-10"></a>
 
 ## 10. Optional HTTP binding
 
 The Context Layer core is transport-neutral. This section defines an experimental HTTP profile using [HTTP Semantics](https://www.rfc-editor.org/rfc/rfc9110.html).
 
+<a id="cl-s-10-1"></a>
+
 ### 10.1 Transport requirements
+
+<a id="cl-r-10-1-01"></a>
 
 - Production endpoints MUST use HTTPS with current TLS guidance.
 - Clients and servers MUST authenticate according to the deployment's identity profile.
@@ -705,6 +927,8 @@ The Context Layer core is transport-neutral. This section defines an experimenta
 - Requests MUST include `Context-Layer-Version: 0.2-draft` or negotiate an equivalent version.
 - Request and response bodies use `application/vnd.context-layer+json` for this experimental profile.
 
+<a id="cl-s-10-2"></a>
+
 ### 10.2 Capability document
 
 An implementation MAY expose a capability document at:
@@ -714,6 +938,8 @@ GET /.well-known/context-layer
 ```
 
 This path is an unregistered draft convention. The response should list protocol versions, roles, endpoint URLs, supported object types, auth metadata, extensions, receipt capabilities, maximum bundle lifetime, and conformance report location.
+
+<a id="cl-s-10-3"></a>
 
 ### 10.3 Suggested resource endpoints
 
@@ -756,6 +982,8 @@ paths:
                 $ref: https://sierracatalina.com/context-layer/implementation/policy-decision.schema.json
 ```
 
+<a id="cl-s-10-4"></a>
+
 ### 10.4 Status and error behavior
 
 Recommended HTTP statuses:
@@ -775,6 +1003,8 @@ Recommended HTTP statuses:
 - `429 Too Many Requests`: rate or query budget exceeded
 - `503 Service Unavailable`: required policy, approval, vault, or receipt component unavailable
 
+<a id="cl-r-10-4-01"></a>
+
 Error bodies MUST use a stable machine code and a safe user message. They MUST NOT expose policy internals, private match features, secrets, stack traces, or raw upstream responses.
 
 ```json
@@ -790,7 +1020,11 @@ Error bodies MUST use a stable machine code and a safe user message. They MUST N
 }
 ```
 
+<a id="cl-s-10-5"></a>
+
 ### 10.5 `CL-Core-Lite` profile
+
+<a id="cl-r-10-5-01"></a>
 
 `CL-Core-Lite` is the smallest v0.2 implementation profile intended for interoperable experiments. A conforming implementation MUST:
 
@@ -805,11 +1039,19 @@ Error bodies MUST use a stable machine code and a safe user message. They MUST N
 
 Lite conformance does not imply production security, adoption as a standard, or conformance with the optional discovery, adapter, signature, or network deployment profiles.
 
+<a id="cl-s-11"></a>
+
 ## 11. Security and privacy requirements
+
+<a id="cl-s-11-1"></a>
 
 ### 11.1 Authentication and authorization
 
+<a id="cl-r-11-1-01"></a>
+
 Authentication proves a principal; policy authorizes a context use. Implementations MUST keep those decisions distinct.
+
+<a id="cl-r-11-1-02"></a>
 
 - Every network requester MUST be authenticated or explicitly assigned an `untrusted_anonymous` class.
 - Tokens MUST be validated for issuer, audience, expiry, and required scope.
@@ -818,14 +1060,22 @@ Authentication proves a principal; policy authorizes a context use. Implementati
 - Browser endpoints MUST validate origin and CSRF defenses where credentials or session creation are involved.
 - Static public assets MUST be separated from credential-bearing session endpoints in production.
 
+<a id="cl-s-11-2"></a>
+
 ### 11.2 Secret handling
+
+<a id="cl-r-11-2-01"></a>
 
 - Long-lived provider credentials MUST remain server-side or in platform-appropriate secure storage.
 - Credentials MUST NOT be embedded in bundles, receipts, HTML, mobile binaries, source-control archives, logs, prompts, or query strings.
 - Client-facing realtime or model sessions SHOULD use short-lived, narrowly scoped client credentials when the provider supports them.
 - Credential rotation and revocation MUST be operationally documented.
 
+<a id="cl-s-11-3"></a>
+
 ### 11.3 Data minimization
+
+<a id="cl-r-11-3-01"></a>
 
 - Source payloads SHOULD remain inside the vault.
 - Bundles MUST contain only fields granted by the decision.
@@ -833,9 +1083,15 @@ Authentication proves a principal; policy authorizes a context use. Implementati
 - Logs and metrics MUST avoid raw context unless separately authorized.
 - Receipts SHOULD use digests and categories rather than duplicate sensitive content.
 
+<a id="cl-s-11-4"></a>
+
 ### 11.4 Prompt and content injection
 
+<a id="cl-r-11-4-01"></a>
+
 Captured content is untrusted data, even when it came from a known account. Implementations MUST prevent source content from becoming executable agent instructions merely because it appears in retrieved context.
+
+<a id="cl-r-11-4-02"></a>
 
 Bundles SHOULD separate:
 
@@ -845,37 +1101,69 @@ Bundles SHOULD separate:
 - Tool manifests
 - Untrusted content
 
+<a id="cl-r-11-4-03"></a>
+
 Consumers MUST NOT allow a source document to expand its own permissions, tools, retention, or recipient list.
+
+<a id="cl-s-11-5"></a>
 
 ### 11.5 Semantic transformation risk
 
+<a id="cl-r-11-5-01"></a>
+
 Redaction and summarization can fail. High-risk deployments SHOULD combine deterministic field-level policy with semantic transforms and MUST test for under-redaction, indirect identifiers, reconstruction, and context leakage.
+
+<a id="cl-r-11-5-02"></a>
 
 The semantic proxy SHOULD report which transformations ran and their confidence. A policy MAY require human review when a transform cannot establish sufficient confidence.
 
+<a id="cl-s-11-6"></a>
+
 ### 11.6 Discovery inference
+
+<a id="cl-r-11-6-01"></a>
 
 Rate limiting by requester IP alone is insufficient. Discovery implementations SHOULD account for requester identity, semantic similarity, target subject, result pattern, time window, and coordinated clients.
 
 Negative responses can reveal information. Deployments MAY return uniform responses, add delay, batch approvals, or use privacy-preserving matching techniques according to threat model.
 
+<a id="cl-s-11-7"></a>
+
 ### 11.7 Revocation and deletion
+
+<a id="cl-r-11-7-01"></a>
 
 Bundle revocation cannot guarantee deletion by an already-compromised recipient. Implementations MUST state this limitation. Revocation MUST prevent future authorized retrieval and use within conforming components.
 
+<a id="cl-r-11-7-02"></a>
+
 Source deletion MUST propagate according to legal, user, and provenance requirements. Receipts MAY need to retain non-content evidence after source deletion, but such retention MUST be explicit and minimized.
+
+<a id="cl-s-11-8"></a>
 
 ### 11.8 Receipt privacy
 
+<a id="cl-r-11-8-01"></a>
+
 Receipts create a second sensitive dataset. They can reveal relationships, timing, tools, models, and behavior even when payloads are omitted. Receipt access MUST have independent policy, retention, export, and deletion rules.
+
+<a id="cl-s-11-9"></a>
 
 ### 11.9 Availability and fail-closed behavior
 
+<a id="cl-r-11-9-01"></a>
+
 When the policy engine, approval surface, key verifier, or required receipt store is unavailable before an operation, sensitive disclosure MUST fail closed. Implementations MAY permit explicitly defined low-risk offline operations using a cached, unexpired policy snapshot.
+
+<a id="cl-r-11-9-02"></a>
 
 If an irreversible external side effect succeeds but its completion receipt cannot be stored, the implementation MUST report the result as indeterminate, retry the receipt idempotently, and block dependent actions. It MUST NOT claim that the external side effect was rolled back merely because receipt persistence failed.
 
+<a id="cl-s-12"></a>
+
 ## 12. Interoperability rules
+
+<a id="cl-r-12-01"></a>
 
 Adapters MUST:
 
@@ -887,6 +1175,8 @@ Adapters MUST:
 - Avoid converting untrusted content into trusted instructions
 - Document lossy transformations
 - Support deterministic export fixtures for conformance testing
+
+<a id="cl-r-12-02"></a>
 
 Consumers MUST:
 
@@ -900,13 +1190,19 @@ Consumers MUST:
 
 See [Implementation and Interoperability Profiles](context-layer-implementation-and-interoperability.md) for protocol-specific mappings.
 
+<a id="cl-s-13"></a>
+
 ## 13. Conformance profiles
 
 An implementation may claim one or more roles.
 
+The lists below are informative summaries of role responsibilities. They do not independently impose conformance requirements or change the strength, conditions, or profile applicability of requirements elsewhere in this document. Conformance is determined by those applicable requirements and the applicable tests in [Section 14](#cl-s-14).
+
+<a id="cl-s-13-1"></a>
+
 ### 13.1 `CL-Core-Issuer`
 
-Must implement:
+Implementation topics:
 
 - `context_request` validation
 - Versioned `policy_decision`
@@ -916,9 +1212,11 @@ Must implement:
 - Required receipt contract
 - Raw-vault isolation tests
 
+<a id="cl-s-13-2"></a>
+
 ### 13.2 `CL-Core-Consumer`
 
-Must implement:
+Implementation topics:
 
 - Bundle validation
 - Capability and restriction enforcement
@@ -927,9 +1225,11 @@ Must implement:
 - Proposal-only memory writeback
 - Context deletion or inaccessibility after expiry
 
+<a id="cl-s-13-3"></a>
+
 ### 13.3 `CL-Discovery`
 
-Must implement:
+Implementation topics:
 
 - Authenticated or explicitly classified discovery requests
 - Query budgets and semantic probe correlation
@@ -938,9 +1238,11 @@ Must implement:
 - Approval escalation
 - Discovery receipts
 
+<a id="cl-s-13-4"></a>
+
 ### 13.4 `CL-Memory`
 
-Must implement:
+Implementation topics:
 
 - Source events and derived claims
 - Provenance continuity
@@ -948,9 +1250,11 @@ Must implement:
 - Memory update proposals
 - Approval and commit receipts
 
+<a id="cl-s-13-5"></a>
+
 ### 13.5 `CL-Receipt-Store`
 
-Must implement:
+Implementation topics:
 
 - Logical append-only semantics
 - Correction by supersession
@@ -959,9 +1263,11 @@ Must implement:
 - Secret and payload minimization
 - Export and verification tooling
 
+<a id="cl-s-13-6"></a>
+
 ### 13.6 `CL-Adapter`
 
-Must document:
+Documentation topics:
 
 - Native protocol and version
 - Inbound and outbound mapping
@@ -971,7 +1277,11 @@ Must document:
 - Deletion and edit behavior
 - Test fixtures
 
+<a id="cl-s-14"></a>
+
 ## 14. Required conformance tests
+
+<a id="cl-r-14-01"></a>
 
 Every claimed role MUST publish machine-readable test results for applicable cases.
 
@@ -994,19 +1304,31 @@ Minimum tests include:
 
 A test that merely confirms valid JSON is insufficient evidence of policy or privacy conformance.
 
+Informative corpus note: the [versioned conformance kit and report contract](https://github.com/sierracatalina/context-layer/blob/c16aa889620cd782e88d7750d8f6b729e4cc844f/CONFORMANCE.md) describe one experimental local-profile transcript. Its original corpus contains four manifest-bound vector sets and six separate contract fixtures. Supplemental expected objects are reference-derived and separately identified. Reports distinguish common-kit assertions, implementation-specific tests, supported profiles and unexercised behavior; a passing local transcript does not establish complete core or role conformance. [Issue #17](https://github.com/sierracatalina/context-layer/issues/17) tracks coverage and report-scope clarification.
+
+<a id="cl-s-15"></a>
+
 ## 15. Versioning
 
+<a id="cl-r-15-01"></a>
+
 Objects carry an explicit `spec_version`. Implementations MUST reject unsupported major versions. A compatible minor version MUST NOT change the meaning of existing required fields or weaken an invariant.
+
+<a id="cl-r-15-02"></a>
 
 Draft identifiers are unstable. Production data SHOULD NOT be committed to `0.2-draft` schemas without a migration plan.
 
 Schema evolution rules:
+
+<a id="cl-r-15-03"></a>
 
 - Additive optional fields MAY be introduced in a compatible minor version.
 - Required fields MUST NOT be added without a new major version or negotiated required extension.
 - Enum values MAY be added only where consumers are required to handle unknown values safely.
 - Security-sensitive default changes require a major version.
 - Deprecation MUST include an alternative and a migration window.
+
+<a id="cl-s-16"></a>
 
 ## 16. Implementation status of this repository
 
@@ -1017,7 +1339,7 @@ As of 2026-08-21, the public project provides:
 - An experimental single-user local core with an AES-256-GCM vault, four-state policy evaluation, Ed25519-signed bundle envelopes over RFC 8785 canonical JSON, and an authenticated append-only receipt log
 - One narrow UTF-8 files adapter and one local-agent consumer as conformance evidence
 - Synthetic positive and negative fixtures, a minimized demo, and SHA-bound test vectors
-- A reviewed v0.2 technical specification and informative implementation profiles
+- A reviewable v0.2 technical specification and informative implementation profiles
 - An unsubmitted Nostr interoperability discussion draft
 
 It does **not** currently provide:
@@ -1030,9 +1352,17 @@ It does **not** currently provide:
 - A hardened multi-user network service
 - A completed iOS client
 
+<a id="cl-r-16-01"></a>
+
 The local Ed25519 envelope and receipt anchor demonstrate integrity inside the tested single-user profile. Envelopes carry `algorithm: "Ed25519"`, `kid`, and `sig` so recipients can verify bundles independently with the issuer's public key; legacy HMAC bundles are readable only behind an explicit opt-in and are never written. This remains an experimental profile: managed key custody, hardware-rooted audit, and hostile-administrator protection are still absent. The files adapter, local consumer, and HTML demo use synthetic data and MUST NOT be treated as production integrations.
 
+Additional experimental evidence, 2026-10-09: an [independently authored Python implementation](https://github.com/sierracatalina/context-layer/blob/c16aa889620cd782e88d7750d8f6b729e4cc844f/implementations/python/LINEAGE.md) used a pinned source-only packet and a separately authored proposed local profile. The profile author inspected the reference; the Python implementation author did not. [The conformance report scope](https://github.com/sierracatalina/context-layer/blob/c16aa889620cd782e88d7750d8f6b729e4cc844f/CONFORMANCE.md) identifies the shared corpus, reference-derived supplement and remaining limits. This supplies evidence for a named local experiment, not proof that the original core alone was complete, that all core roles conform, or that outside adoption or independent outside security review occurred. Descriptive profile behavior cannot override authoritative core or closed-schema constraints; [issue #16](https://github.com/sierracatalina/context-layer/issues/16) tracks that clarification.
+
+<a id="cl-s-17"></a>
+
 ## 17. Open design questions
+
+The proposed local profile records one experimental choice for several items below. General core choices remain open unless a reviewed specification revision explicitly resolves them. Current implementation-driven discussions cover [canonical bytes and signing](https://github.com/sierracatalina/context-layer/issues/13), [approval bindings](https://github.com/sierracatalina/context-layer/issues/14), [receipt formats](https://github.com/sierracatalina/context-layer/issues/15), [schema/profile precedence](https://github.com/sierracatalina/context-layer/issues/16), and [conformance coverage](https://github.com/sierracatalina/context-layer/issues/17). The role-list interpretation is tracked separately in [issue #18](https://github.com/sierracatalina/context-layer/issues/18).
 
 The next specification revision needs decisions on:
 
@@ -1050,7 +1380,11 @@ The next specification revision needs decisions on:
 - Registration of media types and well-known metadata
 - Governance, change control, and an independent conformance process
 
+<a id="cl-s-18"></a>
+
 ## 18. Normative and informative references
+
+<a id="cl-s-18-1"></a>
 
 ### 18.1 Normative foundations for this draft
 
@@ -1060,6 +1394,8 @@ The next specification revision needs decisions on:
 - [RFC 9110: HTTP Semantics](https://www.rfc-editor.org/rfc/rfc9110.html)
 - [RFC 8446: TLS 1.3](https://www.rfc-editor.org/info/rfc8446/)
 - [RFC 9700: OAuth 2.0 Security Best Current Practice](https://www.rfc-editor.org/info/rfc9700/)
+
+<a id="cl-s-18-2"></a>
 
 ### 18.2 Informative interoperability references
 
@@ -1074,3 +1410,17 @@ The next specification revision needs decisions on:
 - [IPFS privacy and encryption](https://docs.ipfs.tech/concepts/privacy-and-encryption/)
 - [OpenAI Realtime API with WebRTC](https://developers.openai.com/api/docs/guides/realtime-webrtc)
 - [x402 documentation](https://docs.x402.org/introduction)
+
+<a id="cl-s-18-3"></a>
+
+### 18.3 Informative authorization and capability prior art
+
+These sources inform the design comparison in [Prior art](../../PRIOR-ART.md); they are not mandatory wire formats or additional normative dependencies of this draft.
+
+- [UCAN specification, version 1.0.0](https://github.com/ucan-wg/spec) and [UCAN delegation](https://github.com/ucan-wg/delegation)
+- [RFC 9635: Grant Negotiation and Authorization Protocol, GNAP](https://www.rfc-editor.org/rfc/rfc9635.html)
+- [Birgisson et al., Macaroons: Cookies with Contextual Caveats for Decentralized Authorization in the Cloud, NDSS 2014](https://research.google/pubs/macaroons-cookies-with-contextual-caveats-for-decentralized-authorization-in-the-cloud/)
+- [Eclipse Biscuit token specification](https://doc.biscuitsec.org/reference/specifications)
+- [Authorization Capabilities v0.4.0, zcap-ld](https://w3c-ccg.github.io/zcap-spec/v0.4.0/)
+- [RFC 6749: The OAuth 2.0 Authorization Framework](https://www.rfc-editor.org/rfc/rfc6749.html)
+- [RFC 8693: OAuth 2.0 Token Exchange](https://www.rfc-editor.org/rfc/rfc8693.html)

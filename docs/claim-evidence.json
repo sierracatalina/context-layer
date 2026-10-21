@@ -1,0 +1,634 @@
+{
+  "format": "context-layer-claim-evidence/1",
+  "review_date": "2026-10-10",
+  "baseline_revision": "0a8d016c822f38e8fc857422e133d0699c42a21f",
+  "baseline_ci_url": "https://github.com/sierracatalina/context-layer/actions/runs/37695577167",
+  "baseline_ci_scope": "Ubuntu and Windows workflow associated with the pinned main revision; not proof for later changes.",
+  "claims": [
+    {
+      "id": "C01",
+      "claim": "Closed core object contracts reject tested unknown/forbidden fields.",
+      "scope": "Five core schemas and the JavaScript reference runtime.",
+      "status": "implemented-tested",
+      "revision": "0a8d016c822f38e8fc857422e133d0699c42a21f",
+      "date": "2026-10-09",
+      "evidence": [
+        {
+          "path": "protocol/schemas/context-request.schema.json"
+        },
+        {
+          "path": "protocol/reference/context-layer-reference.mjs"
+        },
+        {
+          "path": "tests/reference-implementation.test.mjs",
+          "test": "request validation rejects unknown and secret-bearing fields"
+        }
+      ],
+      "limits": "Finite fixtures do not establish universal validation correctness or companion conformance.",
+      "next_evidence": "Rerun candidate contracts and independent implementations."
+    },
+    {
+      "id": "C02",
+      "claim": "The local policy proof exercises four decision states and approval binding.",
+      "scope": "Synthetic reference/local-core policy profiles.",
+      "status": "implemented-tested",
+      "revision": "0a8d016c822f38e8fc857422e133d0699c42a21f",
+      "date": "2026-10-09",
+      "evidence": [
+        {
+          "path": "packages/local-core/policy.mjs"
+        },
+        {
+          "path": "tests/local-core.test.mjs",
+          "test": "policy engine deterministically emits allow, reduce, approval, and deny states"
+        },
+        {
+          "path": "tests/local-core.test.mjs",
+          "test": "approval requires explicit authentication and exact request and policy digest binding"
+        }
+      ],
+      "limits": "An authenticated approval input is not a production consent UI or identity service.",
+      "next_evidence": "Specify portable policy and approval semantics for independent implementation."
+    },
+    {
+      "id": "C03",
+      "claim": "The local bundle profile signs canonical JSON with Ed25519 and rejects tested tampering.",
+      "scope": "Local experimental envelope, synthetic keys and listed canonicalization cases.",
+      "status": "implemented-tested",
+      "revision": "0a8d016c822f38e8fc857422e133d0699c42a21f",
+      "date": "2026-10-09",
+      "evidence": [
+        {
+          "path": "packages/local-core/jcs.mjs"
+        },
+        {
+          "path": "packages/local-core/authority.mjs"
+        },
+        {
+          "path": "tests/local-core.test.mjs",
+          "test": "Ed25519 verification rejects tampering, wrong keys, and malformed signatures"
+        },
+        {
+          "path": "tests/local-core.test.mjs",
+          "test": "Ed25519 Unicode signatures interoperate with independent canonical bytes"
+        }
+      ],
+      "limits": "Public-key verification does not prove issuer trust, managed key custody, all RFC edge cases or outside review. Legacy HMAC reading is opt-in.",
+      "next_evidence": "Publish precise signing/canonicalization contracts and cross-implementation vectors."
+    },
+    {
+      "id": "C04",
+      "claim": "Recipients reject tested wrong-recipient, expiry, revocation and replay cases.",
+      "scope": "Trusted single-user local consumer and receipt-log boundary.",
+      "status": "implemented-tested",
+      "revision": "0a8d016c822f38e8fc857422e133d0699c42a21f",
+      "date": "2026-10-09",
+      "evidence": [
+        {
+          "path": "packages/local-core/consumer.mjs"
+        },
+        {
+          "path": "tests/local-core.test.mjs",
+          "test": "local agent rejects wrong-recipient, expired, and revoked bundles"
+        },
+        {
+          "path": "tests/local-core.test.mjs",
+          "test": "local agent enforces durable single-use replay across receipt-log reopen"
+        }
+      ],
+      "limits": "Cannot enforce deletion or prevent misuse by a compromised recipient after disclosure. Handler code and the revocation source are trusted.",
+      "next_evidence": "Add independent negative tests and deployment-specific identity/revocation evidence."
+    },
+    {
+      "id": "C05",
+      "claim": "Receipt chains detect tested tampering and migrate earlier anchors.",
+      "scope": "Local append-only log, signed sidecar and same-filesystem locking.",
+      "status": "implemented-tested",
+      "revision": "0a8d016c822f38e8fc857422e133d0699c42a21f",
+      "date": "2026-10-09",
+      "evidence": [
+        {
+          "path": "packages/local-core/receipt-log.mjs"
+        },
+        {
+          "path": "tests/receipt-log-hardening.test.mjs",
+          "test": "version-1 HMAC logs verify read-only, migrate on open, and keep replay history"
+        },
+        {
+          "path": "tests/receipt-log-hardening.test.mjs",
+          "test": "authenticated anchor detects rollback, rewrite, and unanchored suffixes"
+        }
+      ],
+      "limits": "Coordinated rollback of log and sidecar remains possible. A receipt attests to reported operations, not complete behavioral correctness.",
+      "next_evidence": "Test protected external checkpoints before claiming stronger rollback resistance."
+    },
+    {
+      "id": "C06",
+      "claim": "The vault encrypts persisted test data and the files adapter enforces tested root boundaries.",
+      "scope": "One experimental local vault and UTF-8 files adapter.",
+      "status": "implemented-tested",
+      "revision": "0a8d016c822f38e8fc857422e133d0699c42a21f",
+      "date": "2026-10-09",
+      "evidence": [
+        {
+          "path": "packages/local-core/vault.mjs"
+        },
+        {
+          "path": "packages/local-core/files-adapter.mjs"
+        },
+        {
+          "path": "tests/local-core.test.mjs",
+          "test": "vault uses versioned AES-256-GCM envelopes and exposes no plaintext at rest"
+        },
+        {
+          "path": "tests/local-core.test.mjs",
+          "test": "files adapter rejects outside-root, oversized, invalid UTF-8, and symlink paths"
+        }
+      ],
+      "limits": "No production key custody, tenant isolation or hostile-process protection is established.",
+      "next_evidence": "Specify and assess actual production custody and process boundaries separately."
+    },
+    {
+      "id": "C07",
+      "claim": "The consumer produces pending memory proposals without a direct commit API.",
+      "scope": "Synthetic local-core/reference proposal-only writeback.",
+      "status": "implemented-tested",
+      "revision": "0a8d016c822f38e8fc857422e133d0699c42a21f",
+      "date": "2026-10-09",
+      "evidence": [
+        {
+          "path": "protocol/schemas/memory-update-proposal.schema.json"
+        },
+        {
+          "path": "tests/local-core.test.mjs",
+          "test": "memory writeback remains a receipted pending proposal with no commit API"
+        }
+      ],
+      "limits": "This does not implement a human review interface or an approved-commit workflow.",
+      "next_evidence": "Review and test a separate commit workflow and human comprehension before claiming it exists."
+    },
+    {
+      "id": "C08",
+      "claim": "A versioned standalone kit executes the scoped local-profile transcript against JavaScript and Python adapters.",
+      "scope": "Forty-five common-kit assertions per adapter, four unchanged original vector sets, six separate contract fixtures and a labeled reference-derived full-object supplement.",
+      "status": "implemented-tested",
+      "revision": "af610f6e39ee0b8dbc3db49f098676bb1fd729c1",
+      "date": "2026-10-09",
+      "evidence": [
+        {
+          "path": "CONFORMANCE.md"
+        },
+        {
+          "path": "conformance/v0.2.0-draft.1/manifest.json"
+        },
+        {
+          "path": "tests/conformance-kit.test.mjs",
+          "test": "exported kit runs outside repository and tests real reference adapter results"
+        },
+        {
+          "path": "tests/conformance-kit.test.mjs",
+          "test": "full-object profile oracles satisfy independent closed schemas and explicit scope"
+        },
+        {
+          "path": "scripts/check-independent-conformance.mjs"
+        }
+      ],
+      "limits": "The supplement is reference-derived, not an independent oracle. The kit is exported offline, not registry-published or a certification. A passing transcript does not establish complete core/role conformance, outside adoption or universally correct reference behavior.",
+      "next_evidence": "Run the exact final combined candidate on both hosted operating systems and retain assertion-level reports; resolve remaining profile/coverage questions in issues #13–17 without treating source links as resolution.",
+      "ci_url": "https://github.com/sierracatalina/context-layer/actions/runs/38006012587"
+    },
+    {
+      "id": "C09",
+      "claim": "The documentation site includes checked routes, source/asset contracts and progressive mobile navigation.",
+      "scope": "site/context-layer source and site/vercel.json, including the plain-language overview and mobile-menu state checks.",
+      "status": "implemented-tested",
+      "revision": "378aab9cf48c5148c8ffce1f5fca17bcbee08f18",
+      "date": "2026-10-09",
+      "evidence": [
+        {
+          "path": "site/vercel.json"
+        },
+        {
+          "path": "tests/public-site.test.mjs",
+          "test": "all public routes expose a progressive mobile menu with the full navigation"
+        },
+        {
+          "path": "tests/public-site.test.mjs",
+          "test": "mobile menu supports repeat toggles, dismissal, responsive changes and history restore"
+        },
+        {
+          "path": "tests/overview.test.mjs",
+          "test": "overview, TLDR, glossary, rendered page and local links satisfy the G1 contract"
+        },
+        {
+          "path": "tests/editorial-formatting.test.mjs"
+        }
+      ],
+      "limits": "Source assertions and simulated events do not verify production deployment, rendered browser viewports or human usability. The overview preserves a narrow sentence-case exception; ordinary site prose keeps its editorial contract.",
+      "next_evidence": "Check rendered protected preview and production bytes at the exact deployment revision; keep deployment protection in place."
+    },
+    {
+      "id": "C10",
+      "claim": "Package metadata and core/companion wire identifiers are separate.",
+      "scope": "Package 0.2.0-draft.2; core context-layer/0.2-draft; companion context-layer/0.3-draft.",
+      "status": "implemented-inspected",
+      "revision": "0a8d016c822f38e8fc857422e133d0699c42a21f",
+      "date": "2026-10-09",
+      "evidence": [
+        {
+          "path": "package.json"
+        },
+        {
+          "path": "package-lock.json"
+        },
+        {
+          "path": "protocol/companions/0.3-draft/README.md"
+        }
+      ],
+      "limits": "A version string does not establish compatibility, an issued tag or release readiness.",
+      "next_evidence": "Apply RELEASE.md exact-candidate gates and explicit publication approval."
+    },
+    {
+      "id": "C11",
+      "claim": "CL-Pass schemas and behavioral oracles describe a separate experimental proposal.",
+      "scope": "context-layer/0.3-draft companions.",
+      "status": "proposed-untested",
+      "revision": "0a8d016c822f38e8fc857422e133d0699c42a21f",
+      "date": "2026-10-09",
+      "evidence": [
+        {
+          "path": "protocol/companions/0.3-draft/spec.md"
+        },
+        {
+          "path": "test-vectors/cl-pass/VECTORS.md"
+        }
+      ],
+      "limits": "Schema-valid examples do not demonstrate T01–T10 behavior or a live issuer.",
+      "next_evidence": "Implement and execute every claimed companion behavior before upgrading status."
+    },
+    {
+      "id": "C12",
+      "claim": "Broader source, organization, federation, semantic proxy and discovery profiles are design targets.",
+      "scope": "Implementation guide, architecture and essay, including source/site mirrors.",
+      "status": "proposed-untested",
+      "revision": "0a8d016c822f38e8fc857422e133d0699c42a21f",
+      "date": "2026-10-09",
+      "evidence": [
+        {
+          "path": "protocol/spec/context-layer-implementation-and-interoperability.md"
+        },
+        {
+          "path": "protocol/spec/context-layer-blog-post.md"
+        },
+        {
+          "path": "protocol/spec/context-layer-architecture-diagram.svg"
+        }
+      ],
+      "limits": "Diagrams and recipes do not prove extraction, semantic redaction, mobile UI, recovery or production adapters exist.",
+      "next_evidence": "Link a concrete implementation, supported profile and negative tests for each capability."
+    },
+    {
+      "id": "C13",
+      "claim": "One local MCP stdio demo narrows six synthetic fields to three before delivery and denies a private-only request.",
+      "scope": "Official SDK 1.32.1 client/server using negotiated MCP 2025-11-25; native model agents used a shell-to-MCP bridge. Public fresh-clone protocol timing was 14.26 seconds at runtime revision 12bdad60bb34ac0bc47bd1e6b322d032c14a8110. A separate same-clock fresh-clone through actual model agenda and verification took 73.98 seconds at f50e9684533229e707fc6ec6a5e541c8e79d785e.",
+      "status": "implemented-tested",
+      "revision": "b4c16dad4e919816f2aed87bef2b138e3c23121b",
+      "date": "2026-10-09",
+      "evidence": [
+        {
+          "path": "examples/mcp-agent-demo/demo.test.mjs",
+          "test": "scoped MCP payload removes unrelated values before the client receives them"
+        },
+        {
+          "path": "examples/mcp-agent-demo/demo.test.mjs",
+          "test": "private-only selector is denied through actual MCP transport"
+        },
+        {
+          "path": "docs/demo/README.md"
+        },
+        {
+          "path": "docs/demo/evidence/fresh-clone.json"
+        },
+        {
+          "path": "docs/demo/evidence/fresh-clone-model.json"
+        },
+        {
+          "path": "docs/demo/evidence/fresh-clone-agent/mcp-tool-call.json"
+        },
+        {
+          "path": "docs/demo/evidence/SHA256SUMS"
+        },
+        {
+          "path": "site/context-layer/demo/media/mcp-agent-walkthrough.mp4"
+        }
+      ],
+      "limits": "This is a local bridge-based experiment using synthetic data, not direct native-host/plugin verification, general MCP interoperability, A2A implementation, outside adoption or production readiness. Timing assumes installed prerequisites and an already available authorized model-agent runtime; it excludes acquiring or signing in to that runtime. The 87.5-second video labels replayed model results separately from captured live protocol/test output.",
+      "next_evidence": "Verify the exact integrated candidate and protected browser presentation; separately test a supported native host and consenting independently maintained integration before broadening claims.",
+      "ci_url": "https://github.com/sierracatalina/context-layer/actions/runs/38002964853"
+    },
+    {
+      "id": "C14",
+      "claim": "The Nostr profile is unsubmitted and event kinds remain unassigned.",
+      "scope": "Experimental discussion draft only.",
+      "status": "proposed-untested",
+      "revision": "0a8d016c822f38e8fc857422e133d0699c42a21f",
+      "date": "2026-10-09",
+      "evidence": [
+        {
+          "path": "docs/nostr/NIP-XX-purpose-bound-context.md"
+        }
+      ],
+      "limits": "No accepted NIP, tested relay interoperability or deployed minimum-reveal service is established.",
+      "next_evidence": "Obtain implementation and relay evidence; submission requires a separate decision."
+    },
+    {
+      "id": "C15",
+      "claim": "Outside maintenance and adoption are not established by these project-produced experiments.",
+      "scope": "JavaScript experiments and the independently authored Python implementation produced within this project.",
+      "status": "not-established",
+      "revision": "af610f6e39ee0b8dbc3db49f098676bb1fd729c1",
+      "date": "2026-10-09",
+      "evidence": [
+        {
+          "path": "implementations/python/LINEAGE.md"
+        },
+        {
+          "path": "CONFORMANCE.md"
+        }
+      ],
+      "limits": "Project-produced second-language or clean-room code can test implementability without proving outside ownership or adoption.",
+      "next_evidence": "Apply GOALS.md G-IMPLEMENT and G-ADOPT with consenting outside project-owner confirmation."
+    },
+    {
+      "id": "C16",
+      "claim": "Independent security review and certification are not established.",
+      "scope": "Protocol, cryptography, local runtime and site.",
+      "status": "not-established",
+      "revision": "af610f6e39ee0b8dbc3db49f098676bb1fd729c1",
+      "date": "2026-10-09",
+      "evidence": [
+        {
+          "path": "SECURITY.md"
+        },
+        {
+          "path": "docs/context-layer-threat-model.md"
+        },
+        {
+          "path": "docs/security-review-status.md"
+        }
+      ],
+      "limits": "Regression tests and disclosure instructions are not an outside audit, security score or certification.",
+      "next_evidence": "Record real independent review scope and finding dispositions; keep unsupported assurances absent."
+    },
+    {
+      "id": "C17",
+      "claim": "A bounded seeded generated/property suite exercises malformed inputs, receipt corruption, concurrent replay and revocation/expiry.",
+      "scope": "Five deterministic property families; xorshift32-v1 seed 12648430, default 256 generated cases with configurable bound 1–4096 and documented per-family caps.",
+      "status": "implemented-tested",
+      "revision": "af610f6e39ee0b8dbc3db49f098676bb1fd729c1",
+      "date": "2026-10-09",
+      "evidence": [
+        {
+          "path": "docs/security-testing.md"
+        },
+        {
+          "path": "tests/security/fuzz-properties.test.mjs",
+          "test": "seeded bundle JSON/shape mutations reject without releasing context"
+        },
+        {
+          "path": "tests/security/fuzz-properties.test.mjs",
+          "test": "generated concurrent single-use and restart properties use durable shared storage"
+        },
+        {
+          "path": "tests/security/fuzz-properties.test.mjs",
+          "test": "generated revocation/expiry rechecks prevent handler invocation after open"
+        }
+      ],
+      "limits": "This is a fixed-seed bounded campaign, not a coverage-guided fuzzer, exhaustive proof, hostile-process assessment or outside cryptographic review. Per-family scenario limits differ from the configured generated-case count.",
+      "next_evidence": "Record final-candidate seed, case budget and results; preserve private reporting for vulnerability details and obtain actual outside review separately.",
+      "ci_url": "https://github.com/sierracatalina/context-layer/actions/runs/38006012587"
+    },
+    {
+      "id": "C18",
+      "claim": "Human comprehension, explain-back and external user outcomes are unmeasured.",
+      "scope": "README, site and protocol documentation.",
+      "status": "not-established",
+      "revision": "0a8d016c822f38e8fc857422e133d0699c42a21f",
+      "date": "2026-10-09",
+      "evidence": [
+        {
+          "path": "README.md"
+        },
+        {
+          "path": "site/context-layer/_pages/index.html"
+        }
+      ],
+      "limits": "Automated readability metrics and model reviews cannot establish what actual people understood.",
+      "next_evidence": "Record consented, anonymized human method/results separately from reading scores."
+    },
+    {
+      "id": "C19",
+      "claim": "Eleven version-addressed schema snapshots and their static site candidates pass offline identity, reference and hash checks.",
+      "scope": "Five core 0.2.0-draft.1 schemas and six separate companion 0.3.0-draft.1 schemas, with a shared hash catalog and legacy aliases.",
+      "status": "implemented-tested",
+      "revision": "af610f6e39ee0b8dbc3db49f098676bb1fd729c1",
+      "date": "2026-10-09",
+      "evidence": [
+        {
+          "path": "protocol/schemas/schema-catalog.json"
+        },
+        {
+          "path": "site/context-layer/schemas/index.json"
+        },
+        {
+          "path": "tests/conformance-kit.test.mjs",
+          "test": "versioned schemas compile offline and publication candidates preserve exact identities and refs"
+        },
+        {
+          "path": "tests/conformance-kit.test.mjs",
+          "test": "schema catalog binds every versioned source and site candidate"
+        }
+      ],
+      "limits": "The catalog explicitly records prepared-not-deployment-verified status. These proposed version directories are not immutable published releases yet; an identifier or local file does not prove a live URL. Companion schema checks do not implement CL-Pass behavior.",
+      "next_evidence": "After approved site deployment, fetch all eleven versioned URLs and legacy aliases and compare bytes, IDs and catalog hashes; freeze released versions instead of overwriting them.",
+      "ci_url": "https://github.com/sierracatalina/context-layer/actions/runs/38006012587"
+    },
+    {
+      "id": "C20",
+      "claim": "Private disclosure has a documented GitHub destination; form availability requires an authenticated check.",
+      "scope": "Repository security policy and issue routing.",
+      "status": "implemented-inspected",
+      "revision": "af610f6e39ee0b8dbc3db49f098676bb1fd729c1",
+      "date": "2026-10-09",
+      "evidence": [
+        {
+          "path": "SECURITY.md"
+        }
+      ],
+      "limits": "Public read on 2026-10-09 reached GitHub login only. This verifies the destination route, not an eligible reporter submission. No fallback contact is invented.",
+      "next_evidence": "Verify the authenticated private form before release; do not post exploit details publicly if unavailable."
+    },
+    {
+      "id": "C21",
+      "claim": "A plain-language overview and one-line glossary satisfy documented automated readability and coverage checks.",
+      "scope": "Five-section overview, README TL;DR, 119 glossary entries, 81 distinct extracted source terms and generated site mirrors.",
+      "status": "implemented-tested",
+      "revision": "1828876991f82a6b53b2c938ffec0ede35b2b350",
+      "date": "2026-10-10",
+      "evidence": [
+        {
+          "path": "OVERVIEW.md"
+        },
+        {
+          "path": "GLOSSARY.md"
+        },
+        {
+          "path": "docs/overview-validation.md"
+        },
+        {
+          "path": "tests/overview.test.mjs",
+          "test": "overview, TLDR, glossary, rendered page and local links satisfy the G1 contract"
+        },
+        {
+          "path": "tests/overview.test.mjs",
+          "test": "glossary derives coverage from both specifications and fails on an omitted term"
+        }
+      ],
+      "limits": "Flesch estimates use a deterministic heuristic and are not observed human comprehension. The canonical PCP name and pinned public citation preserve optional use and separate acting authority; source/rendered checks and the full local aggregate pass. No nontechnical explain-back study or new-head hosted CI result is claimed.",
+      "next_evidence": "Verify exact-head hosted CI and protected browser rendering, then record consented human explain-back results."
+    },
+    {
+      "id": "C22",
+      "claim": "Core navigation, a concise topic summary and a complete normative index preserve existing uppercase requirements and examples; section 13 now explicitly summarizes roles informatively.",
+      "scope": "Core v0.2 specification only: 123 raw uppercase MUST/SHOULD occurrences, 119 indexed occurrences in 56 passages after excluding the language definition. All 37 original role bullets are preserved. Prior-art comparisons and local-profile links are informative.",
+      "status": "implemented-tested",
+      "revision": "378aab9cf48c5148c8ffce1f5fca17bcbee08f18",
+      "date": "2026-10-09",
+      "evidence": [
+        {
+          "path": "NORMATIVE-SUMMARY.md"
+        },
+        {
+          "path": "NORMATIVE-INDEX.md"
+        },
+        {
+          "path": "PRIOR-ART.md"
+        },
+        {
+          "path": "tests/spec-documentation.test.mjs",
+          "test": "navigation and citation edits preserve all normative excerpts and code examples"
+        },
+        {
+          "path": "tests/spec-documentation.test.mjs",
+          "test": "every indexed passage renders in full and has shared GitHub/site anchors"
+        },
+        {
+          "path": "tests/spec-documentation.test.mjs",
+          "test": "each prior-art comparison includes the required decision dimensions and primary links"
+        },
+        {
+          "path": "tests/spec-documentation.test.mjs",
+          "test": "informative role overview preserves all original bullets and existing requirement scope"
+        },
+        {
+          "path": "CHANGELOG.md"
+        }
+      ],
+      "limits": "Counts are keyword occurrences and passages, not atomic requirements. The one-page document is a topic summary; the complete requirement listing remains a separate longer index. Section 13 selects the informative interpretation under the existing uppercase-only convention; this is not equivalence with every earlier stricter reading. No existing uppercase obligation, condition, profile boundary, code example or role bullet is changed. Companion/Nostr drafts remain outside this core index.",
+      "next_evidence": "Independently review the exact integrated section 13 change and compatibility note under issue #18 before disposition. General canonicalization, approval, receipt, schema/profile and coverage questions remain tracked in issues #13–17."
+    },
+    {
+      "id": "C23",
+      "claim": "Proposed measurable goals, user stories, release gates and private-report routing have reviewable repository artifacts.",
+      "scope": "G-IMPLEMENT, G-ADOPT and G-FREEZE proposals; three synthetic user stories; issue/PR templates; current release and version policy.",
+      "status": "implemented-tested",
+      "revision": "9149d9ecb14ef2807495ff70d448320439353b04",
+      "date": "2026-10-09",
+      "ci_url": "https://github.com/sierracatalina/context-layer/actions/runs/38001797605",
+      "evidence": [
+        {
+          "path": "GOALS.md"
+        },
+        {
+          "path": "ROADMAP.md"
+        },
+        {
+          "path": "RELEASE.md"
+        },
+        {
+          "path": "tests/governance-evidence.test.mjs",
+          "test": "adoption and freeze goals remain proposed with owners, dates and measurements"
+        },
+        {
+          "path": "tests/governance-evidence.test.mjs",
+          "test": "security reporting routes privately and public forms discourage sensitive details"
+        }
+      ],
+      "limits": "Targets, owners and dates are unaccepted proposals. Documentation is not release authorization, a completed external review, verified private-form availability, outside adoption or a v0.3 tag.",
+      "next_evidence": "Obtain owner acceptance, verify the authenticated private report form, decide any external-review recipient/budget and apply exact-candidate release gates before promotion."
+    },
+    {
+      "id": "C24",
+      "claim": "An independently authored Python experiment passes its own tests and the shared local-profile transcript.",
+      "scope": "Python 3.12 experiment with 105 unit tests, 52 standalone public-vector assertions, 45 common-kit assertions and nine cross-implementation byte/parity/bidirectional checks.",
+      "status": "implemented-tested",
+      "revision": "b35e25cf1e83d7c3b7dc16b66686dde5625be11c",
+      "date": "2026-10-10",
+      "evidence": [
+        {
+          "path": "implementations/python/LINEAGE.md"
+        },
+        {
+          "path": "implementations/python/reports/verification-summary.json"
+        },
+        {
+          "path": "implementations/python/tests/test_profile.py",
+          "test": "test_profile_signature_verified_with_only_public_key"
+        },
+        {
+          "path": "implementations/python/tests/test_profile.py",
+          "test": "test_profile_bound_approval_transcript"
+        },
+        {
+          "path": "scripts/check-independent-conformance.mjs"
+        },
+        {
+          "path": "implementations/python/tests/test_profile.py",
+          "test": "test_profile_log_reuses_validator_without_skipping_receipt_checks"
+        },
+        {
+          "path": "implementations/python/tests/test_profile.py",
+          "test": "test_profile_lock_timeout_keeps_owner_and_receipts_unchanged"
+        },
+        {
+          "path": "implementations/python/tests/test_profile.py",
+          "test": "test_profile_process_harness_reaps_children_before_failure_escapes"
+        },
+        {
+          "path": "implementations/python/reports/windows-lock-fix/REVIEW-NOTE.md"
+        },
+        {
+          "path": "implementations/python/tests/test_core.py",
+          "test": "test_authority_rejects_malformed_authorizing_collections_at_construction"
+        },
+        {
+          "path": "implementations/python/tests/test_profile.py",
+          "test": "test_profile_malformed_transform_containers_never_reach_signing"
+        },
+        {
+          "path": "implementations/python/tests/test_profile.py",
+          "test": "test_profile_supported_transform_families_preserve_their_effects"
+        },
+        {
+          "path": "implementations/python/tests/test_profile.py",
+          "test": "test_profile_unsupported_transform_fails_before_bundle_signing"
+        },
+        {
+          "path": "implementations/python/reports/python-policy-review/REVIEW-NOTE.md"
+        }
+      ],
+      "limits": "The implementation author used a source-only packet plus separately authored profile prose. The profile author inspected JavaScript; the implementer did not. This is project-produced implementation-process independence, not outside maintenance, adoption or security audit. Python does not implement version-1 receipt-anchor migration, a production vault or every core role. Receipt-lock and policy-container corrections passed local Linux tests and independent exact-patch review. The malformed allowlist/transform-container failures were reproduced; unsupported-identifier disclosure and IndexError were not, and their actual fail-closed behavior is documented. Fresh exact-head hosted Windows/Ubuntu results are required; earlier hosted CI and configured code/security review apply only to their recorded prior heads.",
+      "next_evidence": "Run final combined hosted Linux/Windows checks and preserve exact source/clarification provenance; resolve recorded general-core ambiguities and obtain consenting outside implementation evidence separately."
+    }
+  ]
+}

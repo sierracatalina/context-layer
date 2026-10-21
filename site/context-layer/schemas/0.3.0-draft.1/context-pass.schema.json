@@ -1,0 +1,159 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sierracatalina.com/context-layer/schemas/0.3.0-draft.1/context-pass.schema.json",
+  "title": "context pass",
+  "description": "Standing category grant for one principal and one client instance. Necessary, not sufficient, for disclosure. Companion to context-layer/0.2-draft; does not open the five CL-Core-Lite schemas.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "spec_version",
+    "type",
+    "id",
+    "created_at",
+    "issuer",
+    "subject_ref",
+    "principal",
+    "client_instance",
+    "categories",
+    "allowed_purpose_codes",
+    "expires_at",
+    "revocable",
+    "status"
+  ],
+  "properties": {
+    "spec_version": {
+      "const": "context-layer/0.3-draft"
+    },
+    "type": {
+      "const": "context_pass"
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^urn:cl:pass:[A-Za-z0-9._~-]+$"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "issuer": {
+      "$ref": "#/$defs/issuer"
+    },
+    "subject_ref": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 512
+    },
+    "principal": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 512
+    },
+    "client_instance": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 512
+    },
+    "pairing_ref": {
+      "type": "string",
+      "pattern": "^urn:cl:pairing:[A-Za-z0-9._~-]+$"
+    },
+    "categories": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 4,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/memory_category"
+      }
+    },
+    "allowed_purpose_codes": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 32,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/purpose_code"
+      }
+    },
+    "expires_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "revocable": {
+      "type": "boolean"
+    },
+    "status": {
+      "enum": [
+        "active",
+        "revoked",
+        "expired"
+      ]
+    },
+    "revoked_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "const": "revoked"
+          }
+        },
+        "required": [
+          "status"
+        ]
+      },
+      "then": {
+        "required": [
+          "revoked_at"
+        ]
+      }
+    }
+  ],
+  "$defs": {
+    "issuer": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 3,
+          "maxLength": 512
+        }
+      }
+    },
+    "memory_category": {
+      "enum": [
+        "preference",
+        "fact",
+        "project",
+        "instruction"
+      ]
+    },
+    "purpose_code": {
+      "anyOf": [
+        {
+          "enum": [
+            "draft.response",
+            "summarize.material",
+            "retrieve.context",
+            "plan.task",
+            "execute.approved_action",
+            "discover.minimum_reveal",
+            "propose.memory_update"
+          ]
+        },
+        {
+          "type": "string",
+          "pattern": "^x\\.[a-z0-9]+(?:[._-][a-z0-9]+)*(?:\\.[a-z0-9]+(?:[._-][a-z0-9]+)*)+$"
+        }
+      ]
+    }
+  }
+}

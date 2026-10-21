@@ -1,0 +1,104 @@
+{
+  "kit_version": "context-layer-conformance/0.2.0-draft.1",
+  "status": "proposed-unreleased",
+  "spec_version": "context-layer/0.2-draft",
+  "profile": "local-core/0.2-draft.1",
+  "files": [
+    {
+      "path": "LICENSE",
+      "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+    },
+    {
+      "path": "LICENSE-DOCS",
+      "sha256": "9e5f1b3c610b9c2da5c313bf81d577a7d1acec686bdb0384edefa6df0f90cd94"
+    },
+    {
+      "path": "README.md",
+      "sha256": "94b58ce05b34fc3d0ac7358cfbb1f95b419ecfce9f91a03eea12b4d342614a16"
+    },
+    {
+      "path": "adapter-contract.md",
+      "sha256": "480b186966bba8f2c87b287f946bf0c15dc2aa7da8a15586c6477870b65a01a1"
+    },
+    {
+      "path": "fixtures/invalid-memory-update-proposal.json",
+      "sha256": "877d80f6d5153deacefcf1872594deeb45b0dbade56da0a973d9fae2f597d97f"
+    },
+    {
+      "path": "fixtures/invalid-policy-decision.json",
+      "sha256": "04ccb7f279d714741b0548ccf50941ce8593975d1d4011d9190d9568ad314d7b"
+    },
+    {
+      "path": "fixtures/invalid-secret-receipt.json",
+      "sha256": "3666a2edbb099d9e365ccf0d63bdcbd292c75f31c91a8b0dffbdcadce7cc0611"
+    },
+    {
+      "path": "fixtures/valid-exchange.json",
+      "sha256": "6413978df9af1c5b777362e3ac83371486731c75f66152bfe0aa79b4f4dbc95b"
+    },
+    {
+      "path": "fixtures/valid-memory-update-proposal.json",
+      "sha256": "9bd0c1746b7a209b73d9ef7b5c6239b536cec234089b46b970c4ad34b73fccb9"
+    },
+    {
+      "path": "fixtures/valid-policy-decision.json",
+      "sha256": "9ee9c49035c2d0f0ca60fa561d0b13cd790b147ec391ca2c8129e19b67863e41"
+    },
+    {
+      "path": "local-profile-expectations.json",
+      "sha256": "f7de67b0d73c855d9a0bc4096fd7ad95a34de753d3f6a6350a1e428e3c75ab2c"
+    },
+    {
+      "path": "package.json",
+      "sha256": "24bf8c64a13282a371bc9630ba17b53c76c99ee881a18bde3b670d343b963274"
+    },
+    {
+      "path": "profiles/local-core-0.2-draft.1.md",
+      "sha256": "c0103260c0fcff84bb9f0565c7b2c03139e251f4a165c35300b8dca93d45094a"
+    },
+    {
+      "path": "run.mjs",
+      "sha256": "3248ffef3c1105d993c8865afb0c271b0d30f346bbf5e8ddee194b56e3f1354a"
+    },
+    {
+      "path": "schemas/context-request.schema.json",
+      "sha256": "0592799c09dd23d3c866b0a120f3ad69e37f88e2d46e32ae0bc92ae7ebdd6b24"
+    },
+    {
+      "path": "schemas/memory-update-proposal.schema.json",
+      "sha256": "04b752e49ae8217900b35ef4900f34419ca88069581a2547fb60cd1d87a689cf"
+    },
+    {
+      "path": "schemas/policy-decision.schema.json",
+      "sha256": "4a3cb895cd4da9ddc695dc99e0e7ec9561a0cab3557969978bf3ecb13adb767a"
+    },
+    {
+      "path": "schemas/receipt.schema.json",
+      "sha256": "3a76f370de8c9c21bba04dd5963aa630aecf483de644d9f8819978b598f8595e"
+    },
+    {
+      "path": "schemas/scoped-context-bundle.schema.json",
+      "sha256": "7e1a0f8034001ebc242883919f9ad5ad671dabb909426e76795276f0b0e93aba"
+    },
+    {
+      "path": "vectors/canonicalization.json",
+      "sha256": "1f0899a693e51985c1affe5a456b90f7224fc875a1d615f372df8a3b057a9314"
+    },
+    {
+      "path": "vectors/exchange-security.json",
+      "sha256": "b5a023c98947e07f8637486c00a64b877b4a43548556d60b20ee73724d5a964d"
+    },
+    {
+      "path": "vectors/manifest.json",
+      "sha256": "e4257079c5738bbd579d44c374c6d0fcb9ee98d4b09bad462f3d15f9cad8d687"
+    },
+    {
+      "path": "vectors/policy-cases.json",
+      "sha256": "45d4ce69f415eb7d48a937d042ae4f1d72cd1221f0b7b34cb946ae782cc05528"
+    },
+    {
+      "path": "vectors/receipt-memory-isolation.json",
+      "sha256": "40397701a45f284b9911d987916bc65a25c562ca726ead3117467ece505d47d9"
+    }
+  ]
+}

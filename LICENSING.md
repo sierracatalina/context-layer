@@ -23,7 +23,7 @@ The following material is licensed under Creative Commons Attribution 4.0 Intern
 
 Suggested attribution: “Context Layer, Sierra Catalina, Context Layer v0.2 draft,” with a link to the source repository and an indication of modifications.
 
-Website application, hosting, and deployment source are intentionally outside this repository. This file does not assign licenses to material maintained in that separate source location.
+The Context Layer documentation site and standalone routing configuration are included under `site/`; the existing software, documentation and mixed-file rules in this file apply. Copies of protocol prose, diagrams and executable artifacts retain their source classification. The unrelated Sierra Catalina website and hosting material outside this repository are not assigned a license by this file. This boundary correction does not replace either controlling license.
 
 ## Mixed files and exceptions
 

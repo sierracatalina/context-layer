@@ -1,0 +1,30 @@
+{
+  "spec_version": "context-layer/0.2-draft",
+  "type": "memory_update_proposal",
+  "id": "urn:cl:proposal:synthetic-invalid-proposal",
+  "created_at": "2026-08-12T15:12:00Z",
+  "issuer": {
+    "id": "urn:agent:reply-drafter"
+  },
+  "subject_ref": "vault://projects/synthetic-launch",
+  "operation": "add",
+  "proposed_claims": [
+    {
+      "predicate": "requested_delivery_date",
+      "object": {
+        "value": "2026-08-13",
+        "datatype": "date"
+      },
+      "confidence": 0.55
+    }
+  ],
+  "provenance_refs": [],
+  "rationale": "Synthetic invalid direct-write fixture.",
+  "submitted_by": "urn:agent:reply-drafter",
+  "status": "committed",
+  "approval_requirement": [
+    "source_required"
+  ],
+  "expires_at": "2026-08-13T15:12:00Z",
+  "raw_vault_write": true
+}

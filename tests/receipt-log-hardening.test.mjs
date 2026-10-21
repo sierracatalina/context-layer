@@ -300,10 +300,10 @@ test("concurrent opens migrate an HMAC log once under the receipt lock", async (
   assert.equal(records.every((record) => record.anchor_version === 2), true);
 });
 
-function spawnAppendWorker({ filePath, anchorPath, barrierPath, key, operation }) {
+function spawnAppendWorker({ filePath, anchorPath, barrierPath, key, operation, workerSource = RECEIPT_APPEND_WORKER }) {
   const child = spawn(
     process.execPath,
-    ["--input-type=module", "--eval", RECEIPT_APPEND_WORKER],
+    ["--input-type=module", "--eval", workerSource],
     {
       env: {
         ...process.env,
@@ -338,33 +338,151 @@ function spawnAppendWorker({ filePath, anchorPath, barrierPath, key, operation }
   child.stderr.on("data", (chunk) => {
     stderr += chunk;
   });
+  // close runs after both output streams end, so diagnostics contain all bytes.
+  const closed = new Promise((resolvePromise) => child.once("close", resolvePromise));
+  function workerFailure(message, code, signal, cause) {
+    const diagnostic = { pid: child.pid ?? null, code, signal, stdout, stderr };
+    const error = new Error(message + ": " + JSON.stringify(diagnostic), { cause });
+    error.diagnostic = diagnostic;
+    return error;
+  }
   const completion = new Promise((resolvePromise, rejectPromise) => {
-    child.once("error", (error) => {
+    child.once("error", (cause) => {
+      const error = workerFailure("receipt append worker could not run", child.exitCode, child.signalCode, cause);
       if (!readySettled) {
         readySettled = true;
         rejectReady(error);
       }
       rejectPromise(error);
     });
-    child.once("close", (code) => {
+    child.once("close", (code, signal) => {
       if (!readySettled) {
         readySettled = true;
-        rejectReady(new Error("receipt append worker exited before the barrier"));
+        const error = workerFailure("receipt append worker exited before the barrier", code, signal);
+        rejectReady(error);
+        rejectPromise(error);
+        return;
       }
-      if (code !== 0) {
-        rejectPromise(new Error("receipt append worker failed: " + stderr.trim()));
+      if (code !== 0 || signal !== null) {
+        rejectPromise(workerFailure("receipt append worker failed", code, signal));
         return;
       }
       const resultLine = stdout.split(/\r?\n/).find((line) => line.startsWith("RESULT "));
       if (!resultLine) {
-        rejectPromise(new Error("receipt append worker returned no result"));
+        rejectPromise(workerFailure("receipt append worker returned no result", code, signal));
         return;
       }
-      resolvePromise(JSON.parse(resultLine.slice("RESULT ".length)));
+      try {
+        resolvePromise(JSON.parse(resultLine.slice("RESULT ".length)));
+      } catch (cause) {
+        rejectPromise(workerFailure("receipt append worker returned invalid JSON", code, signal, cause));
+      }
     });
   });
-  return { child, ready, completion };
+  // A worker can fail while the caller is awaiting another worker's readiness.
+  // Observe rejection immediately, but return the original promises so awaiting
+  // ready or completion still fails with the complete diagnostic.
+  ready.catch(() => undefined);
+  completion.catch(() => undefined);
+  return { child, ready, completion, closed };
 }
+
+async function stopAppendWorkers(workers) {
+  for (const { child } of workers) {
+    if (child.exitCode === null && child.signalCode === null) child.kill();
+  }
+  await Promise.all(workers.map((worker) => worker.closed));
+}
+
+function spawnWorkerProbe(workerSource) {
+  return spawnAppendWorker({
+    filePath: "unused-probe-log",
+    anchorPath: "unused-probe-anchor",
+    barrierPath: "unused-probe-barrier",
+    key: Buffer.alloc(32, 8),
+    operation: "process.probe",
+    workerSource,
+  });
+}
+
+test("receipt worker startup failures retain diagnostics without unhandled rejections", async (t) => {
+  for (const { name, source, code, stderr } of [
+    { name: "silent nonzero exit", source: "process.exitCode = 23;", code: 23, stderr: "" },
+    { name: "diagnostic failure", source: 'process.stderr.write("synthetic startup failure\\n"); process.exitCode = 17;', code: 17, stderr: "synthetic startup failure\n" },
+    { name: "exit zero before ready", source: "", code: 0, stderr: "" },
+  ]) {
+    await t.test(name, async () => {
+      const worker = spawnWorkerProbe(source);
+      try {
+        // Deliberately let both promises reject before consuming either one.
+        await worker.closed;
+        await new Promise((resolvePromise) => setImmediate(resolvePromise));
+        let startupError;
+        await assert.rejects(worker.ready, (error) => {
+          startupError = error;
+          assert.match(error.message, /exited before the barrier/);
+          assert.deepEqual(error.diagnostic, { pid: worker.child.pid, code, signal: null, stdout: "", stderr });
+          return true;
+        });
+        await assert.rejects(worker.completion, (error) => error === startupError);
+      } finally {
+        await stopAppendWorkers([worker]);
+      }
+    });
+  }
+});
+
+test("receipt worker completion failures retain exit and output evidence", async (t) => {
+  for (const { name, source, expected, code } of [
+    { name: "nonzero after ready", source: 'process.stdout.write("READY\\n"); process.exitCode = 19;', expected: /worker failed/, code: 19 },
+    { name: "missing result", source: 'process.stdout.write("READY\\n");', expected: /returned no result/, code: 0 },
+    { name: "invalid result", source: 'process.stdout.write("READY\\nRESULT invalid-json\\n");', expected: /returned invalid JSON/, code: 0 },
+  ]) {
+    await t.test(name, async () => {
+      const worker = spawnWorkerProbe(source);
+      try {
+        await worker.ready;
+        await worker.closed;
+        await new Promise((resolvePromise) => setImmediate(resolvePromise));
+        await assert.rejects(worker.completion, (error) => {
+          assert.match(error.message, expected);
+          assert.equal(error.diagnostic.code, code);
+          assert.equal(error.diagnostic.signal, null);
+          assert.match(error.diagnostic.stdout, /^READY\n/);
+          return true;
+        });
+      } finally {
+        await stopAppendWorkers([worker]);
+      }
+    });
+  }
+});
+
+test("receipt worker cleanup waits for sibling close before fixture removal", async (t) => {
+  const directory = await temporaryDirectory(t, "worker-cleanup");
+  const fixturePath = join(directory, "fixture");
+  await writeFile(fixturePath, "synthetic fixture");
+  const failed = spawnWorkerProbe("process.exitCode = 23;");
+  const sibling = spawnWorkerProbe('process.stdout.write("READY\\n"); setInterval(() => {}, 1000);');
+  let siblingClosed = false;
+  sibling.child.once("close", () => { siblingClosed = true; });
+  try {
+    await sibling.ready;
+    await assert.rejects(failed.ready, /exited before the barrier/);
+  } finally {
+    await stopAppendWorkers([failed, sibling]);
+  }
+  assert.equal(siblingClosed, true);
+  assert.equal(await readFile(fixturePath, "utf8"), "synthetic fixture");
+  await assert.rejects(sibling.completion, (error) => {
+    assert.equal(error.diagnostic.code, sibling.child.exitCode);
+    assert.equal(error.diagnostic.signal, sibling.child.signalCode);
+    assert.match(error.diagnostic.stdout, /^READY\n/);
+    assert.equal(error.diagnostic.stderr, "");
+    return true;
+  });
+  await assert.rejects(failed.completion, /exited before the barrier/);
+});
 
 test("durable receipt logs require an anchor and reject unsafe bootstrap", async (t) => {
   const directory = await temporaryDirectory(t, "bootstrap");
@@ -759,20 +877,21 @@ test("exclusive receipt-log lock serializes real child processes", async (t) => 
     key,
     operation: "process.operation.two",
   });
-  t.after(() => {
-    first.child.kill();
-    second.child.kill();
-  });
-  await Promise.all([first.ready, second.ready]);
-  await writeFile(barrierPath, "go\n", "utf8");
-  const results = await Promise.all([first.completion, second.completion]);
-  assert.deepEqual(results.map((result) => result.sequence).sort(), [1, 2]);
-  const verified = await verifyReceiptLog(filePath, {
-    anchor: { filePath: anchorPath, key },
-  });
-  assert.equal(verified.entries, 2);
-  await rm(filePath);
-  await rm(anchorPath);
+  try {
+    await Promise.all([first.ready, second.ready]);
+    await writeFile(barrierPath, "go\n", "utf8");
+    const results = await Promise.all([first.completion, second.completion]);
+    assert.deepEqual(results.map((result) => result.sequence).sort(), [1, 2]);
+    const verified = await verifyReceiptLog(filePath, {
+      anchor: { filePath: anchorPath, key },
+    });
+    assert.equal(verified.entries, 2);
+    await rm(filePath);
+    await rm(anchorPath);
+  } finally {
+    // Reap workers before temporaryDirectory's after-hook removes their files.
+    await stopAppendWorkers([first, second]);
+  }
 });
 
 test("stale exclusive locks remain fail-closed until explicit recovery", async (t) => {

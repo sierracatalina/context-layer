@@ -1,0 +1,9 @@
+{
+  "command": "node [FRESH_CLONE]/examples/mcp-agent-demo/call-context.mjs scoped [FRESH_CLONE]/outputs/model-agent/mcp-tool-call.json",
+  "utc_time": "2026-10-09T23:07:22.713Z",
+  "model_id": "unavailable: not exposed by this runtime",
+  "statement": "I generated the three agenda bullets from the actual get_meeting_context result returned by the MCP bridge invocation above. I used no other meeting data source and did not inspect source code, prior run artifacts, or other agents' work.",
+  "bundle_digest": "sha256:c8068812dcfc3348cc6ba5fafad76db1f17052656ef0cece240a90e0f9e3ff8c",
+  "public_run_id": "mcp-meeting-20261009-fresh-clone",
+  "publication_normalization": "Only the absolute fresh-checkout prefix is replaced with [FRESH_CLONE]; payload values, timestamps and final agenda are unchanged."
+}

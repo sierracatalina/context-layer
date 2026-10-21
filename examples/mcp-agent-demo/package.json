@@ -1,0 +1,17 @@
+{
+  "name": "context-layer-mcp-agent-demo",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Synthetic-data Context Layer over real MCP stdio, with an optional real Codex host",
+  "engines": { "node": ">=22.13.0" },
+  "scripts": {
+    "demo": "node protocol-demo.mjs",
+    "test": "node --test demo.test.mjs",
+    "agent": "node run-agent.mjs"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "1.32.1",
+    "zod": "4.3.6"
+  }
+}

@@ -1,0 +1,48 @@
+{
+  "baseline_files": {
+    "context_layer_independent/profile.py": "1d0055152d846dcd65b4894d3382f7ff7e1848c9fbcda5a2c1bc1e9ccdde112d",
+    "tests/test_profile.py": "54260479a97b6502184af52eecf0a0a0d76944106817ee6744b53c75dc8dfc68"
+  },
+  "cases": [
+    {
+      "case": "authentication-string-substring",
+      "result": "accepted",
+      "value": "allow"
+    },
+    {
+      "case": "onward-string-substring",
+      "result": "accepted",
+      "value": "allow"
+    },
+    {
+      "case": "unsupported-transform-policy",
+      "result": "rejected",
+      "error_type": "ProtocolError",
+      "code": "SCHEMA_INVALID"
+    },
+    {
+      "case": "unsupported-transform-issuance",
+      "result": "rejected",
+      "error_type": "ProtocolError",
+      "code": "SCHEMA_INVALID"
+    },
+    {
+      "case": "anchor-b'\\n'",
+      "result": "rejected",
+      "error_type": "ProtocolError",
+      "code": "INVALID_JSON"
+    },
+    {
+      "case": "anchor-b'\\n\\n'",
+      "result": "rejected",
+      "error_type": "ProtocolError",
+      "code": "INVALID_JSON"
+    },
+    {
+      "case": "anchor-b' \\n'",
+      "result": "rejected",
+      "error_type": "ProtocolError",
+      "code": "INVALID_JSON"
+    }
+  ]
+}

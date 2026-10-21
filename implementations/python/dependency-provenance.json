@@ -1,0 +1,125 @@
+{
+  "packages": [
+    {
+      "filename": "attrs-26.1.0-py3-none-any.whl",
+      "target": "CPython 3.12 linux x86-64",
+      "sha256": "c647aa4a12dfbad9333ca4e71fe62ddc36f4e63b2d260a37a8b83d2f043ac309",
+      "source": "PyPI"
+    },
+    {
+      "filename": "cffi-2.1.1-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl",
+      "target": "CPython 3.12 linux x86-64",
+      "sha256": "c1453022f490d2459a11819d83ad1d586e9ff65a12ac3e705ffebd46d3685dcf",
+      "source": "PyPI"
+    },
+    {
+      "filename": "cryptography-50.0.0-cp311-abi3-manylinux_2_28_x86_64.whl",
+      "target": "CPython 3.12 linux x86-64",
+      "sha256": "b42a28c1844fd9de8f3f7d540e36b66f3a9c83fceac7170ebc7a6a19edd9dcae",
+      "source": "PyPI"
+    },
+    {
+      "filename": "jsonschema-4.26.0-py3-none-any.whl",
+      "target": "CPython 3.12 linux x86-64",
+      "sha256": "d489f15263b8d200f8387e64b4c3a75f06629559fb73deb8fdfb525f2dab50ce",
+      "source": "PyPI"
+    },
+    {
+      "filename": "jsonschema_specifications-2025.9.1-py3-none-any.whl",
+      "target": "CPython 3.12 linux x86-64",
+      "sha256": "98802fee3a11ee76ecaca44429fda8a41bff98b00a0f2838151b113f210cc6fe",
+      "source": "PyPI"
+    },
+    {
+      "filename": "pycparser-3.0-py3-none-any.whl",
+      "target": "CPython 3.12 linux x86-64",
+      "sha256": "b727414169a36b7d524c1c3e31839a521725078d7b2ff038656844266160a992",
+      "source": "PyPI"
+    },
+    {
+      "filename": "referencing-0.37.0-py3-none-any.whl",
+      "target": "CPython 3.12 linux x86-64",
+      "sha256": "381329a9f99628c9069361716891d34ad94af76e461dcb0335825aecc7692231",
+      "source": "PyPI"
+    },
+    {
+      "filename": "rfc8785-0.1.4-py3-none-any.whl",
+      "target": "CPython 3.12 linux x86-64",
+      "sha256": "520d690b448ecf0703691c76e1a34a24ddcd4fc5bc41d589cb7c58ec651bcd48",
+      "source": "PyPI"
+    },
+    {
+      "filename": "rpds_py-2026.6.3-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+      "target": "CPython 3.12 linux x86-64",
+      "sha256": "ecabd69db66de867690f9797f2f8fa27ba501bbc24540cbdbdc649cd15888ba6",
+      "source": "PyPI"
+    },
+    {
+      "filename": "typing_extensions-4.16.0-py3-none-any.whl",
+      "target": "CPython 3.12 linux x86-64",
+      "sha256": "481caa481374e813c1b176ada14e97f1f67a4539ce9cfeb3f350d78d6370c2e8",
+      "source": "PyPI"
+    },
+    {
+      "filename": "attrs-26.1.0-py3-none-any.whl",
+      "target": "CPython 3.12 windows x86-64",
+      "sha256": "c647aa4a12dfbad9333ca4e71fe62ddc36f4e63b2d260a37a8b83d2f043ac309",
+      "source": "PyPI"
+    },
+    {
+      "filename": "cffi-2.1.1-cp312-cp312-win_amd64.whl",
+      "target": "CPython 3.12 windows x86-64",
+      "sha256": "f53e442b08449d42821fa4a4fba000095af9f62742a500f978a9f557ec44339a",
+      "source": "PyPI"
+    },
+    {
+      "filename": "cryptography-50.0.0-cp311-abi3-win_amd64.whl",
+      "target": "CPython 3.12 windows x86-64",
+      "sha256": "bd1c592e4d5974f0d08d4888e432157adba757c66da0246918e43677fafa2d30",
+      "source": "PyPI"
+    },
+    {
+      "filename": "jsonschema-4.26.0-py3-none-any.whl",
+      "target": "CPython 3.12 windows x86-64",
+      "sha256": "d489f15263b8d200f8387e64b4c3a75f06629559fb73deb8fdfb525f2dab50ce",
+      "source": "PyPI"
+    },
+    {
+      "filename": "jsonschema_specifications-2025.9.1-py3-none-any.whl",
+      "target": "CPython 3.12 windows x86-64",
+      "sha256": "98802fee3a11ee76ecaca44429fda8a41bff98b00a0f2838151b113f210cc6fe",
+      "source": "PyPI"
+    },
+    {
+      "filename": "pycparser-3.0-py3-none-any.whl",
+      "target": "CPython 3.12 windows x86-64",
+      "sha256": "b727414169a36b7d524c1c3e31839a521725078d7b2ff038656844266160a992",
+      "source": "PyPI"
+    },
+    {
+      "filename": "referencing-0.37.0-py3-none-any.whl",
+      "target": "CPython 3.12 windows x86-64",
+      "sha256": "381329a9f99628c9069361716891d34ad94af76e461dcb0335825aecc7692231",
+      "source": "PyPI"
+    },
+    {
+      "filename": "rfc8785-0.1.4-py3-none-any.whl",
+      "target": "CPython 3.12 windows x86-64",
+      "sha256": "520d690b448ecf0703691c76e1a34a24ddcd4fc5bc41d589cb7c58ec651bcd48",
+      "source": "PyPI"
+    },
+    {
+      "filename": "rpds_py-2026.6.3-cp312-cp312-win_amd64.whl",
+      "target": "CPython 3.12 windows x86-64",
+      "sha256": "2c958bf94822e9290a40aaf2a822d4bc5c88099093e3948ad6c571eca9272e5f",
+      "source": "PyPI"
+    },
+    {
+      "filename": "typing_extensions-4.16.0-py3-none-any.whl",
+      "target": "CPython 3.12 windows x86-64",
+      "sha256": "481caa481374e813c1b176ada14e97f1f67a4539ce9cfeb3f350d78d6370c2e8",
+      "source": "PyPI"
+    }
+  ],
+  "note": "Wheels downloaded and hashed without reading implementation source. Runtime libraries are dependencies, not Context Layer reference code. Windows/Ubuntu wheels were resolved; Windows execution awaits CI."
+}

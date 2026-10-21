@@ -1,0 +1,30 @@
+{
+  "spec_version": "context-layer/0.2-draft",
+  "type": "memory_update_proposal",
+  "id": "urn:cl:proposal:synthetic-valid-proposal",
+  "created_at": "2026-08-12T15:12:00Z",
+  "issuer": {
+    "id": "urn:agent:reply-drafter"
+  },
+  "subject_ref": "vault://projects/synthetic-launch",
+  "operation": "add_or_contradict",
+  "proposed_claims": [
+    {
+      "predicate": "requested_delivery_date",
+      "object": {
+        "value": "2026-08-13",
+        "datatype": "date"
+      },
+      "confidence": 0.55
+    }
+  ],
+  "provenance_refs": [],
+  "rationale": "The synthetic conversation may imply Thursday, but no source was captured.",
+  "submitted_by": "urn:agent:reply-drafter",
+  "status": "pending_validation",
+  "approval_requirement": [
+    "source_required",
+    "user_confirm"
+  ],
+  "expires_at": "2026-08-13T15:12:00Z"
+}
